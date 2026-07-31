@@ -1,0 +1,216 @@
+﻿codigo;nome;categoria;unidade;descricao;ativo;quantidade_minima
+MOB-001;Armário de aço 2 portas;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-002;Armário de aço 4 portas;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-003;Arquivo de aço com gavetas;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-004;Estante de aço;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-005;Mesa para professor;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-006;Mesa para aluno;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-007;Cadeira para aluno;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-008;Cadeira para professor;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-009;Conjunto aluno mesa e cadeira;Mobiliário;Conjunto;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-010;Mesa para secretaria;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-011;Cadeira giratória;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-012;Cadeira fixa;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-013;Longarina;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-014;Birô administrativo;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-015;Mesa de reunião;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-016;Quadro branco;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-017;Quadro verde;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-018;Quadro de avisos;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-019;Prateleira;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-020;Banco escolar;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+MOB-021;Carteira escolar;Mobiliário;Unidade;Item do catálogo inicial de materiais da categoria Mobiliário.;true;0
+EXP-001;Papel A4;Expediente;Resma;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-002;Papel ofício;Expediente;Resma;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-003;Pasta AZ;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-004;Pasta suspensa;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-005;Pasta catálogo;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-006;Pasta com elástico;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-007;Envelope A4;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-008;Envelope ofício;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-009;Caneta azul;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-010;Caneta preta;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-011;Caneta vermelha;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-012;Lápis grafite;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-013;Borracha branca;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-014;Apontador;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-015;Régua 30 cm;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-016;Cola branca;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-017;Cola bastão;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-018;Tesoura sem ponta;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-019;Tesoura grande;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-020;Grampeador;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-021;Grampo para grampeador;Expediente;Caixa;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-022;Extrator de grampos;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-023;Clips;Expediente;Caixa;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-024;Percevejo;Expediente;Caixa;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-025;Fita adesiva transparente;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-026;Fita crepe;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-027;Marcador permanente;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-028;Marca-texto;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-029;Corretivo;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-030;Calculadora;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-031;Livro de protocolo;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-032;Livro de ata;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-033;Carimbo;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-034;Almofada para carimbo;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+EXP-035;Tinta para carimbo;Expediente;Unidade;Item do catálogo inicial de materiais da categoria Expediente.;true;0
+PED-001;Caderno brochura;Pedagógico;Unidade;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-002;Caderno universitário;Pedagógico;Unidade;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-003;Lápis de cor;Pedagógico;Caixa;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-004;Giz de cera;Pedagógico;Caixa;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-005;Hidrocor;Pedagógico;Caixa;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-006;Tinta guache;Pedagógico;Caixa;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-007;Pincel escolar;Pedagógico;Unidade;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-008;Cartolina;Pedagógico;Unidade;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-009;Papel madeira;Pedagógico;Unidade;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-010;Papel crepom;Pedagógico;Unidade;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-011;Papel laminado;Pedagógico;Unidade;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-012;Papel camurça;Pedagógico;Unidade;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-013;EVA;Pedagógico;Folha;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-014;TNT;Pedagógico;Metro;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-015;Massa de modelar;Pedagógico;Caixa;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-016;Cola colorida;Pedagógico;Caixa;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-017;Jogo pedagógico;Pedagógico;Unidade;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-018;Alfabeto móvel;Pedagógico;Conjunto;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-019;Material dourado;Pedagógico;Conjunto;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-020;Blocos lógicos;Pedagógico;Conjunto;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-021;Dominó pedagógico;Pedagógico;Unidade;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-022;Quebra-cabeça pedagógico;Pedagógico;Unidade;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-023;Livro paradidático;Pedagógico;Unidade;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-024;Dicionário;Pedagógico;Unidade;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-025;Globo terrestre;Pedagógico;Unidade;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+PED-026;Mapa escolar;Pedagógico;Unidade;Item do catálogo inicial de materiais da categoria Pedagógico.;true;0
+INF-001;Computador desktop;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-002;Notebook;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-003;Tablet;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-004;Monitor;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-005;Teclado;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-006;Mouse;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-007;Caixa de som;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-008;Projetor multimídia;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-009;Tela de projeção;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-010;Impressora;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-011;Toner para impressora;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-012;Cartucho de tinta;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-013;Cabo HDMI;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-014;Cabo VGA;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-015;Cabo de rede;Informática e Tecnologia;Metro;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-016;Roteador;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-017;Nobreak;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-018;Estabilizador;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-019;Pendrive;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-020;HD externo;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-021;Webcam;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+INF-022;Microfone;Informática e Tecnologia;Unidade;Item do catálogo inicial de materiais da categoria Informática e Tecnologia.;true;0
+LIM-001;Água sanitária;Limpeza e Higiene;Litro;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-002;Desinfetante;Limpeza e Higiene;Litro;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-003;Detergente;Limpeza e Higiene;Unidade;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-004;Sabão em pó;Limpeza e Higiene;Kg;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-005;Sabão líquido;Limpeza e Higiene;Litro;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-006;Sabão em barra;Limpeza e Higiene;Unidade;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-007;Álcool 70%;Limpeza e Higiene;Litro;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-008;Limpador multiuso;Limpeza e Higiene;Unidade;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-009;Esponja de limpeza;Limpeza e Higiene;Unidade;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-010;Pano de chão;Limpeza e Higiene;Unidade;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-011;Pano multiuso;Limpeza e Higiene;Pacote;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-012;Flanela;Limpeza e Higiene;Unidade;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-013;Rodo;Limpeza e Higiene;Unidade;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-014;Vassoura;Limpeza e Higiene;Unidade;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-015;Pá de lixo;Limpeza e Higiene;Unidade;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-016;Balde;Limpeza e Higiene;Unidade;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-017;Cesto de lixo;Limpeza e Higiene;Unidade;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-018;Saco de lixo 30L;Limpeza e Higiene;Pacote;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-019;Saco de lixo 50L;Limpeza e Higiene;Pacote;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-020;Saco de lixo 100L;Limpeza e Higiene;Pacote;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-021;Papel higiênico;Limpeza e Higiene;Fardo;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-022;Papel toalha;Limpeza e Higiene;Fardo;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-023;Sabonete líquido;Limpeza e Higiene;Litro;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-024;Dispenser para sabonete;Limpeza e Higiene;Unidade;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-025;Dispenser para papel toalha;Limpeza e Higiene;Unidade;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-026;Luva de limpeza;Limpeza e Higiene;Par;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-027;Escova sanitária;Limpeza e Higiene;Unidade;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+LIM-028;Desodorizador sanitário;Limpeza e Higiene;Unidade;Item do catálogo inicial de materiais da categoria Limpeza e Higiene.;true;0
+COP-001;Copo descartável;Copa e Cozinha;Pacote;Item do catálogo inicial de materiais da categoria Copa e Cozinha.;true;0
+COP-002;Prato descartável;Copa e Cozinha;Pacote;Item do catálogo inicial de materiais da categoria Copa e Cozinha.;true;0
+COP-003;Colher descartável;Copa e Cozinha;Pacote;Item do catálogo inicial de materiais da categoria Copa e Cozinha.;true;0
+COP-004;Garfo descartável;Copa e Cozinha;Pacote;Item do catálogo inicial de materiais da categoria Copa e Cozinha.;true;0
+COP-005;Faca descartável;Copa e Cozinha;Pacote;Item do catálogo inicial de materiais da categoria Copa e Cozinha.;true;0
+COP-006;Guardanapo;Copa e Cozinha;Pacote;Item do catálogo inicial de materiais da categoria Copa e Cozinha.;true;0
+COP-007;Garrafa térmica;Copa e Cozinha;Unidade;Item do catálogo inicial de materiais da categoria Copa e Cozinha.;true;0
+COP-008;Jarra;Copa e Cozinha;Unidade;Item do catálogo inicial de materiais da categoria Copa e Cozinha.;true;0
+COP-009;Panela;Copa e Cozinha;Unidade;Item do catálogo inicial de materiais da categoria Copa e Cozinha.;true;0
+COP-010;Frigideira;Copa e Cozinha;Unidade;Item do catálogo inicial de materiais da categoria Copa e Cozinha.;true;0
+COP-011;Concha;Copa e Cozinha;Unidade;Item do catálogo inicial de materiais da categoria Copa e Cozinha.;true;0
+COP-012;Escumadeira;Copa e Cozinha;Unidade;Item do catálogo inicial de materiais da categoria Copa e Cozinha.;true;0
+COP-013;Colher de servir;Copa e Cozinha;Unidade;Item do catálogo inicial de materiais da categoria Copa e Cozinha.;true;0
+COP-014;Prato;Copa e Cozinha;Unidade;Item do catálogo inicial de materiais da categoria Copa e Cozinha.;true;0
+COP-015;Copo;Copa e Cozinha;Unidade;Item do catálogo inicial de materiais da categoria Copa e Cozinha.;true;0
+COP-016;Talher;Copa e Cozinha;Unidade;Item do catálogo inicial de materiais da categoria Copa e Cozinha.;true;0
+COP-017;Bandeja;Copa e Cozinha;Unidade;Item do catálogo inicial de materiais da categoria Copa e Cozinha.;true;0
+COP-018;Pote plástico;Copa e Cozinha;Unidade;Item do catálogo inicial de materiais da categoria Copa e Cozinha.;true;0
+COP-019;Lixeira com pedal;Copa e Cozinha;Unidade;Item do catálogo inicial de materiais da categoria Copa e Cozinha.;true;0
+MAN-001;Lâmpada LED;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-002;Reator;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-003;Tomada;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-004;Interruptor;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-005;Fio elétrico;Manutenção;Metro;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-006;Extensão elétrica;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-007;Filtro de linha;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-008;Cadeado;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-009;Fechadura;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-010;Dobradiça;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-011;Parafuso;Manutenção;Caixa;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-012;Bucha;Manutenção;Caixa;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-013;Prego;Manutenção;Kg;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-014;Martelo;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-015;Alicate;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-016;Chave de fenda;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-017;Chave Philips;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-018;Trena;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-019;Cola instantânea;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-020;Silicone;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-021;Tinta para parede;Manutenção;Galão;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-022;Pincel para pintura;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-023;Rolo de pintura;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-024;Massa corrida;Manutenção;Kg;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-025;Cimento;Manutenção;Saco;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-026;Areia;Manutenção;Metro cúbico;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-027;Cano PVC;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-028;Torneira;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+MAN-029;Registro;Manutenção;Unidade;Item do catálogo inicial de materiais da categoria Manutenção.;true;0
+ESP-001;Bola de futebol;Esporte e Recreação;Unidade;Item do catálogo inicial de materiais da categoria Esporte e Recreação.;true;0
+ESP-002;Bola de futsal;Esporte e Recreação;Unidade;Item do catálogo inicial de materiais da categoria Esporte e Recreação.;true;0
+ESP-003;Bola de vôlei;Esporte e Recreação;Unidade;Item do catálogo inicial de materiais da categoria Esporte e Recreação.;true;0
+ESP-004;Bola de basquete;Esporte e Recreação;Unidade;Item do catálogo inicial de materiais da categoria Esporte e Recreação.;true;0
+ESP-005;Rede de vôlei;Esporte e Recreação;Unidade;Item do catálogo inicial de materiais da categoria Esporte e Recreação.;true;0
+ESP-006;Rede de futebol;Esporte e Recreação;Unidade;Item do catálogo inicial de materiais da categoria Esporte e Recreação.;true;0
+ESP-007;Cone esportivo;Esporte e Recreação;Unidade;Item do catálogo inicial de materiais da categoria Esporte e Recreação.;true;0
+ESP-008;Bambolê;Esporte e Recreação;Unidade;Item do catálogo inicial de materiais da categoria Esporte e Recreação.;true;0
+ESP-009;Corda;Esporte e Recreação;Unidade;Item do catálogo inicial de materiais da categoria Esporte e Recreação.;true;0
+ESP-010;Apito;Esporte e Recreação;Unidade;Item do catálogo inicial de materiais da categoria Esporte e Recreação.;true;0
+ESP-011;Colchonete;Esporte e Recreação;Unidade;Item do catálogo inicial de materiais da categoria Esporte e Recreação.;true;0
+ESP-012;Jogo de dama;Esporte e Recreação;Unidade;Item do catálogo inicial de materiais da categoria Esporte e Recreação.;true;0
+ESP-013;Jogo de xadrez;Esporte e Recreação;Unidade;Item do catálogo inicial de materiais da categoria Esporte e Recreação.;true;0
+ESP-014;Mesa de tênis de mesa;Esporte e Recreação;Unidade;Item do catálogo inicial de materiais da categoria Esporte e Recreação.;true;0
+ESP-015;Raquete de tênis de mesa;Esporte e Recreação;Unidade;Item do catálogo inicial de materiais da categoria Esporte e Recreação.;true;0
+SEG-001;Extintor de incêndio;Segurança e Sinalização;Unidade;Item do catálogo inicial de materiais da categoria Segurança e Sinalização.;true;0
+SEG-002;Placa de sinalização;Segurança e Sinalização;Unidade;Item do catálogo inicial de materiais da categoria Segurança e Sinalização.;true;0
+SEG-003;Fita zebrada;Segurança e Sinalização;Unidade;Item do catálogo inicial de materiais da categoria Segurança e Sinalização.;true;0
+SEG-004;Cone de sinalização;Segurança e Sinalização;Unidade;Item do catálogo inicial de materiais da categoria Segurança e Sinalização.;true;0
+SEG-005;Lanterna;Segurança e Sinalização;Unidade;Item do catálogo inicial de materiais da categoria Segurança e Sinalização.;true;0
+SEG-006;Pilha;Segurança e Sinalização;Unidade;Item do catálogo inicial de materiais da categoria Segurança e Sinalização.;true;0
+SEG-007;Bateria;Segurança e Sinalização;Unidade;Item do catálogo inicial de materiais da categoria Segurança e Sinalização.;true;0
+SEG-008;Corrente plástica;Segurança e Sinalização;Metro;Item do catálogo inicial de materiais da categoria Segurança e Sinalização.;true;0
+SEG-009;Kit primeiros socorros;Segurança e Sinalização;Unidade;Item do catálogo inicial de materiais da categoria Segurança e Sinalização.;true;0
+SEG-010;Luva descartável;Segurança e Sinalização;Caixa;Item do catálogo inicial de materiais da categoria Segurança e Sinalização.;true;0
+SEG-011;Máscara descartável;Segurança e Sinalização;Caixa;Item do catálogo inicial de materiais da categoria Segurança e Sinalização.;true;0
+SEG-012;Álcool em gel;Segurança e Sinalização;Litro;Item do catálogo inicial de materiais da categoria Segurança e Sinalização.;true;0
+UNI-001;Camisa escolar;Uniformes e Identificação;Unidade;Item do catálogo inicial de materiais da categoria Uniformes e Identificação.;true;0
+UNI-002;Short escolar;Uniformes e Identificação;Unidade;Item do catálogo inicial de materiais da categoria Uniformes e Identificação.;true;0
+UNI-003;Calça escolar;Uniformes e Identificação;Unidade;Item do catálogo inicial de materiais da categoria Uniformes e Identificação.;true;0
+UNI-004;Fardamento completo;Uniformes e Identificação;Kit;Item do catálogo inicial de materiais da categoria Uniformes e Identificação.;true;0
+UNI-005;Crachá de identificação;Uniformes e Identificação;Unidade;Item do catálogo inicial de materiais da categoria Uniformes e Identificação.;true;0
+UNI-006;Cordão para crachá;Uniformes e Identificação;Unidade;Item do catálogo inicial de materiais da categoria Uniformes e Identificação.;true;0
+UNI-007;Colete de identificação;Uniformes e Identificação;Unidade;Item do catálogo inicial de materiais da categoria Uniformes e Identificação.;true;0
+UNI-008;Boné;Uniformes e Identificação;Unidade;Item do catálogo inicial de materiais da categoria Uniformes e Identificação.;true;0

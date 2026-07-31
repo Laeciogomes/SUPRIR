@@ -1,0 +1,22 @@
+{
+  "name": "sistema-pedidos-materiais-caninde",
+  "private": true,
+  "version": "4.8.0",
+  "type": "module",
+  "scripts": {
+    "dev": "npm run pages:dev",
+    "dev:frontend": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "pages:dev": "npm run build && wrangler pages dev dist --ip 0.0.0.0",
+    "check": "npm run build"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0"
+  },
+  "devDependencies": {
+    "vite": "^8.0.16",
+    "wrangler": "^4.0.0"
+  },
+  "description": "Sistema integrado de pedidos, autorização, entrega, relatórios, acesso por código para escolas de Canindé, PWA e identidade visual da Secretaria de Educação com logo definitiva da Secretaria de Educação, instalação PWA ajustada, manifesto vinculado no HTML, logo centralizada no login, relatórios de pedidos com produtos discriminados e correções acumuladas."
+}
