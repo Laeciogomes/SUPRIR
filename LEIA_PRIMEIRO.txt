@@ -1,0 +1,56 @@
+Versão 4.8 — Sistema de Pedidos e Entrega de Materiais de Canindé
+
+SISTEMA DE PEDIDOS E ENTREGA DE MATERIAIS — CANINDÉ V4.8
+
+Esta versão já vem com:
+- logo definitiva da Secretaria Municipal de Educação;
+- todos os caminhos antigos de logo redirecionados para a marca nova;
+- fonte ampliada;
+- modais em vez de alertas do navegador;
+- correção de fechamento das modais;
+- exclusão de escolas por administrador da SME;
+- app instalável/PWA para Android, iPhone e computador;
+- importação das 59 escolas por CSV;
+- catálogo inicial com 215 materiais;
+- funções Cloudflare para criar usuários e importar escolas.
+
+ORDEM CERTA PARA USAR:
+
+1) No Supabase, execute o arquivo:
+   supabase/BANCO_COMPLETO_V4_7.sql
+
+   Se o banco já existe e você só quer corrigir a logo, execute:
+   supabase/migrations/008_logo_definitiva_secretaria_educacao.sql
+
+2) Crie o usuário administrador no Supabase Authentication.
+
+3) Promova esse usuário para administrador da SME com SQL:
+   update public.profiles
+   set account_type='sme', permission_level='sme_admin', role='admin', active=true, must_change_password=false
+   where lower(email)=lower('SEU_EMAIL');
+
+4) Copie .env.example para .env e coloque a URL e a chave pública do Supabase.
+
+5) Copie .dev.vars.example para .dev.vars e coloque a chave secreta do Supabase.
+   A chave secreta normalmente começa com sb_secret_ ou é a service_role legacy.
+   NÃO use sb_publishable em SUPABASE_SERVICE_ROLE_KEY.
+
+6) Rode no PowerShell:
+   npm.cmd install
+   npm.cmd run dev
+
+7) Abra:
+   http://127.0.0.1:8788
+
+8) Entre pelo portal SME e importe:
+   private/importacao/escolas_caninde_credenciais.csv
+
+IMPORTANTE:
+Não use a porta 5173 para importar escolas, porque ela não sobe as Functions do Cloudflare.
+Use a porta 8788.
+
+
+## Atualização V4.8
+
+- Relatório de pedidos detalhado por produto, com material, categoria, unidade, quantidade solicitada, autorizada, entregue, saldo e observações.
+- Impressão/PDF e exportação CSV geram os produtos discriminados por pedido.

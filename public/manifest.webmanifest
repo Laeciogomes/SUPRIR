@@ -1,0 +1,52 @@
+{
+  "name": "Sistema de Materiais — Canindé",
+  "short_name": "Materiais SME",
+  "description": "Sistema Integrado de Pedidos e Entrega de Materiais da Prefeitura Municipal de Canindé.",
+  "id": "/?app=materiais-caninde-v4-8",
+  "start_url": "/?source=pwa&version=4.8",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#f7f7f5",
+  "theme_color": "#ffd000",
+  "prefer_related_applications": false,
+  "categories": ["government", "education", "productivity"],
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/assets/pwa/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/pwa/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/pwa/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Novo pedido",
+      "short_name": "Pedido",
+      "description": "Abrir o sistema para registrar ou acompanhar pedidos.",
+      "url": "/?atalho=novo-pedido",
+      "icons": [{ "src": "/assets/pwa/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Relatórios",
+      "short_name": "Relatórios",
+      "description": "Abrir relatórios de pedidos e entregas.",
+      "url": "/?atalho=relatorios",
+      "icons": [{ "src": "/assets/pwa/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
