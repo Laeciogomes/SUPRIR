@@ -1,12 +1,23 @@
-# V5.1.13 — Renomeação oficial Cloudflare/GitHub
+# V5.1.14 — Correção do alias técnico do Cloudflare Pages
 
-## 5.1.13
+## 5.1.14
 
-- Projeto Cloudflare Pages oficial passa a ser `suprir`.
+- Mantém `suprir` como nome atual do projeto Cloudflare Pages.
+- Reconhece `sistema-materiais-caninde.pages.dev` como subdomínio técnico original e imutável do Pages.
+- Mantém `https://suprir.caninde.codeedu.dev` como único domínio oficial/canônico.
+- Redireciona o alias técnico original para o domínio oficial.
+- Corrige documentação para não indicar `suprir.pages.dev` como endereço existente.
+- Não altera banco, perfis, permissões ou fluxo operacional.
+
+# V5.1.14 — Renomeação oficial Cloudflare/GitHub
+
+## 5.1.14
+
+- Nome do projeto Cloudflare Pages: `suprir`.
 - Repositório GitHub oficial passa a ser `Laeciogomes/SUPRIR`.
 - Mantém `https://suprir.caninde.codeedu.dev` como domínio canônico oficial.
-- Redireciona `suprir.pages.dev` para o domínio oficial.
-- Mantém o redirecionamento legado de `sistema-materiais-caninde.pages.dev`.
+- Mantém `sistema-materiais-caninde.pages.dev` como alias técnico imutável do Cloudflare Pages.
+- Redireciona esse alias técnico para o domínio oficial.
 - Atualiza documentação e cache do PWA.
 - Não altera banco, perfis, permissões ou fluxo operacional.
 

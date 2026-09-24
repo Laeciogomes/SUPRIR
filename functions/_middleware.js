@@ -1,6 +1,5 @@
 const OFFICIAL_HOST = 'suprir.caninde.codeedu.dev';
 const PAGES_ALIASES = new Set([
-  'suprir.pages.dev',
   'sistema-materiais-caninde.pages.dev',
 ]);
 

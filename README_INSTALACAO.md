@@ -1,4 +1,4 @@
-# Manual de instalação — SUPRIR Educação V5.1.13
+# Manual de instalação — SUPRIR Educação V5.1.14
 
 ## 1. Banco de dados
 
@@ -29,7 +29,7 @@ supabase/migrations/009_perfis_operacionais_v5.sql
 supabase/migrations/010_remover_entregador_confirmacao_escola_v5_1.sql
 ```
 
-A V5.1.13 mantém apenas quatro perfis: `school_user`, `sme_authorizer`, `warehouse_operator` e `system_admin`.
+A V5.1.14 mantém apenas quatro perfis: `school_user`, `sme_authorizer`, `warehouse_operator` e `system_admin`.
 
 Se uma base V5.0 possuir contas `delivery_agent`, a migração as converte para `warehouse_operator` **desativado**, evitando concessão automática de novas permissões. O administrador pode revisar e reativar apenas as contas que realmente devam operar no almoxarifado.
 
@@ -130,4 +130,4 @@ npm run build
 npx wrangler pages deploy dist --project-name suprir
 ```
 
-O cache do PWA da V5.1.13 usa uma nova chave. Se um aparelho insistir em exibir a versão anterior, remova/reinstale o app ou limpe os dados do site.
+O cache do PWA da V5.1.14 usa uma nova chave. Se um aparelho insistir em exibir a versão anterior, remova/reinstale o app ou limpe os dados do site.

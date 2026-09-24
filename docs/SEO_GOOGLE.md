@@ -1,6 +1,6 @@
 # SEO e indexação no Google — SUPRIR Educação
 
-A V5.1.13 está preparada para o domínio oficial:
+A V5.1.14 está preparada para o domínio oficial:
 
 `https://suprir.caninde.codeedu.dev/`
 
@@ -11,7 +11,7 @@ A V5.1.13 está preparada para o domínio oficial:
 - dados estruturados Schema.org;
 - `robots.txt` liberando a página pública e indicando o sitemap;
 - `sitemap.xml` apontando para o domínio oficial;
-- redirecionamento 301 do alias atual `suprir.pages.dev` para o domínio oficial;
+- redirecionamento 301 do alias técnico `sistema-materiais-caninde.pages.dev` para o domínio oficial;
 - mantém redirecionamento do alias legado `sistema-materiais-caninde.pages.dev` para o domínio oficial;
 - recuperação de senha usando o domínio oficial em produção.
 
@@ -43,4 +43,4 @@ As áreas autenticadas não devem ser indexadas; o conteúdo público indexável
 - Projeto Cloudflare Pages: `suprir`
 - Repositório GitHub: `Laeciogomes/SUPRIR`
 - Domínio oficial: `https://suprir.caninde.codeedu.dev/`
-- Alias Pages: `https://suprir.pages.dev/` (redirecionado para o domínio oficial)
+- Alias técnico Pages (imutável): `https://sistema-materiais-caninde.pages.dev/` (redirecionado para o domínio oficial)
