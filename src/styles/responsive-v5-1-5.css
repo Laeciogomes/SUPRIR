@@ -328,7 +328,7 @@
   padding: 2px 4px clamp(7px, 1.5dvh, 15px);
 }
 .sidebar-brand .sidebar-brand-full { max-height: clamp(48px, 9.5dvh, 74px); }
-.sidebar-brand-compact { display: none; width: 38px; height: 38px; object-fit: contain; }
+.sidebar-brand-compact { display: none; width: 42px; height: 42px; object-fit: contain; }
 .sidebar-collapse-toggle {
   width: 34px;
   height: 34px;

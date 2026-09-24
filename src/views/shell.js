@@ -137,7 +137,7 @@ export function renderShell() {
           <div class="sidebar-brand-surface">
             ${imageTag(inst.logoUrl, 'Prefeitura Municipal de Canindé e Secretaria de Educação', 'sidebar-brand-full', CONFIG.logoFallbackUrl)}
           </div>
-          <img class="sidebar-brand-compact" src="/assets/brand/simbolo-suprir-educacao.svg" alt="SUPRIR Educação" />
+          <img class="sidebar-brand-compact" src="/favicon-192x192.png" alt="SUPRIR Educação" />
           <div class="sidebar-product"><strong>${escapeHtml(CONFIG.productName)}</strong><span>${escapeHtml(CONFIG.productSubtitle)}</span></div>
           <button type="button" class="icon-button sidebar-collapse-toggle" data-action="toggle-sidebar" aria-label="${state.sidebarCollapsed ? 'Expandir menu lateral' : 'Recolher menu lateral'}" title="${state.sidebarCollapsed ? 'Expandir menu' : 'Recolher menu'}">${icon('menu', 20)}</button>
           <button type="button" class="icon-button sidebar-close" data-action="close-mobile-menu">${icon('x', 20)}</button>

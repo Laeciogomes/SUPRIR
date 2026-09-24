@@ -1,3 +1,11 @@
+# V5.1.19 — correção do ícone do menu lateral recolhido
+
+## 5.1.19
+
+- Substituído o símbolo antigo do menu lateral recolhido pelo mesmo ícone usado no favicon.
+- Ajustado o tamanho do ícone compacto do menu lateral para melhor visualização.
+- Mantida a padronização da marca do SUPRIR na tela de login.
+
 # V5.1.18 — padronização da marca do SUPRIR com o favicon
 
 ## 5.1.18
