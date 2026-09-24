@@ -1,5 +1,5 @@
 import { state, resetSecureState } from './state.js';
-import { isSchool, isAdmin, canAuthorizeRequests, canOperateWarehouse, getRequest, getAllDeliveries } from './helpers.js';
+import { isSchool, isAdmin, canAuthorizeRequests, canOperateWarehouse, canManageMaterials, getRequest, getAllDeliveries } from './helpers.js';
 import { app, render, navigate, openRequest } from './router.js';
 import { openConfirm, setToast } from './notices.js';
 import {
@@ -184,8 +184,13 @@ export const ACTIONS = {
     await deleteSchool(button.dataset.id);
   },
   'open-material-form': (button) => {
-    if (!isAdmin()) throw new Error('Somente o administrador do sistema pode alterar o catálogo.');
+    if (!canManageMaterials()) throw new Error('Somente o almoxarifado ou o administrador pode alterar o catálogo.');
     state.modal = { type: 'materialForm', materialId: button.dataset.id || null };
+    render();
+  },
+  'open-stock-entry': (button) => {
+    if (!canManageMaterials()) throw new Error('Somente o almoxarifado ou o administrador pode registrar entradas de estoque.');
+    state.modal = { type: 'stockEntry', materialId: button.dataset.id || null };
     render();
   },
   'open-user-create': () => {
@@ -233,6 +238,13 @@ export const ACTIONS = {
   'filter-status': (button) => {
     state.filters.requestStatus = button.dataset.status;
     state.view = 'requests';
+    render();
+  },
+  'set-list-page': (button) => {
+    const scope = button.dataset.scope;
+    const page = Math.max(1, Number(button.dataset.page || 1));
+    if (scope === 'users') state.pagination.usersPage = page;
+    if (scope === 'materials') state.pagination.materialsPage = page;
     render();
   },
   'report-type': (button) => {

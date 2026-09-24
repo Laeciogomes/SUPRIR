@@ -49,6 +49,7 @@ export function smeNav() {
     return [
       { id: 'dashboard', label: 'Painel de análise', icon: 'dashboard' },
       { id: 'requests', label: 'Pedidos para análise', icon: 'clipboard', count: submitted },
+      { id: 'materials', label: 'Estoque', icon: 'box' },
       { id: 'reports', label: 'Relatórios', icon: 'report' },
       { id: 'profile', label: 'Meu perfil', icon: 'user' }
     ];
@@ -59,7 +60,7 @@ export function smeNav() {
       { id: 'dashboard', label: 'Painel do almoxarifado', icon: 'dashboard' },
       { id: 'requests', label: 'Fila de separação', icon: 'archive', count: warehouseQueue },
       { id: 'deliveries', label: 'Remessas', icon: 'truck', count: openDeliveries },
-      { id: 'materials', label: 'Catálogo', icon: 'box' },
+      { id: 'materials', label: 'Estoque', icon: 'box' },
       { id: 'reports', label: 'Relatórios', icon: 'report' },
       { id: 'profile', label: 'Meu perfil', icon: 'user' }
     ];
@@ -70,7 +71,7 @@ export function smeNav() {
     { id: 'requests', label: 'Pedidos', icon: 'clipboard', count: submitted },
     { id: 'deliveries', label: 'Remessas', icon: 'truck', count: openDeliveries },
     { id: 'schools', label: 'Escolas', icon: 'school' },
-    { id: 'materials', label: 'Materiais', icon: 'box' },
+    { id: 'materials', label: 'Estoque e materiais', icon: 'box' },
     { id: 'reports', label: 'Relatórios', icon: 'report' }
   ];
   if (isAdmin()) items.push({ id: 'users', label: 'Usuários e acessos', icon: 'users' }, { id: 'settings', label: 'Configurações', icon: 'settings' });
@@ -92,6 +93,7 @@ export function getViewMeta() {
     authorizer: {
       dashboard: ['Painel de análise', 'Receba, confira e decida os pedidos enviados pelas escolas.'],
       requests: ['Análise e autorização', 'Registre o recebimento, as quantidades autorizadas ou a justificativa de rejeição.'],
+      materials: ['Estoque', 'Consulte o saldo atual disponível de cada material.'],
       reports: ['Relatórios', 'Acompanhe os pedidos analisados e os indicadores da rede.'],
       profile: ['Meu perfil', 'Confira seus dados e sua função no fluxo.'],
       requestDetail: ['Análise do pedido', 'Confira a solicitação e registre a decisão da SME.']
@@ -100,7 +102,7 @@ export function getViewMeta() {
       dashboard: ['Painel do almoxarifado', 'Organize a separação e a expedição dos pedidos já autorizados.'],
       requests: ['Fila de separação', 'Prepare os materiais autorizados e registre as remessas.'],
       deliveries: ['Remessas', 'Acompanhe as saídas preparadas pelo almoxarifado.'],
-      materials: ['Catálogo de materiais', 'Consulte os materiais disponíveis no sistema.'],
+      materials: ['Estoque', 'Consulte saldos, entradas e disponibilidade dos materiais.'],
       reports: ['Relatórios', 'Consulte pedidos, materiais e remessas processadas.'],
       profile: ['Meu perfil', 'Confira seus dados e sua função no fluxo.'],
       requestDetail: ['Separação e expedição', 'Confira o autorizado, separe os itens e registre a saída.']
@@ -110,7 +112,7 @@ export function getViewMeta() {
       requests: ['Pedidos', 'Acompanhe solicitações, decisões, separação e expedição.'],
       deliveries: ['Remessas', 'Acompanhe as saídas do almoxarifado e as confirmações registradas pelas escolas.'],
       schools: ['Escolas', 'Gerencie as unidades escolares atendidas pela rede.'],
-      materials: ['Materiais', 'Gerencie o catálogo disponível para solicitação.'],
+      materials: ['Estoque e materiais', 'Gerencie o catálogo, entradas e saldos disponíveis para solicitação.'],
       reports: ['Relatórios gerenciais', 'Consolide dados por escola, período, situação e material.'],
       users: ['Usuários e acessos', 'Crie contas e defina responsabilidades por etapa.'],
       settings: ['Configurações institucionais', 'Defina os dados exibidos no sistema e nos relatórios.'],
@@ -205,7 +207,7 @@ export function renderCurrentView() {
   if (state.view === 'requests' && (isAdmin() || canAuthorizeRequests() || canOperateWarehouse())) return renderRequestsList(false);
   if (state.view === 'deliveries' && (isAdmin() || canOperateWarehouse())) return renderDeliveries();
   if (state.view === 'schools' && isAdmin()) return renderSchools();
-  if (state.view === 'materials' && (isAdmin() || canOperateWarehouse())) return renderMaterials();
+  if (state.view === 'materials' && (isAdmin() || canAuthorizeRequests() || canOperateWarehouse())) return renderMaterials();
   if (state.view === 'users' && isAdmin()) return renderUsers();
   if (state.view === 'settings' && isAdmin()) return renderSettings();
   return renderSmeDashboard();

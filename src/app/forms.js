@@ -6,7 +6,7 @@ import {
 } from '../auth/school-credentials.js';
 import { parseSchoolAccessCsv } from '../utils/csv.js';
 import { state } from './state.js';
-import { isAdmin, getRequest } from './helpers.js';
+import { isAdmin, canManageMaterials, getRequest } from './helpers.js';
 import { app, render } from './router.js';
 import { openConfirm, setToast } from './notices.js';
 import {
@@ -135,6 +135,12 @@ export async function submitSchoolRequest(event) {
   if (!validItems.length) throw new Error('Adicione pelo menos um material com quantidade válida.');
   const materialIds = validItems.map((item) => item.material_id);
   if (new Set(materialIds).size !== materialIds.length) throw new Error('O mesmo material foi adicionado mais de uma vez. Agrupe a quantidade em uma única linha.');
+  for (const item of validItems) {
+    const material = state.materials.find((entry) => entry.id === item.material_id);
+    const available = Number(material?.stock_quantity || 0);
+    if (!material || available <= 0) throw new Error('Um dos materiais selecionados ficou sem estoque. Atualize o pedido.');
+    if (item.quantity > available) throw new Error(`A quantidade de ${material.nome} ultrapassa o estoque disponível (${available} ${material.unidade}).`);
+  }
 
   state.loading = true;
   render();
@@ -172,6 +178,13 @@ export async function submitAuthorization(form) {
     notes: String(data.get(`notes_${item.id}`) || '').trim() || null
   }));
   if (!items.some((item) => item.approved_quantity > 0)) throw new Error('Autorize ao menos um item ou rejeite o pedido.');
+  for (const item of items) {
+    if (item.approved_quantity <= 0) continue;
+    const requestItem = request.request_items.find((entry) => entry.id === item.request_item_id);
+    const material = state.materials.find((entry) => entry.id === requestItem?.material_id);
+    const available = Number(material?.stock_quantity || 0);
+    if (item.approved_quantity > available) throw new Error(`A autorização de ${requestItem?.material_name_snapshot || 'um material'} ultrapassa o estoque atual (${available} ${requestItem?.unit_snapshot || ''}).`);
+  }
   await executeRpc('authorize_request', {
     p_request_id: request.id,
     p_items: items,
@@ -196,7 +209,12 @@ export async function submitDispatch(form) {
     notes: null
   })).filter((item) => item.quantity > 0);
   if (!items.length) throw new Error('Informe ao menos uma quantidade para a remessa.');
-
+  for (const item of items) {
+    const requestItem = request.request_items.find((entry) => entry.id === item.request_item_id);
+    const material = state.materials.find((entry) => entry.id === requestItem?.material_id);
+    const available = Number(material?.stock_quantity || 0);
+    if (item.quantity > available) throw new Error(`Estoque insuficiente para ${requestItem?.material_name_snapshot || 'um material'}. Disponível: ${available} ${requestItem?.unit_snapshot || ''}.`);
+  }
 
   await executeRpc('register_dispatch', {
     p_request_id: request.id,
@@ -282,27 +300,52 @@ export async function deleteSchool(schoolId) {
 
 export async function submitMaterial(form) {
   const supabase = getSupabase();
+  if (!canManageMaterials()) throw new Error('Somente o almoxarifado ou o administrador pode alterar materiais.');
   const data = new FormData(form);
   const minimum = String(data.get('quantidade_minima') || '').trim();
-  const payload = {
-    nome: String(data.get('nome') || '').trim(),
-    codigo: String(data.get('codigo') || '').trim() || null,
-    categoria: String(data.get('categoria') || '').trim() || null,
-    unidade: String(data.get('unidade') || '').trim(),
-    quantidade_minima: minimum ? Number(minimum.replace(',', '.')) : null,
-    descricao: String(data.get('descricao') || '').trim() || null,
-    ativo: Boolean(data.get('ativo'))
-  };
+  const initialStock = String(data.get('initialStock') || '').trim();
+  const isEdit = Boolean(state.modal.materialId);
+
   state.loading = true;
   render();
-  const isEdit = Boolean(state.modal.materialId);
-  const query = isEdit
-    ? supabase.from('materials').update(payload).eq('id', state.modal.materialId)
-    : supabase.from('materials').insert(payload);
-  const { error } = await query;
+
+  const { error } = await supabase.rpc('save_warehouse_material', {
+    p_material_id: isEdit ? state.modal.materialId : null,
+    p_nome: String(data.get('nome') || '').trim(),
+    p_codigo: String(data.get('codigo') || '').trim() || null,
+    p_categoria: String(data.get('categoria') || '').trim() || null,
+    p_unidade: String(data.get('unidade') || '').trim(),
+    p_quantidade_minima: minimum ? Number(minimum.replace(',', '.')) : null,
+    p_descricao: String(data.get('descricao') || '').trim() || null,
+    p_ativo: Boolean(data.get('ativo')),
+    p_initial_stock: !isEdit && initialStock ? Number(initialStock.replace(',', '.')) : 0
+  });
   if (error) throw error;
   state.modal = null;
-  await refreshData(isEdit ? 'Material atualizado.' : 'Material cadastrado.');
+  await refreshData(isEdit ? 'Material atualizado.' : 'Material cadastrado com sucesso.');
+}
+
+export async function submitStockEntry(form) {
+  const supabase = getSupabase();
+  if (!canManageMaterials()) throw new Error('Somente o almoxarifado ou o administrador pode registrar entradas de estoque.');
+  const data = new FormData(form);
+  const materialId = String(data.get('materialId') || '');
+  const quantityText = String(data.get('quantity') || '').trim();
+  const quantity = Number(quantityText.replace(',', '.'));
+  if (!materialId) throw new Error('Selecione o material.');
+  if (!Number.isFinite(quantity) || quantity <= 0) throw new Error('Informe uma quantidade de entrada maior que zero.');
+
+  state.loading = true;
+  render();
+  const { error } = await supabase.rpc('register_stock_entry', {
+    p_material_id: materialId,
+    p_quantity: quantity,
+    p_document_number: String(data.get('documentNumber') || '').trim() || null,
+    p_notes: String(data.get('notes') || '').trim() || null
+  });
+  if (error) throw error;
+  state.modal = null;
+  await refreshData('Entrada de estoque registrada.');
 }
 
 export async function submitUserCreate(form) {
@@ -514,6 +557,7 @@ export const SUBMIT_HANDLERS = {
   'cancel-request-form': (form) => submitCancellation(form),
   'school-form': (form) => submitSchool(form),
   'material-form': (form) => submitMaterial(form),
+  'stock-entry-form': (form) => submitStockEntry(form),
   'user-create-form': (form) => submitUserCreate(form),
   'school-import-form': (form) => submitSchoolImport(form),
   'user-edit-form': (form) => submitUserEdit(form),

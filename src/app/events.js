@@ -51,8 +51,10 @@ export function registerEventListeners() {
     }
     if (target.dataset.filter && target.matches('input')) {
       state.filters[target.dataset.filter] = target.value;
-      window.clearTimeout(state.filterTimer);
       const filterName = target.dataset.filter;
+      if (filterName === 'userSearch') state.pagination.usersPage = 1;
+      if (filterName === 'materialSearch') state.pagination.materialsPage = 1;
+      window.clearTimeout(state.filterTimer);
       const cursor = target.selectionStart;
       state.filterTimer = window.setTimeout(() => {
         render();
@@ -72,9 +74,12 @@ export function registerEventListeners() {
     if (target.dataset.draftItem && state.draft) {
       const index = Number(target.dataset.index);
       if (state.draft.items[index]) state.draft.items[index][target.dataset.draftItem] = target.value;
+      if (target.dataset.draftItem === 'material_id') render();
     }
     if (target.dataset.filter) {
       state.filters[target.dataset.filter] = target.value;
+      if (target.dataset.filter === 'userSearch') state.pagination.usersPage = 1;
+      if (target.dataset.filter === 'materialSearch') state.pagination.materialsPage = 1;
       render();
     }
     if (target.dataset.reportFilter) {

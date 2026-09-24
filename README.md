@@ -1,74 +1,67 @@
-# SUPRIR Educação — Canindé V5.1.14
+# SUPRIR Educação — Canindé V5.2.1
 
-**Gestão de pedidos, autorização, separação, expedição e recebimento de materiais da rede municipal de ensino.**
+**Gestão de pedidos, estoque, autorização, separação, expedição e recebimento de materiais da rede municipal de ensino.**
 
-O SUPRIR Educação organiza o fluxo entre escolas, Secretaria Municipal de Educação e almoxarifado, com responsabilidades separadas, auditoria e regras de segurança no Supabase.
+A V5.2.1 incorpora controle físico de estoque ao fluxo já existente. O saldo é mantido pelo almoxarifado, consultado pela SME, usado para limitar as solicitações das escolas e baixado automaticamente quando a remessa sai do almoxarifado.
 
-## Fluxo da V5.1.14
+## Fluxo operacional
 
-1. **Escola** cria e envia o pedido.
-2. **SME — Análise e autorização** recebe, analisa, autoriza ou rejeita.
-3. **Almoxarifado — Separação e expedição** separa os materiais e registra a remessa.
-4. **Escola** confirma o recebimento da remessa no próprio portal.
-5. **Administrador do sistema** acompanha e administra toda a operação.
-
-A V5.1.14 remove o antigo perfil de entregador. Não existe mais usuário `delivery_agent`, atribuição de remessa a entregador ou confirmação intermediária por equipe de entrega.
+1. **Almoxarifado** cadastra o material e registra as entradas de estoque.
+2. **Escola** enxerga somente materiais ativos com saldo maior que zero e cria o pedido dentro do estoque disponível.
+3. **SME — Análise e autorização** consulta o saldo atual e autoriza as quantidades.
+4. **Almoxarifado — Separação e expedição** registra a saída/remessa.
+5. A saída **baixa automaticamente o estoque** e gera uma movimentação auditável.
+6. **Escola** confirma o recebimento no próprio portal.
+7. **Administrador do sistema** acompanha toda a operação.
 
 ## Perfis
 
-| Perfil | Código | Responsabilidade principal |
+| Perfil | Código | Estoque / responsabilidade |
 |---|---|---|
-| Escola | `school_user` | Solicitar, acompanhar e confirmar o recebimento da própria unidade |
-| SME — Análise e autorização | `sme_authorizer` | Receber, analisar, autorizar e rejeitar pedidos |
-| Almoxarifado | `warehouse_operator` | Separar materiais e registrar a expedição/remessa |
-| Administrador do sistema | `system_admin` | Administração total, cadastros e visão global |
+| Escola | `school_user` | Só visualiza e solicita materiais com estoque disponível |
+| SME — Análise e autorização | `sme_authorizer` | Consulta o estoque e autoriza pedidos |
+| Almoxarifado | `warehouse_operator` | Cadastra materiais, registra entradas, separa e expede |
+| Administrador | `system_admin` | Acesso completo, inclusive estoque e cadastros |
 
-As permissões são aplicadas na interface, nas RPCs e nas políticas RLS do Supabase.
+## Controle de estoque
+
+Cada material possui:
+
+- `stock_quantity`: saldo físico atual;
+- `quantidade_minima`: nível usado para alerta de estoque baixo;
+- `stock_updated_at`: última alteração do saldo.
+
+A tabela `inventory_movements` registra as entradas e saídas com saldo anterior, saldo posterior, documento, usuário, pedido/remessa e data.
+
+O estoque **não é reduzido na autorização**. A baixa ocorre na expedição física. O sistema revalida o saldo no momento da saída para impedir estoque negativo.
 
 ## Banco de dados
+
+### Atualização da V5.1.x para V5.2.1
+
+Execute no SQL Editor do Supabase:
+
+```txt
+supabase/migrations/011_estoque_v5_2.sql
+```
+
+ou:
+
+```txt
+supabase/MIGRACAO_V5_1_PARA_V5_2_0.sql
+```
 
 ### Instalação nova
 
 Execute:
 
 ```txt
-supabase/BANCO_COMPLETO_V5_1.sql
+supabase/BANCO_COMPLETO_V5_2.sql
 ```
 
-### Banco já atualizado para V5.0
-
-Execute:
-
-```txt
-supabase/migrations/010_remover_entregador_confirmacao_escola_v5_1.sql
-```
-
-### Banco ainda na V4.8
-
-Execute, nesta ordem:
-
-```txt
-supabase/migrations/009_perfis_operacionais_v5.sql
-supabase/migrations/010_remover_entregador_confirmacao_escola_v5_1.sql
-```
-
-Faça backup antes de qualquer migração.
-
-## Estrutura principal
-
-```txt
-src/                         aplicação web
-functions/                   APIs administrativas do Cloudflare Pages
-public/                      PWA, assets e arquivos públicos
-supabase/                     SQL completo e migrações
-data/                         catálogo inicial de materiais
-private/importacao/           modelos de importação
-docs/                         documentação operacional
-```
+**Importante:** após a migração, os materiais existentes começam com saldo `0`. O almoxarifado deve registrar o estoque físico real como entrada antes de liberar os materiais às escolas.
 
 ## Configuração
-
-Variáveis públicas recomendadas:
 
 ```env
 VITE_SUPABASE_URL=https://SEU-PROJETO.supabase.co
@@ -77,48 +70,25 @@ VITE_NOME_SISTEMA="SUPRIR Educação"
 VITE_SUBTITULO_SISTEMA="Gestão de pedidos e distribuição de materiais"
 VITE_MUNICIPIO_NOME="Prefeitura Municipal de Canindé"
 VITE_SECRETARIA_NOME="Secretaria Municipal de Educação"
-VITE_TITULO_SISTEMA="SUPRIR Educação — Gestão de Pedidos e Distribuição de Materiais"
 VITE_SCHOOL_LOGIN_DOMAIN=escolas.caninde.ce.gov.br
-```
-
-Variáveis secretas das Functions:
-
-```env
-SUPABASE_URL=https://SEU-PROJETO.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=SUA_CHAVE_SECRETA
-SCHOOL_LOGIN_DOMAIN=escolas.caninde.ce.gov.br
+VITE_PUBLIC_URL=https://suprir.caninde.codeedu.dev
 ```
 
 ## Execução local
 
 ```powershell
-npm.cmd install
-npm.cmd run dev
+npm install
+npm run dev
 ```
 
 ## Publicação
-
-No Cloudflare Pages:
-
-```txt
-Projeto: suprir
-Build command: npm run build
-Build output directory: dist
-Domínio oficial: https://suprir.caninde.codeedu.dev
-```
-
-Publicação manual:
 
 ```powershell
 npm run build
 npx wrangler pages deploy dist --project-name suprir
 ```
 
-Repositório oficial: `https://github.com/Laeciogomes/SUPRIR`.
+- GitHub: `https://github.com/Laeciogomes/SUPRIR`
+- Produção: `https://suprir.caninde.codeedu.dev`
 
-Antes de publicar em produção, use `docs/CHECKLIST_PUBLICACAO.md`.
-
-
-## Indexação no Google
-
-A V5.1.14 inclui metadados SEO, dados estruturados, `robots.txt` e `sitemap.xml`. Consulte `docs/SEO_GOOGLE.md` antes da publicação, principalmente se for usado domínio próprio em vez do endereço padrão do Cloudflare Pages.
+Consulte `docs/ATUALIZACAO_V5_2.md` antes da atualização do banco em produção.

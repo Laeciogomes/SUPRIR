@@ -21,6 +21,7 @@ export const state = {
   settings: null,
   schools: [],
   materials: [],
+  inventoryMovements: [],
   requests: [],
   profiles: [],
   events: {},
@@ -32,7 +33,14 @@ export const state = {
     requestStatus: 'all',
     requestSchool: 'all',
     deliverySearch: '',
-    deliveryStatus: 'all'
+    deliveryStatus: 'all',
+    userSearch: '',
+    materialSearch: ''
+  },
+  pagination: {
+    usersPage: 1,
+    materialsPage: 1,
+    pageSize: 15
   },
   report: {
     type: 'orders',
@@ -52,6 +60,7 @@ export function resetSecureState() {
   state.settings = null;
   state.schools = [];
   state.materials = [];
+  state.inventoryMovements = [];
   state.requests = [];
   state.profiles = [];
   state.events = {};

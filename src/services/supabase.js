@@ -67,21 +67,32 @@ export async function loadAuthenticatedData(showLoading = true) {
 
     const isAdmin = profile.account_type === 'sme' && ['system_admin', 'sme_admin'].includes(profile.permission_level);
 
-    const [settingsResult, schoolsResult, materialsResult, requestsResult] = await Promise.all([
+    const inventoryPromise = profile.account_type === 'sme'
+      ? supabase
+          .from('inventory_movements')
+          .select('*, materials (id, nome, unidade, codigo)')
+          .order('created_at', { ascending: false })
+          .limit(200)
+      : Promise.resolve({ data: [], error: null });
+
+    const [settingsResult, schoolsResult, materialsResult, requestsResult, inventoryResult] = await Promise.all([
       supabase.from('system_settings').select('*').eq('id', 1).maybeSingle(),
       supabase.from('schools').select('*').order('nome', { ascending: true }),
       supabase.from('materials').select('*').order('nome', { ascending: true }),
-      fetchRequests()
+      fetchRequests(),
+      inventoryPromise
     ]);
 
     if (settingsResult.error) throw settingsResult.error;
     if (schoolsResult.error) throw schoolsResult.error;
     if (materialsResult.error) throw materialsResult.error;
     if (requestsResult.error) throw requestsResult.error;
+    if (inventoryResult.error) throw inventoryResult.error;
 
     state.settings = settingsResult.data || null;
     state.schools = schoolsResult.data || [];
     state.materials = materialsResult.data || [];
+    state.inventoryMovements = inventoryResult.data || [];
     state.requests = normalizeRequests(requestsResult.data || []);
 
     if (isAdmin) {
@@ -116,13 +127,13 @@ export function fetchRequests() {
       schools (id, nome, inep, codigo, diretor, telefone, email, endereco, bairro),
       request_items (
         *,
-        materials (id, nome, unidade, categoria, codigo)
+        materials (id, nome, unidade, categoria, codigo, stock_quantity, quantidade_minima)
       ),
       deliveries (
         *,
         delivery_items (
           *,
-          materials (id, nome, unidade, categoria, codigo)
+          materials (id, nome, unidade, categoria, codigo, stock_quantity, quantidade_minima)
         )
       )
     `)

@@ -34,6 +34,10 @@ export function canManageMasterData() {
   return isAdmin();
 }
 
+export function canManageMaterials() {
+  return isAdmin() || canOperateWarehouse();
+}
+
 // Compatibilidade semântica com os módulos antigos: "manager" agora é a
 // função de análise/autorização, e não um papel genérico com acesso a todas as etapas.
 export function isManager() {

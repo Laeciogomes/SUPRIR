@@ -129,7 +129,7 @@ export function draftFromRequest(request) {
 export function renderRequestForm() {
   if (!state.draft) state.draft = createBlankDraft();
   const draft = state.draft;
-  const activeMaterials = state.materials.filter((material) => material.ativo);
+  const activeMaterials = state.materials.filter((material) => material.ativo && Number(material.stock_quantity || 0) > 0);
   const school = state.schools.find((item) => item.id === state.profile.school_id);
 
   if (!state.profile.school_id || !school) {
@@ -168,14 +168,18 @@ export function renderRequestForm() {
         ${activeMaterials.length ? `
           <div class="request-items-editor">
             <div class="editor-head"><span>Material</span><span>Quantidade</span><span>Observação do item</span><span></span></div>
-            ${draft.items.map((item, index) => `
+            ${draft.items.map((item, index) => {
+              const selectedMaterial = activeMaterials.find((material) => material.id === item.material_id);
+              const available = Number(selectedMaterial?.stock_quantity || 0);
+              return `
               <div class="editor-row" data-index="${index}">
-                <label class="field mobile-label"><span>Material</span><select data-draft-item="material_id" data-index="${index}" required><option value="">Selecione um material</option>${activeMaterials.map((material) => `<option value="${material.id}" ${selected(item.material_id === material.id)}>${escapeHtml(material.nome)} — ${escapeHtml(material.unidade)}</option>`).join('')}</select></label>
-                <label class="field mobile-label"><span>Quantidade</span><input type="number" min="0.01" step="0.01" data-draft-item="quantity" data-index="${index}" value="${attr(item.quantity)}" placeholder="0" required /></label>
+                <label class="field mobile-label"><span>Material</span><select data-draft-item="material_id" data-index="${index}" required><option value="">Selecione um material</option>${activeMaterials.map((material) => `<option value="${material.id}" ${selected(item.material_id === material.id)}>${escapeHtml(material.nome)} — disponível ${formatNumber(material.stock_quantity || 0)} ${escapeHtml(material.unidade)}</option>`).join('')}</select>${selectedMaterial ? `<small>Disponível em estoque: <strong>${formatNumber(available)} ${escapeHtml(selectedMaterial.unidade)}</strong></small>` : ''}</label>
+                <label class="field mobile-label"><span>Quantidade</span><input type="number" min="0.01" ${selectedMaterial ? `max="${attr(available)}"` : ''} step="0.01" data-draft-item="quantity" data-index="${index}" value="${attr(item.quantity)}" placeholder="0" required /></label>
                 <label class="field mobile-label"><span>Observação do item</span><input type="text" data-draft-item="notes" data-index="${index}" value="${attr(item.notes)}" maxlength="300" placeholder="Tamanho, série, especificação..." /></label>
                 <button type="button" class="icon-button danger-soft" data-action="remove-draft-item" data-index="${index}" title="Remover item" ${draft.items.length === 1 ? 'disabled' : ''}>${icon('x', 18)}</button>
-              </div>`).join('')}
-          </div>` : renderEmptyState('box', 'Catálogo vazio', 'A SME precisa cadastrar materiais ativos antes que a escola possa fazer pedidos.')}
+              </div>`;
+            }).join('')}
+          </div>` : renderEmptyState('box', 'Nenhum material disponível', 'No momento não há materiais ativos com saldo em estoque para solicitar.')}
       </section>
 
       <section class="form-actions sticky-actions">

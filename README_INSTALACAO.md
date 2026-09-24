@@ -1,133 +1,72 @@
-# Manual de instalação — SUPRIR Educação V5.1.14
+# Manual de instalação — SUPRIR Educação V5.2.1
 
-## 1. Banco de dados
+## 1. Faça backup do Supabase
 
-Faça backup do Supabase antes da atualização.
+Antes da migração, gere um backup ou snapshot do banco de produção.
 
-### Instalação nova
+## 2. Atualize o banco
 
-Execute no SQL Editor:
-
-```txt
-supabase/BANCO_COMPLETO_V5_1.sql
-```
-
-### Atualização de uma V5.0
-
-Execute:
+Para uma base que já está na V5.1.x, execute somente:
 
 ```txt
-supabase/migrations/010_remover_entregador_confirmacao_escola_v5_1.sql
+supabase/migrations/011_estoque_v5_2.sql
 ```
 
-### Atualização de uma V4.8
-
-Execute, nesta ordem:
+Para uma instalação nova, use:
 
 ```txt
-supabase/migrations/009_perfis_operacionais_v5.sql
-supabase/migrations/010_remover_entregador_confirmacao_escola_v5_1.sql
+supabase/BANCO_COMPLETO_V5_2.sql
 ```
 
-A V5.1.14 mantém apenas quatro perfis: `school_user`, `sme_authorizer`, `warehouse_operator` e `system_admin`.
+A migração adiciona o saldo físico dos materiais, o histórico de movimentações e as RPCs de entrada/saída de estoque.
 
-Se uma base V5.0 possuir contas `delivery_agent`, a migração as converte para `warehouse_operator` **desativado**, evitando concessão automática de novas permissões. O administrador pode revisar e reativar apenas as contas que realmente devam operar no almoxarifado.
+## 3. Cadastre o estoque físico inicial
 
-## 2. Administrador do sistema
+Após a migração, os materiais existentes ficam com saldo zero. Entre com um usuário `warehouse_operator` ou `system_admin` e acesse **Estoque**.
 
-Crie o usuário em **Supabase > Authentication > Users** e depois execute:
+Para cada material existente:
 
-```sql
-update public.profiles
-set
-  account_type = 'sme',
-  permission_level = 'system_admin',
-  role = 'admin',
-  active = true,
-  must_change_password = false,
-  school_id = null,
-  updated_at = now()
-where lower(email) = lower('SEU_EMAIL_AQUI');
-```
+1. Clique em **Entrada**;
+2. informe a quantidade física existente no almoxarifado;
+3. informe documento/observação, se houver;
+4. confirme.
 
-## 3. Equipe interna
+Somente depois da entrada o material passa a aparecer para as escolas.
 
-Pelo próprio sistema, o administrador pode criar:
+## 4. Perfis
 
-- **SME — Análise e autorização** (`sme_authorizer`);
-- **Almoxarifado — Separação e expedição** (`warehouse_operator`);
-- **Administrador do sistema** (`system_admin`).
+- `school_user`: solicita apenas o que estiver disponível;
+- `sme_authorizer`: consulta saldos e autoriza pedidos;
+- `warehouse_operator`: cadastra materiais, registra entradas e expede;
+- `system_admin`: administração completa.
 
-A escola permanece com `school_user` e confirma o recebimento da própria remessa.
+## 5. Teste obrigatório
 
-## 4. Variáveis de ambiente
+Faça um teste com um material de saldo conhecido, por exemplo `100` unidades:
 
-```env
-VITE_SUPABASE_URL=https://SEU-PROJETO.supabase.co
-VITE_SUPABASE_ANON_KEY=SUA_CHAVE_PUBLICA
-VITE_NOME_SISTEMA="SUPRIR Educação"
-VITE_SUBTITULO_SISTEMA="Gestão de pedidos e distribuição de materiais"
-VITE_MUNICIPIO_NOME="Prefeitura Municipal de Canindé"
-VITE_SECRETARIA_NOME="Secretaria Municipal de Educação"
-VITE_SCHOOL_LOGIN_DOMAIN=escolas.caninde.ce.gov.br
-VITE_PUBLIC_URL=https://suprir.caninde.codeedu.dev
-```
+1. Registre entrada de `100`;
+2. confirme que a escola enxerga o material;
+3. crie um pedido de `20`;
+4. autorize `20` na SME;
+5. registre remessa de `20` no almoxarifado;
+6. confira que o estoque passou automaticamente para `80`;
+7. confira a movimentação `Saída -20` no histórico;
+8. confirme o recebimento pela escola.
 
-Functions:
+Também teste que uma saída maior que o saldo é bloqueada.
 
-```env
-SUPABASE_URL=https://SEU-PROJETO.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=SUA_CHAVE_SECRETA_DO_SUPABASE
-SCHOOL_LOGIN_DOMAIN=escolas.caninde.ce.gov.br
-```
-
-## 5. Domínio oficial e Supabase Auth
-
-Domínio oficial de produção:
-
-`https://suprir.caninde.codeedu.dev`
-
-No Supabase, em **Authentication > URL Configuration**, use:
+## 6. Supabase Auth
 
 - Site URL: `https://suprir.caninde.codeedu.dev`
 - Redirect URL: `https://suprir.caninde.codeedu.dev/**`
-- Desenvolvimento local: `http://localhost:8788/**`
+- Desenvolvimento: `http://localhost:8788/**`
 
-O frontend usa `VITE_PUBLIC_URL` opcionalmente; se não for informado, o padrão já é `https://suprir.caninde.codeedu.dev`.
-
-## 6. Teste local
+## 7. Build e Cloudflare
 
 ```powershell
-npm.cmd install
-npm.cmd run dev
-```
-
-## 7. Teste do fluxo
-
-Use contas diferentes e valide:
-
-1. Escola cria e envia o pedido.
-2. SME recebe, analisa e autoriza.
-3. Almoxarifado inicia a separação e registra a remessa.
-4. A remessa fica como **Aguardando recebimento**.
-5. A própria escola informa a data e confirma o recebimento.
-6. O sistema registra o usuário da escola responsável e recalcula automaticamente a situação do pedido.
-7. Administrador confere o histórico e os relatórios.
-
-## 8. Cloudflare Pages
-
-```txt
-Projeto Cloudflare Pages: suprir
-Build command: npm run build
-Build output directory: dist
-Domínio oficial: https://suprir.caninde.codeedu.dev
-```
-
-Para publicar manualmente:
-
-```powershell
+npm install
 npm run build
 npx wrangler pages deploy dist --project-name suprir
 ```
 
-O cache do PWA da V5.1.14 usa uma nova chave. Se um aparelho insistir em exibir a versão anterior, remova/reinstale o app ou limpe os dados do site.
+O cache PWA da V5.2.1 possui nova chave para forçar a atualização da interface.

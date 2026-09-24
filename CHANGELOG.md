@@ -1,3 +1,27 @@
+# V5.2.1 — pesquisa e paginação em Usuários e Materiais
+
+## 5.2.1
+
+- Adiciona pesquisa por nome na tela de Usuários.
+- Adiciona pesquisa por nome na tela de Materiais/Estoque.
+- Pesquisa ignora diferenças de maiúsculas/minúsculas e acentos.
+- Pagina as duas listas em 15 registros por página.
+- Adiciona controles Anterior/Próxima e resumo de registros exibidos.
+- Não altera banco de dados, estoque, permissões ou fluxo operacional.
+
+# V5.2.0 — Controle de estoque integrado
+
+## 5.2.0
+
+- Adiciona saldo físico de estoque por material.
+- Escola visualiza somente materiais ativos com saldo disponível.
+- SME passa a consultar o estoque atual e vê o saldo no momento da autorização.
+- Almoxarifado e administrador podem cadastrar materiais e registrar novas entradas sempre que houver recebimento.
+- Saídas/remessas baixam o estoque automaticamente e de forma transacional.
+- Adiciona histórico auditável de entradas e saídas com saldo anterior e posterior, documento, usuário e data.
+- Impede solicitação, autorização ou expedição acima do saldo disponível.
+- Mantém estoque mínimo para alertas de reposição.
+
 # V5.1.19 — correção do ícone do menu lateral recolhido
 
 ## 5.1.19

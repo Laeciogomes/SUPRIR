@@ -9,6 +9,7 @@ import { escapeHtml, attr, formatDate, formatNumber, todayISO, selected, checked
 import { state } from '../app/state.js';
 import {
   isAdmin,
+  canManageMaterials,
   getRequest,
   getAllDeliveries,
   deliveredQuantityForItem
@@ -24,7 +25,15 @@ function renderAuthorizeModal(modal) {
         <div class="callout info">${icon('info', 19)}<p>Informe a quantidade autorizada de cada item. O nome do usuário logado será salvo como responsável pela autorização.</p></div>
         <div class="authorization-items">
           <div class="editor-head auth"><span>Material</span><span>Solicitado</span><span>Autorizado</span><span>Observação da SME</span></div>
-          ${(request?.request_items || []).map((item) => `<div class="editor-row auth"><div><strong>${escapeHtml(item.material_name_snapshot)}</strong><small>${escapeHtml(item.unit_snapshot)}</small></div><div class="requested-qty">${formatNumber(item.requested_quantity)}</div><label class="field mobile-label"><span>Autorizado</span><input type="number" name="approved_${item.id}" min="0" max="${attr(item.requested_quantity)}" step="0.01" value="${attr(Number(item.approved_quantity) || Number(item.requested_quantity))}" required /></label><label class="field mobile-label"><span>Observação</span><input type="text" name="notes_${item.id}" value="${attr(item.sme_notes || '')}" placeholder="Ajuste ou justificativa" /></label></div>`).join('')}
+          ${(request?.request_items || []).map((item) => {
+            const material = state.materials.find((entry) => entry.id === item.material_id);
+            const stock = Number(material?.stock_quantity || 0);
+            const requested = Number(item.requested_quantity || 0);
+            const maxApproved = Math.max(0, Math.min(requested, stock));
+            const suggested = Math.min(Number(item.approved_quantity || requested), maxApproved);
+            const stockTone = stock <= 0 ? 'zero' : Number(material?.quantidade_minima || 0) > 0 && stock <= Number(material.quantidade_minima) ? 'low' : '';
+            return `<div class="editor-row auth"><div><strong>${escapeHtml(item.material_name_snapshot)}</strong><small>${escapeHtml(item.unit_snapshot)}</small><span class="stock-inline ${stockTone}">Estoque atual: <strong>${formatNumber(stock)} ${escapeHtml(item.unit_snapshot)}</strong></span></div><div class="requested-qty">${formatNumber(item.requested_quantity)}</div><label class="field mobile-label"><span>Autorizado</span><input type="number" name="approved_${item.id}" min="0" max="${attr(maxApproved)}" step="0.01" value="${attr(suggested)}" required /></label><label class="field mobile-label"><span>Observação</span><input type="text" name="notes_${item.id}" value="${attr(item.sme_notes || '')}" placeholder="Ajuste ou justificativa" /></label></div>`;
+          }).join('')}
         </div>
         <label class="field"><span>Observação geral da autorização</span><textarea name="authorizationNotes" rows="3" placeholder="Condições, orientações ou justificativas">${escapeHtml(request?.authorization_notes || '')}</textarea></label>
         <div class="modal-actions"><button type="button" class="button secondary" data-action="close-modal">Cancelar</button><button type="submit" class="button success">${icon('shield', 18)} Confirmar autorização</button></div>
@@ -50,7 +59,11 @@ function renderDispatchModal(modal) {
         <div><h3 class="mini-title">Itens da remessa</h3><p class="muted">Informe somente o que está saindo nesta remessa. É possível realizar envios parciais.</p></div>
         <div class="dispatch-items"><div class="editor-head dispatch"><span>Material</span><span>Autorizado</span><span>Já expedido</span><span>Saldo</span><span>Enviar agora</span></div>${remaining.map(({ item, remaining: balance }) => {
           const already = deliveredQuantityForItem(request, item.id, true);
-          return `<div class="editor-row dispatch"><div><strong>${escapeHtml(item.material_name_snapshot)}</strong><small>${escapeHtml(item.unit_snapshot)}</small></div><span>${formatNumber(item.approved_quantity)}</span><span>${formatNumber(already)}</span><strong>${formatNumber(balance)}</strong><label class="field mobile-label"><span>Enviar agora</span><input type="number" name="dispatch_${item.id}" min="0" max="${attr(balance)}" step="0.01" value="${attr(balance)}" /></label></div>`;
+          const material = state.materials.find((entry) => entry.id === item.material_id);
+          const stock = Number(material?.stock_quantity || 0);
+          const maxDispatch = Math.max(0, Math.min(balance, stock));
+          const stockTone = stock <= 0 ? 'zero' : Number(material?.quantidade_minima || 0) > 0 && stock <= Number(material.quantidade_minima) ? 'low' : '';
+          return `<div class="editor-row dispatch"><div><strong>${escapeHtml(item.material_name_snapshot)}</strong><small>${escapeHtml(item.unit_snapshot)}</small><span class="stock-inline ${stockTone}">Estoque: <strong>${formatNumber(stock)} ${escapeHtml(item.unit_snapshot)}</strong></span></div><span>${formatNumber(item.approved_quantity)}</span><span>${formatNumber(already)}</span><strong>${formatNumber(balance)}</strong><label class="field mobile-label"><span>Enviar agora</span><input type="number" name="dispatch_${item.id}" min="0" max="${attr(maxDispatch)}" step="0.01" value="${attr(maxDispatch)}" ${maxDispatch <= 0 ? 'disabled' : ''} /></label></div>`;
         }).join('')}</div>
         <label class="field"><span>Observações da remessa</span><textarea name="observations" rows="3" placeholder="Veículo, volumes, rota, referência de transporte ou outras informações"></textarea></label>
         <div class="callout info">${icon('user', 19)}<p><strong>${escapeHtml(state.profile.full_name)}</strong> ficará registrado como responsável pela expedição. Após o envio, a própria escola confirmará o recebimento no sistema.</p></div>
@@ -114,8 +127,21 @@ function renderInstallAppModal(modal) {
 
 function renderMaterialFormModal(modal) {
   const material = state.materials.find((item) => item.id === modal.materialId) || {};
-  const content = `<div class="modal-heading"><span class="modal-icon primary">${icon('box', 24)}</span><div><h2>${material.id ? 'Editar material' : 'Cadastrar material'}</h2><p>Item disponível no catálogo</p></div></div><form id="material-form" class="modal-body form-stack"><div class="form-grid two"><label class="field span-2"><span>Nome do material *</span><input type="text" name="nome" value="${attr(material.nome || '')}" required /></label><label class="field"><span>Código</span><input type="text" name="codigo" value="${attr(material.codigo || '')}" /></label><label class="field"><span>Categoria</span><input type="text" name="categoria" value="${attr(material.categoria || '')}" placeholder="Ex.: Papelaria" /></label><label class="field"><span>Unidade de medida *</span><input type="text" name="unidade" value="${attr(material.unidade || 'un')}" required placeholder="un, cx, pct, resma..." /></label><label class="field"><span>Quantidade mínima</span><input type="number" name="quantidade_minima" value="${attr(material.quantidade_minima || '')}" min="0" step="0.01" /></label><label class="field span-2"><span>Descrição / especificação</span><textarea name="descricao" rows="4">${escapeHtml(material.descricao || '')}</textarea></label><label class="toggle-field span-2"><input type="checkbox" name="ativo" ${checked(material.id ? material.ativo : true)} /><span><strong>Material ativo</strong><small>Fica disponível para solicitação pelas escolas.</small></span></label></div><div class="modal-actions"><button type="button" class="button secondary" data-action="close-modal">Cancelar</button><button type="submit" class="button primary">${icon('save', 18)} Salvar material</button></div></form>`;
+  if (!canManageMaterials()) return { content: '<div class="modal-body"><p>Seu perfil não possui permissão para alterar materiais.</p></div>' };
+  const initialStockField = material.id ? '' : `<label class="field"><span>Estoque inicial</span><input type="number" name="initialStock" min="0" step="0.01" value="0" /><small>Opcional. A entrada inicial ficará registrada no histórico do estoque.</small></label>`;
+  const currentStock = material.id ? `<div class="callout info">${icon('archive', 19)}<p>Estoque atual: <strong>${formatNumber(material.stock_quantity || 0)} ${escapeHtml(material.unidade || '')}</strong>. Para aumentar o saldo, use “Registrar entrada”.</p></div>` : '';
+  const content = `<div class="modal-heading"><span class="modal-icon primary">${icon('box', 24)}</span><div><h2>${material.id ? 'Editar material' : 'Cadastrar material'}</h2><p>Catálogo e parâmetros de estoque</p></div></div><form id="material-form" class="modal-body form-stack">${currentStock}<div class="form-grid two"><label class="field span-2"><span>Nome do material *</span><input type="text" name="nome" value="${attr(material.nome || '')}" required /></label><label class="field"><span>Código</span><input type="text" name="codigo" value="${attr(material.codigo || '')}" /></label><label class="field"><span>Categoria</span><input type="text" name="categoria" value="${attr(material.categoria || '')}" placeholder="Ex.: Papelaria" /></label><label class="field"><span>Unidade de medida *</span><input type="text" name="unidade" value="${attr(material.unidade || 'un')}" required placeholder="un, cx, pct, resma..." /></label><label class="field"><span>Quantidade mínima</span><input type="number" name="quantidade_minima" value="${attr(material.quantidade_minima || '')}" min="0" step="0.01" /><small>Usada para sinalizar estoque baixo.</small></label>${initialStockField}<label class="field span-2"><span>Descrição / especificação</span><textarea name="descricao" rows="4">${escapeHtml(material.descricao || '')}</textarea></label><label class="toggle-field span-2"><input type="checkbox" name="ativo" ${checked(material.id ? material.ativo : true)} /><span><strong>Material ativo</strong><small>Para a escola, o item só aparece quando estiver ativo e com estoque maior que zero.</small></span></label></div><div class="modal-actions"><button type="button" class="button secondary" data-action="close-modal">Cancelar</button><button type="submit" class="button primary">${icon('save', 18)} Salvar material</button></div></form>`;
   return { content };
+}
+
+function renderStockEntryModal(modal) {
+  if (!canManageMaterials()) return { content: '<div class="modal-body"><p>Seu perfil não possui permissão para registrar estoque.</p></div>' };
+  const fixedMaterial = state.materials.find((item) => item.id === modal.materialId) || null;
+  const materialField = fixedMaterial
+    ? `<input type="hidden" name="materialId" value="${attr(fixedMaterial.id)}" /><div class="stock-summary"><article><span>Material</span><strong>${escapeHtml(fixedMaterial.nome)}</strong></article><article><span>Estoque atual</span><strong>${formatNumber(fixedMaterial.stock_quantity || 0)} ${escapeHtml(fixedMaterial.unidade)}</strong></article><article><span>Unidade</span><strong>${escapeHtml(fixedMaterial.unidade)}</strong></article></div>`
+    : `<label class="field"><span>Material *</span><select name="materialId" required><option value="">Selecione</option>${state.materials.filter((item) => item.ativo).map((item) => `<option value="${item.id}">${escapeHtml(item.nome)} — estoque ${formatNumber(item.stock_quantity || 0)} ${escapeHtml(item.unidade)}</option>`).join('')}</select></label>`;
+  const content = `<div class="modal-heading"><span class="modal-icon success">${icon('plus', 24)}</span><div><h2>Registrar entrada de estoque</h2><p>Some ao saldo físico sempre que novos materiais chegarem ao almoxarifado.</p></div></div><form id="stock-entry-form" class="modal-body stack-lg">${materialField}<div class="form-grid two"><label class="field"><span>Quantidade recebida *</span><input type="number" name="quantity" min="0.01" step="0.01" required placeholder="0" /></label><label class="field"><span>Documento / nota / guia</span><input type="text" name="documentNumber" maxlength="120" placeholder="Ex.: NF 12345" /></label><label class="field span-2"><span>Observações</span><textarea name="notes" rows="3" maxlength="600" placeholder="Fornecedor, lote, origem ou outra informação relevante"></textarea></label></div><div class="callout info">${icon('shield', 19)}<p>A entrada ficará registrada na auditoria com seu usuário, data, quantidade e novo saldo.</p></div><div class="modal-actions"><button type="button" class="button secondary" data-action="close-modal">Cancelar</button><button type="submit" class="button success">${icon('plus', 18)} Confirmar entrada</button></div></form>`;
+  return { content, size: 'large' };
 }
 
 function renderUserCreateModal() {
@@ -165,6 +191,7 @@ export const MODAL_REGISTRY = {
   schoolDelete: renderSchoolDeleteModal,
   installApp: renderInstallAppModal,
   materialForm: renderMaterialFormModal,
+  stockEntry: renderStockEntryModal,
   userCreate: renderUserCreateModal,
   schoolImport: renderSchoolImportModal,
   schoolImportResult: renderSchoolImportResultModal,

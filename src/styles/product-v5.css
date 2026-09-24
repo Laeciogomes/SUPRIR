@@ -314,3 +314,46 @@
     min-height: 72px;
   }
 }
+
+/* V5.2.0 — estoque */
+.stock-value {
+  display: inline-block;
+  min-width: 48px;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+.stock-value.stock-ok { color: #177245; }
+.stock-value.stock-low { color: #a56800; }
+.stock-value.stock-zero { color: #9b2c2c; }
+.movement-in { color: #177245; font-variant-numeric: tabular-nums; }
+.movement-out { color: #9b2c2c; font-variant-numeric: tabular-nums; }
+.stock-inline {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.stock-inline strong { color: #177245; }
+.stock-inline.low strong { color: #a56800; }
+.stock-inline.zero strong { color: #9b2c2c; }
+.stock-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.stock-summary article {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-soft);
+}
+.stock-summary span,
+.stock-summary strong { display: block; }
+.stock-summary span { color: var(--muted); font-size: 10px; }
+.stock-summary strong { margin-top: 4px; font-size: 18px; }
+
+@media (max-width: 700px) {
+  .stock-summary { grid-template-columns: 1fr; }
+}
