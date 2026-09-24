@@ -4,7 +4,7 @@
 // das constantes de workflow e dos formatters — sem dependência circular com
 // application.js.
 import { CONFIG } from '../config/app-config.js';
-import { STATUS, PRIORITY } from '../constants/workflow.js';
+import { STATUS, PRIORITY, INTERNAL_ROLES } from '../constants/workflow.js';
 import { schoolLoginLabel } from '../auth/school-credentials.js';
 import { escapeHtml, attr } from '../utils/formatters.js';
 import { state } from './state.js';
@@ -17,12 +17,38 @@ export function isSme() {
   return state.profile?.account_type === 'sme';
 }
 
+export function hasInternalRole(roles = []) {
+  return isSme() && roles.includes(state.profile?.permission_level);
+}
+
+export function canAuthorizeRequests() {
+  return hasInternalRole(INTERNAL_ROLES.authorizer);
+}
+
+export function canOperateWarehouse() {
+  return hasInternalRole(INTERNAL_ROLES.warehouse);
+}
+
+
+export function canManageMasterData() {
+  return isAdmin();
+}
+
+// Compatibilidade semântica com os módulos antigos: "manager" agora é a
+// função de análise/autorização, e não um papel genérico com acesso a todas as etapas.
 export function isManager() {
-  return ['sme_manager', 'sme_admin'].includes(state.profile?.permission_level);
+  return canAuthorizeRequests();
 }
 
 export function isAdmin() {
-  return state.profile?.permission_level === 'sme_admin';
+  return hasInternalRole(INTERNAL_ROLES.admin);
+}
+
+export function internalRoleKey() {
+  if (isAdmin()) return 'admin';
+  if (canAuthorizeRequests()) return 'authorizer';
+  if (canOperateWarehouse()) return 'warehouse';
+  return 'staff';
 }
 
 export function imageTag(src, alt, className = '', fallbackSrc = CONFIG.logoFallbackUrl || CONFIG.compactLogoUrl) {

@@ -131,7 +131,7 @@ async function prepareSchools(admin, callerId, rows) {
 
 export async function onRequestPost(context) {
   try {
-    const auth = await requireSmeAdmin(context, 'Somente administradores da SME podem importar escolas e acessos.');
+    const auth = await requireSmeAdmin(context, 'Somente administradores do sistema podem importar escolas e acessos.');
     if (auth.errorResponse) return auth.errorResponse;
 
     const body = await context.request.json();

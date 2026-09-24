@@ -1,54 +1,39 @@
-# Estrutura de pastas — versão 4
+# Estrutura de pastas — SUPRIR Educação V5.1
 
 ```text
-sistema-pedidos-materiais-caninde-v4/
+suprir-educacao-caninde/
 ├── public/
-│   ├── assets/brand/                 imagens institucionais otimizadas
-│   ├── _headers                      cabeçalhos de segurança do Cloudflare
-│   └── _redirects                    fallback da aplicação SPA
+│   ├── assets/brand/                 marcas institucionais
+│   ├── assets/pwa/                   ícones do aplicativo
+│   ├── manifest.webmanifest          metadados do PWA
+│   └── sw.js                         service worker
 ├── src/
-│   ├── app/application.js            telas, estado e eventos
-│   ├── auth/school-credentials.js    login numérico e PIN inicial
-│   ├── config/app-config.js          variáveis VITE e caminhos padrão
-│   ├── constants/workflow.js         situações, prioridades e perfis
-│   ├── styles/
-│   │   ├── index.css                 entrada dos estilos
-│   │   ├── tokens.css                cores, sombras e medidas
-│   │   ├── core.css                  componentes e responsividade
-│   │   ├── branding-caninde.css      identidade visual e importação
-│   │   └── print-template.js         relatórios impressos
-│   ├── ui/icons.js                   biblioteca de ícones SVG
-│   ├── utils/
-│   │   ├── formatters.js             datas, números e escape de HTML
-│   │   └── csv.js                    leitura e validação de importações
+│   ├── app/                          estado, ações, formulários e regras de interface
+│   ├── auth/                         login e credenciais das escolas
+│   ├── config/                       configuração do produto/município
+│   ├── constants/workflow.js         status e níveis de acesso
+│   ├── modals/                       modais operacionais
+│   ├── services/                     integração com Supabase e downloads
+│   ├── styles/                       componentes, marca municipal e refinamento V5
+│   ├── views/                        painéis e telas por área
 │   └── main.js                       entrada do Vite
 ├── functions/
-│   ├── _shared/
-│   │   ├── http.js                   respostas JSON
-│   │   ├── passwords.js              senhas temporárias da SME
-│   │   ├── school-credentials.js     PIN e login técnico da escola
-│   │   └── supabase-admin.js         validação do administrador
-│   └── api/users/
-│       ├── create.js                 criação individual
-│       ├── import-schools.js         importação em lote
-│       └── reset-password.js         redefinição de senha/PIN
-├── private/importacao/
-│   ├── escolas_caninde_credenciais.csv  59 escolas, uso local restrito
-│   ├── modelo_importacao_escolas.csv    modelo sem dados reais
-│   └── LEIA-ME.md                       orientação de segurança
+│   ├── _shared/                      validações/serviços de servidor
+│   └── api/users/                    criação, importação e redefinição de acessos
+├── private/importacao/               arquivos de importação restritos
 ├── supabase/
-│   ├── migrations/                   atualizações incrementais
-│   └── supabase_schema_v4_completo.sql
+│   ├── migrations/009_perfis_operacionais_v5.sql
+│   ├── migrations/010_remover_entregador_confirmacao_escola_v5_1.sql
+│   └── BANCO_COMPLETO_V5_1.sql
 ├── docs/                              documentação operacional
-├── supabase_schema_v4.sql             instalação completa
 └── README_INSTALACAO.md
 ```
 
 ## Regras de manutenção
 
-- Identidade visual: `src/styles/branding-caninde.css` e `tokens.css`.
-- Lógica de login da escola: manter cliente e servidor compatíveis em `src/auth/` e `functions/_shared/`.
-- Chaves secretas: somente em `functions/` e nas variáveis protegidas do Cloudflare.
-- Arquivos com credenciais: nunca em `public/` e nunca em repositório público.
-- Alterações de banco: criar nova migração numerada em `supabase/migrations/`.
-- Estados do pedido: atualizar `src/constants/workflow.js` e as funções SQL correspondentes.
+- Perfis e estados: `src/constants/workflow.js` + RPC/RLS no Supabase.
+- Identidade do produto: `src/config/app-config.js` e `src/styles/product-v5.css`.
+- Identidade municipal: `src/styles/branding-caninde.css` e `public/assets/brand/`.
+- Chaves secretas: somente em Functions/variáveis protegidas do Cloudflare.
+- Credenciais de escolas: nunca em `public/` nem em repositório público.
+- Alterações de banco: sempre em nova migração numerada e refletidas no SQL completo da versão.

@@ -1,17 +1,25 @@
 {
-  "name": "Sistema de Materiais — Canindé",
-  "short_name": "Materiais SME",
-  "description": "Sistema Integrado de Pedidos e Entrega de Materiais da Prefeitura Municipal de Canindé.",
-  "id": "/?app=materiais-caninde-v4-8",
-  "start_url": "/?source=pwa&version=4.8",
+  "name": "SUPRIR Educação — Canindé",
+  "short_name": "SUPRIR",
+  "description": "Gestão de pedidos, autorização, separação, expedição e confirmação de recebimento de materiais da rede municipal de ensino de Canindé.",
+  "id": "/?app=suprir-educacao-v5-1-5",
+  "start_url": "/?source=pwa&version=5.1.7",
   "scope": "/",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
-  "orientation": "portrait-primary",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "any",
   "background_color": "#f7f7f5",
   "theme_color": "#ffd000",
   "prefer_related_applications": false,
-  "categories": ["government", "education", "productivity"],
+  "categories": [
+    "government",
+    "education",
+    "productivity"
+  ],
   "lang": "pt-BR",
   "icons": [
     {
@@ -37,16 +45,26 @@
     {
       "name": "Novo pedido",
       "short_name": "Pedido",
-      "description": "Abrir o sistema para registrar ou acompanhar pedidos.",
+      "description": "Abrir o SUPRIR Educação para registrar ou acompanhar pedidos.",
       "url": "/?atalho=novo-pedido",
-      "icons": [{ "src": "/assets/pwa/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/assets/pwa/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "Relatórios",
       "short_name": "Relatórios",
-      "description": "Abrir relatórios de pedidos e entregas.",
+      "description": "Abrir os relatórios de pedidos e entregas.",
       "url": "/?atalho=relatorios",
-      "icons": [{ "src": "/assets/pwa/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/assets/pwa/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

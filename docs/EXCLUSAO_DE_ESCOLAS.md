@@ -1,21 +1,15 @@
-# Exclusão de escolas
+# Exclusão de escolas — SUPRIR Educação V5.1
 
-A versão 4.3 permite excluir escolas pela tela:
+A exclusão de escolas é uma função administrativa disponível em:
 
 ```text
-SME → Escolas → botão excluir
+Administração → Escolas
 ```
 
 ## Regras
 
-- Somente usuários com permissão `sme_admin` podem excluir escolas.
-- Escolas com pedidos ou movimentações não devem ser excluídas, para preservar relatórios e auditoria.
-- Quando houver histórico, use a opção de deixar a escola inativa no cadastro.
+- Somente `system_admin` pode excluir ou administrar cadastros mestres de escolas.
+- Escolas com pedidos ou movimentações não devem ser excluídas, preservando relatórios e auditoria.
+- Quando existir histórico, prefira manter o cadastro e alterar sua situação conforme a regra operacional adotada pelo município.
 
-## Banco de dados
-
-A instalação completa já possui a política de exclusão. Se o Supabase bloquear a ação, execute:
-
-```text
-supabase/migrations/005_permissao_excluir_escolas.sql
-```
+A V5.1 aplica a permissão também no banco, e não somente no botão da interface.

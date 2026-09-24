@@ -57,13 +57,15 @@ export async function loadAuthenticatedData(showLoading = true) {
       .maybeSingle();
 
     if (profileError) throw profileError;
-    if (!profile) throw new Error('Perfil do usuário não encontrado. Execute o SQL da versão 4 no Supabase.');
+    if (!profile) throw new Error('Perfil do usuário não encontrado. Execute o SQL da versão 5 no Supabase.');
     if (!profile.active) {
       await supabase.auth.signOut();
       throw new Error('Este acesso foi desativado pelo administrador.');
     }
 
     state.profile = profile;
+
+    const isAdmin = profile.account_type === 'sme' && ['system_admin', 'sme_admin'].includes(profile.permission_level);
 
     const [settingsResult, schoolsResult, materialsResult, requestsResult] = await Promise.all([
       supabase.from('system_settings').select('*').eq('id', 1).maybeSingle(),
@@ -82,7 +84,7 @@ export async function loadAuthenticatedData(showLoading = true) {
     state.materials = materialsResult.data || [];
     state.requests = normalizeRequests(requestsResult.data || []);
 
-    if (profile.account_type === 'sme' && profile.permission_level === 'sme_admin') {
+    if (isAdmin) {
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
@@ -93,8 +95,9 @@ export async function loadAuthenticatedData(showLoading = true) {
       state.profiles = [];
     }
 
+
     if (deps.isSchool() && !profile.school_id) {
-      deps.setToast('warning', 'Seu usuário ainda não está vinculado a uma escola. Solicite o ajuste à SME.');
+      deps.setToast('warning', 'Seu usuário ainda não está vinculado a uma escola. Solicite o ajuste ao administrador do sistema.');
     }
   } catch (error) {
     console.error(error);

@@ -1,0 +1,673 @@
+/* V5.1.5 — login clássico sem rolagem + sidebar recolhível refinada. */
+
+/* ---------- LOGIN: mantém o desenho clássico e sempre cabe na viewport ---------- */
+.login-page {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+.login-brand-panel,
+.login-form-panel {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+.login-brand-top {
+  position: relative;
+  overflow: visible;
+}
+.suprir-symbol-badge {
+  position: absolute;
+  z-index: 3;
+  right: clamp(8px, 1.25vw, 16px);
+  bottom: clamp(7px, 1.05vw, 13px);
+  width: clamp(30px, 2.7vw, 42px);
+  height: clamp(30px, 2.7vw, 42px);
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: transparent;
+  filter: drop-shadow(0 6px 12px rgba(31, 25, 4, .17));
+}
+.suprir-symbol-badge img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+/* Desktop/notebook: composição original lado a lado, apenas dimensionada pela altura útil. */
+@media (min-width: 841px) {
+  .login-page {
+    display: grid;
+    grid-template-columns: minmax(500px, 1.12fr) minmax(360px, .88fr);
+  }
+  .login-brand-panel {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    align-items: stretch;
+    gap: clamp(8px, 1.7dvh, 18px);
+    padding: clamp(12px, 2.4dvh, 28px) clamp(10px, 1.7vw, 24px);
+  }
+  .login-brand-top {
+    min-height: 0;
+    width: min(900px, 100%);
+    padding: clamp(8px, 1.7dvh, 18px);
+    border-radius: clamp(16px, 2.2dvh, 24px);
+  }
+  .login-brand-top .brand-logo-horizontal {
+    width: 100%;
+    height: clamp(66px, 14.5dvh, 128px);
+    max-height: none;
+  }
+  .login-brand-content {
+    align-self: start;
+    width: min(900px, 100%);
+    display: grid;
+    gap: clamp(14px, 2.4dvh, 24px);
+    padding-top: clamp(2px, 0.8dvh, 10px);
+    position: relative;
+    z-index: 1;
+  }
+  .login-hero-copy {
+    margin: 0;
+    max-width: 790px;
+  }
+  .login-hero-copy .eyebrow { font-size: clamp(10px, 1.45dvh, 12px); }
+  .login-hero-copy h1,
+  .login-hero-copy h2 {
+    margin: clamp(5px, 1.2dvh, 10px) 0 clamp(10px, 2.3dvh, 22px);
+    font-size: clamp(34px, min(5.4vw, 7.6dvh), 72px);
+    line-height: 0.98;
+  }
+  .login-hero-copy h1::after,
+  .login-hero-copy h2::after {
+    width: clamp(62px, 7vw, 96px);
+    height: clamp(4px, .75dvh, 6px);
+    margin-top: clamp(9px, 2.2dvh, 22px);
+  }
+  .login-hero-copy p {
+    font-size: clamp(14px, min(1.85vw, 2.45dvh), 22px);
+    line-height: 1.48;
+    margin: 0;
+  }
+  .login-feature-grid { width: min(900px, 100%); gap: clamp(8px, 1.35dvh, 14px); }
+  .login-feature-grid article {
+    padding: clamp(10px, 2.05dvh, 18px);
+    gap: clamp(10px, 1.55dvh, 14px);
+    align-items: center;
+  }
+  .login-feature-grid article > svg { width: clamp(20px, 3dvh, 28px); height: clamp(20px, 3dvh, 28px); }
+  .login-feature-grid strong { font-size: clamp(14px, 2.15dvh, 18px); }
+  .login-feature-grid span { font-size: clamp(11.5px, 1.7dvh, 14.5px); line-height: 1.36; }
+  .login-brand-footer {
+    align-self: end;
+    margin-top: 0;
+    padding-top: clamp(5px, 1.1dvh, 10px);
+    font-size: clamp(9px, 1.3dvh, 11px);
+  }
+  .login-form-panel {
+    min-height: 0;
+    padding: clamp(12px, 3.4dvh, 38px) clamp(20px, 3vw, 38px);
+    display: grid;
+    place-items: center;
+  }
+  .login-card {
+    width: min(470px, 100%);
+    max-height: calc(100dvh - 24px);
+    padding: clamp(18px, 3.3dvh, 34px);
+    border-radius: clamp(16px, 2.4dvh, 24px);
+  }
+  .login-card-heading { margin-bottom: clamp(10px, 2.4dvh, 24px); }
+  .login-card-heading h2 { font-size: clamp(28px, 4.5dvh, 38px); margin: clamp(4px,.8dvh,8px) 0; }
+  .login-card-heading p { font-size: clamp(11px, 1.7dvh, 14px); line-height: 1.5; margin: 0; }
+  .portal-switch { gap: clamp(6px, 1.3dvh, 10px); margin-bottom: clamp(10px, 2.4dvh, 24px); }
+  .portal-option { padding: clamp(8px, 1.7dvh, 13px); gap: clamp(7px,1.2dvh,10px); }
+  .portal-option-icon { width: clamp(31px, 4.6dvh, 39px); height: clamp(31px, 4.6dvh, 39px); }
+  .portal-option strong { font-size: clamp(12px, 1.8dvh, 14px); }
+  .portal-option small { font-size: clamp(9px, 1.35dvh, 11px); }
+  .login-card .form-stack { gap: clamp(8px, 2dvh, 18px); }
+  .login-card .field { gap: clamp(4px, .8dvh, 7px); }
+  .login-card .field > span { font-size: clamp(11px, 1.7dvh, 14px); }
+  .login-card .field small { font-size: clamp(9.5px, 1.45dvh, 12px); line-height: 1.4; }
+  .login-card input { min-height: clamp(36px, 5.4dvh, 44px); padding-top: clamp(7px,1.2dvh,11px); padding-bottom: clamp(7px,1.2dvh,11px); }
+  .login-card .button.large { min-height: clamp(40px, 6.3dvh, 52px); padding-top: 8px; padding-bottom: 8px; font-size: clamp(13px, 1.95dvh, 16px); }
+  .login-card .text-button { padding: clamp(4px,.85dvh,8px); font-size: clamp(11px,1.6dvh,13px); }
+  .login-help { margin-top: clamp(8px, 1.8dvh, 18px); padding-top: clamp(7px, 1.6dvh, 16px); font-size: clamp(9.5px, 1.45dvh, 12px); }
+  .install-login-button { margin-top: clamp(3px, .8dvh, 8px); }
+  .login-mobile-brand { display: none; }
+}
+
+/* Portrait/tablet/celular: mesma linguagem visual, distribuída em duas faixas sem scroll. */
+@media (max-width: 840px) {
+  .login-page {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 43fr) minmax(0, 57fr);
+  }
+  .login-brand-panel {
+    display: flex;
+    min-height: 0;
+    padding: clamp(7px, 1.45dvh, 14px) clamp(10px, 3.8vw, 24px);
+    border-right: 0;
+    border-bottom: 4px solid var(--gold);
+  }
+  .login-brand-panel::before {
+    width: min(58vw, 300px);
+    height: min(58vw, 300px);
+    right: -28vw;
+    top: -24vw;
+  }
+  .login-brand-panel::after {
+    width: min(42vw, 220px);
+    height: min(42vw, 220px);
+    left: -24vw;
+    bottom: 4px;
+  }
+  .login-brand-top {
+    min-height: 0;
+    width: min(720px, 100%);
+    margin: 0 auto;
+    padding: clamp(4px, .9dvh, 8px) clamp(6px, 2vw, 12px);
+    border-left-width: 5px;
+    border-radius: clamp(11px, 2dvh, 16px);
+  }
+  .login-brand-top .brand-logo-horizontal {
+    width: 100%;
+    height: clamp(40px, 8.5dvh, 68px);
+    max-height: none;
+  }
+  .suprir-symbol-badge {
+    right: 6px;
+    bottom: 5px;
+    width: clamp(22px, 5.5vw, 30px);
+    height: clamp(22px, 5.5vw, 30px);
+  }
+  .login-brand-seal { width: min(170px, 35vw); right: -34px; bottom: 4px; }
+  .login-brand-content {
+    width: min(720px, 100%);
+    margin: auto;
+    display: grid;
+    gap: clamp(4px, .8dvh, 7px);
+    position: relative;
+    z-index: 1;
+  }
+  .login-hero-copy {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+  .login-hero-copy .eyebrow { font-size: clamp(8px, 1.25dvh, 9px); }
+  .login-hero-copy h1,
+  .login-hero-copy h2 {
+    max-width: none;
+    margin: clamp(2px,.6dvh,5px) 0 clamp(3px,.8dvh,7px);
+    font-size: clamp(20px, min(6.6vw, 4.9dvh), 31px);
+    line-height: 1;
+  }
+  .login-hero-copy h1::after,
+  .login-hero-copy h2::after {
+    width: clamp(44px, 11vw, 62px);
+    height: 3px;
+    margin-top: clamp(4px, .9dvh, 7px);
+  }
+  .login-hero-copy p {
+    max-width: none;
+    margin: 0;
+    font-size: clamp(9px, min(2.8vw, 1.9dvh), 12px);
+    line-height: 1.3;
+  }
+  .login-feature-grid {
+    width: min(720px, 100%);
+    margin: 0 auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(3px, .7dvh, 5px);
+  }
+  .login-feature-grid article {
+    min-width: 0;
+    padding: clamp(4px, .8dvh, 7px);
+    gap: 5px;
+    border-radius: 9px;
+  }
+  .login-feature-grid article > svg { width: clamp(13px, 2.4dvh, 17px); height: clamp(13px, 2.4dvh, 17px); flex: 0 0 auto; }
+  .login-feature-grid strong { font-size: clamp(9px, 1.45dvh, 11px); line-height: 1.15; }
+  .login-feature-grid span { margin-top: 1px; font-size: clamp(7px, 1.15dvh, 9px); line-height: 1.25; }
+  .login-brand-footer {
+    width: min(720px, 100%);
+    margin: clamp(3px, .7dvh, 6px) auto 0;
+    padding-top: clamp(3px, .65dvh, 6px);
+    font-size: clamp(7px, 1.1dvh, 8.5px);
+  }
+  .login-form-panel {
+    min-height: 0;
+    padding: clamp(5px, 1.1dvh, 10px) clamp(8px, 3vw, 16px);
+    display: grid;
+    place-items: center;
+    align-content: center;
+  }
+  .login-mobile-brand { display: none; }
+  .login-card {
+    width: min(520px, 100%);
+    max-height: 100%;
+    padding: clamp(10px, 1.8dvh, 16px) clamp(12px, 4vw, 20px);
+    border-radius: clamp(12px, 2dvh, 18px);
+  }
+  .login-card::before { height: 4px; }
+  .login-card-heading { margin-bottom: clamp(5px, 1dvh, 9px); }
+  .login-card-heading .eyebrow { font-size: clamp(7px, 1.15dvh, 9px); }
+  .login-card-heading h2 { margin: 1px 0; font-size: clamp(22px, 4.4dvh, 29px); line-height: 1; }
+  .login-card-heading p { margin: 0; font-size: clamp(8px, 1.4dvh, 10px); line-height: 1.3; }
+  .portal-switch {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+    margin-bottom: clamp(5px, 1dvh, 9px);
+  }
+  .portal-option { min-width: 0; padding: clamp(5px, .9dvh, 7px); gap: 5px; border-radius: 9px; }
+  .portal-option-icon { width: clamp(25px, 4.4dvh, 31px); height: clamp(25px, 4.4dvh, 31px); border-radius: 8px; }
+  .portal-option-icon svg { width: 15px; height: 15px; }
+  .portal-option strong { font-size: clamp(8px, 1.25dvh, 10px); }
+  .portal-option small { font-size: clamp(6px, 1dvh, 8px); line-height: 1.15; }
+  .login-card .form-stack { gap: clamp(4px, .85dvh, 7px); }
+  .login-card .field { gap: clamp(2px, .45dvh, 4px); }
+  .login-card .field > span { font-size: clamp(7px, 1.15dvh, 9px); }
+  .login-card .field small { font-size: clamp(6px, 1dvh, 8px); line-height: 1.2; }
+  .login-card input {
+    min-height: clamp(30px, 4.7dvh, 36px);
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 8px;
+    font-size: clamp(10px, 1.65dvh, 12px);
+  }
+  .login-card .input-with-icon > svg:first-child { left: 9px; width: 14px; height: 14px; }
+  .login-card .input-with-icon input { padding-left: 31px; }
+  .login-card .password-wrap input { padding-right: 36px; }
+  .login-card .password-wrap .icon-button { width: 28px; height: 28px; right: 2px; }
+  .login-card .button.large {
+    min-height: clamp(31px, 4.9dvh, 37px);
+    padding: 5px 9px;
+    font-size: clamp(9px, 1.45dvh, 11px);
+  }
+  .login-card .button.large svg { width: 14px; height: 14px; }
+  .login-card .text-button { padding: clamp(2px,.45dvh,4px); font-size: clamp(7px, 1.15dvh, 9px); }
+  .login-help {
+    margin-top: clamp(4px,.8dvh,7px);
+    padding-top: clamp(4px,.8dvh,7px);
+    font-size: clamp(6.3px, 1.02dvh, 8px);
+    line-height: 1.25;
+  }
+  .install-login-button { margin-top: 1px; }
+  .install-login-button svg { width: 12px; height: 12px; }
+}
+
+/* Paisagem baixa: mantém as duas colunas originais e comprime apenas espaçamentos. */
+@media (orientation: landscape) and (max-height: 620px) and (min-width: 620px) {
+  .login-page { grid-template-columns: minmax(0, 1.08fr) minmax(300px, .92fr); grid-template-rows: 1fr; }
+  .login-brand-panel { border-right: 4px solid var(--gold); border-bottom: 0; padding: 10px 16px; }
+  .login-brand-top { width: 100%; padding: 5px 7px; border-radius: 12px; }
+  .login-brand-top .brand-logo-horizontal { height: clamp(42px, 12dvh, 62px); }
+  .login-brand-content { align-self: center; gap: 7px; }
+  .login-hero-copy { margin: 0; }
+  .login-hero-copy h1,
+  .login-hero-copy h2 { font-size: clamp(23px, min(4vw, 7dvh), 34px); }
+  .login-hero-copy p { font-size: clamp(8px, 1.8dvh, 10px); line-height: 1.25; }
+  .login-feature-grid { gap: 4px; }
+  .login-feature-grid article { padding: 4px 5px; }
+  .login-brand-footer { margin-top: 4px; padding-top: 4px; }
+  .login-form-panel { padding: 7px 10px; }
+  .login-card { width: min(390px,100%); padding: 10px 14px; }
+}
+
+/* ---------- SIDEBAR: sem scroll, recolhível e com tooltip ---------- */
+.app-shell { --sidebar-expanded: var(--sidebar); }
+.sidebar {
+  overflow: visible;
+  padding: clamp(9px, 1.9dvh, 20px) 15px;
+  transition: width .2s ease, padding .2s ease;
+}
+.sidebar-brand {
+  flex: 0 0 auto;
+  min-height: 0;
+  gap: 6px 8px;
+  padding: 2px 4px clamp(7px, 1.5dvh, 15px);
+}
+.sidebar-brand .sidebar-brand-full { max-height: clamp(48px, 9.5dvh, 74px); }
+.sidebar-brand-compact { display: none; width: 38px; height: 38px; object-fit: contain; }
+.sidebar-collapse-toggle {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.045);
+  border-color: rgba(255,208,0,.2);
+  color: #fff5c1;
+}
+.sidebar-collapse-toggle:hover { background: rgba(255,208,0,.12); color: var(--gold); }
+.portal-label {
+  flex: 0 0 auto;
+  margin: clamp(6px, 1.4dvh, 16px) 5px clamp(4px, 1dvh, 10px);
+  padding: clamp(7px, 1.35dvh, 11px);
+}
+.school-context {
+  flex: 0 0 auto;
+  margin: 0 5px clamp(5px, 1.3dvh, 13px);
+  padding: clamp(6px, 1.2dvh, 10px) 11px;
+}
+.sidebar-nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: clamp(2px, .55dvh, 4px);
+  overflow: visible;
+  padding: clamp(2px, .65dvh, 5px) 0;
+  scrollbar-width: none;
+}
+.sidebar-nav::-webkit-scrollbar { display: none; }
+.nav-item {
+  position: relative;
+  flex: 0 1 auto;
+  min-height: clamp(33px, 5.35dvh, 45px);
+  padding: clamp(5px, 1.15dvh, 9px) 11px;
+}
+.sidebar-footer {
+  flex: 0 0 auto;
+  margin-top: auto;
+  padding: clamp(7px, 1.4dvh, 15px) 5px 0;
+}
+
+/* Estado recolhido no desktop. */
+@media (min-width: 861px) {
+  .app-shell.sidebar-collapsed { --sidebar: 70px; }
+  .app-shell.sidebar-collapsed .sidebar { padding-left: 10px; padding-right: 10px; }
+  .app-shell.sidebar-collapsed .sidebar-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding-inline: 0;
+  }
+  .app-shell.sidebar-collapsed .sidebar-brand-full,
+  .app-shell.sidebar-collapsed .sidebar-product,
+  .app-shell.sidebar-collapsed .portal-label div,
+  .app-shell.sidebar-collapsed .school-context,
+  .app-shell.sidebar-collapsed .nav-label,
+  .app-shell.sidebar-collapsed .sidebar-user > div:last-child {
+    display: none;
+  }
+  .app-shell.sidebar-collapsed .sidebar-brand-compact { display: block; }
+  .app-shell.sidebar-collapsed .sidebar-collapse-toggle { display: inline-flex; }
+  .app-shell.sidebar-collapsed .portal-label {
+    justify-content: center;
+    margin-inline: 0;
+    padding-inline: 0;
+    background: transparent;
+    border-color: transparent;
+  }
+  .app-shell.sidebar-collapsed .portal-label > span { display: grid; place-items: center; }
+  .app-shell.sidebar-collapsed .sidebar-nav { align-items: center; width: 100%; }
+  .app-shell.sidebar-collapsed .nav-item {
+    width: 44px;
+    min-height: 40px;
+    padding: 0;
+    justify-content: center;
+    gap: 0;
+    overflow: visible;
+  }
+  .app-shell.sidebar-collapsed .nav-icon { width: auto; }
+  .app-shell.sidebar-collapsed .nav-count {
+    position: absolute;
+    top: 2px;
+    right: 0;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    font-size: 7px;
+    border: 2px solid #141413;
+  }
+  .app-shell.sidebar-collapsed .nav-item::after {
+    content: attr(data-label);
+    position: absolute;
+    left: calc(100% + 12px);
+    top: 50%;
+    z-index: 100;
+    transform: translate(5px, -50%);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    white-space: nowrap;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: #fff;
+    background: #171716;
+    border: 1px solid rgba(255,208,0,.25);
+    box-shadow: 0 10px 26px rgba(0,0,0,.24);
+    font-size: 10px;
+    font-weight: 700;
+    transition: opacity .14s ease, transform .14s ease, visibility .14s ease;
+  }
+  .app-shell.sidebar-collapsed .nav-item:hover::after,
+  .app-shell.sidebar-collapsed .nav-item:focus-visible::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(0, -50%);
+  }
+  .app-shell.sidebar-collapsed .sidebar-footer {
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 8px 0 0;
+  }
+  .app-shell.sidebar-collapsed .sidebar-user { display: none; }
+  .app-shell.sidebar-collapsed .sidebar-footer .icon-button {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 11px;
+  }
+  .app-shell.sidebar-collapsed .sidebar-footer .icon-button::after {
+    content: attr(data-label);
+    position: absolute;
+    left: calc(100% + 12px);
+    top: 50%;
+    z-index: 110;
+    transform: translate(5px, -50%);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    white-space: nowrap;
+    padding: 8px 10px;
+    border-radius: 8px;
+    color: #fff;
+    background: #171716;
+    border: 1px solid rgba(255,208,0,.25);
+    box-shadow: 0 10px 26px rgba(0,0,0,.24);
+    font-size: 10px;
+    font-weight: 700;
+    transition: opacity .14s ease, transform .14s ease, visibility .14s ease;
+  }
+  .app-shell.sidebar-collapsed .sidebar-footer .icon-button:hover::after,
+  .app-shell.sidebar-collapsed .sidebar-footer .icon-button:focus-visible::after {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(0, -50%);
+  }
+}
+
+/* Alturas pequenas: comprime o menu para nunca criar barra de rolagem. */
+@media (min-width: 861px) and (max-height: 700px) {
+  .sidebar { padding-top: 7px; padding-bottom: 7px; }
+  .sidebar-brand { padding-bottom: 6px; }
+  .sidebar-brand .sidebar-brand-full { max-height: 50px; }
+  .sidebar-product span { display: none; }
+  .portal-label { margin-top: 5px; margin-bottom: 4px; padding-top: 6px; padding-bottom: 6px; }
+  .school-context { margin-bottom: 4px; padding-top: 5px; padding-bottom: 5px; }
+  .school-context span { display: none; }
+  .nav-item { min-height: 34px; padding-top: 4px; padding-bottom: 4px; }
+  .sidebar-footer { padding-top: 6px; }
+  .sidebar-user .avatar { width: 31px; height: 31px; border-radius: 9px; }
+}
+@media (min-width: 861px) and (max-height: 560px) {
+  .sidebar-brand .sidebar-brand-full { max-height: 42px; }
+  .sidebar-product { display: none; }
+  .portal-label { margin-top: 3px; margin-bottom: 2px; padding: 4px 7px; }
+  .school-context { margin-bottom: 2px; padding: 4px 7px; }
+  .school-context small, .school-context span { display: none; }
+  .nav-item { min-height: 29px; padding: 3px 9px; font-size: 9px; }
+  .nav-item .icon { width: 16px; height: 16px; }
+  .sidebar-footer { padding-top: 4px; }
+  .sidebar-user > div:last-child span { display: none; }
+}
+
+
+/* Alturas muito pequenas (notebook compacto / celular na horizontal): nada é cortado e não há scroll. */
+@media (max-height: 480px) {
+  .sidebar { padding-top: 5px; padding-bottom: 5px; }
+  .sidebar-brand { padding-bottom: 4px; gap: 4px 6px; }
+  .sidebar-brand .sidebar-brand-full { max-height: 34px; }
+  .sidebar-product { display: none; }
+  .portal-label { min-height: 24px; margin: 2px 2px; padding: 3px 6px; }
+  .portal-label small { display: none; }
+  .portal-label strong { font-size: 9px; margin: 0; }
+  .school-context { margin: 1px 2px 2px; padding: 3px 6px; }
+  .school-context small, .school-context span { display: none; }
+  .school-context strong { margin: 0; font-size: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sidebar-nav { gap: 1px; padding: 1px 0; }
+  .nav-item { min-height: 24px; height: 24px; padding: 2px 8px; font-size: 8px; border-radius: 8px; }
+  .nav-item .icon, .nav-icon svg { width: 14px; height: 14px; }
+  .sidebar-footer { padding-top: 3px; }
+  .sidebar-user .avatar { width: 26px; height: 26px; border-radius: 8px; font-size: 8px; }
+  .sidebar-user strong { font-size: 8px; }
+  .sidebar-user span { display: none; }
+  .sidebar-footer .icon-button { width: 28px; height: 28px; }
+  .app-shell.sidebar-collapsed .sidebar-footer .icon-button { width: 32px; height: 32px; }
+}
+
+/* Mobile: hambúrguer continua abrindo o menu completo, sem herdar o estado recolhido. */
+@media (max-width: 860px) {
+  .app-shell.sidebar-collapsed { --sidebar: 280px; }
+  .sidebar { width: min(86vw, 300px); overflow: hidden; }
+  .sidebar-collapse-toggle { display: none; }
+  .sidebar-nav { overflow: visible; }
+  .sidebar-brand-compact { display: none !important; }
+}
+
+/* V5.1.5 — acabamento do login clássico. */
+.login-brand-content { min-width: 0; }
+.login-hero-copy h1 {
+  color: #fff;
+  text-wrap: balance;
+  letter-spacing: -.045em;
+  font-weight: 750;
+}
+.login-hero-copy h1::after {
+  content: "";
+  display: block;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--gold) 0 72%, var(--brand-red) 72%);
+}
+.sidebar-logout { flex: 0 0 auto; }
+
+/* V5.1.7 — em notebooks/telas baixas, amplia o conteúdo institucional para ocupar a faixa esquerda. */
+@media (min-width: 841px) and (max-height: 700px) {
+  .login-brand-panel {
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: clamp(7px, 1.25dvh, 12px);
+  }
+  .login-brand-content {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(10px, 1.8dvh, 16px);
+    transform: none;
+  }
+  .login-hero-copy { max-width: 100%; }
+  .login-hero-copy .eyebrow {
+    font-size: clamp(8px, 1.45dvh, 10px);
+    letter-spacing: .12em;
+  }
+  .login-hero-copy h1 {
+    max-width: 98%;
+    font-size: clamp(42px, min(5.7vw, 9.6dvh), 62px);
+    line-height: .98;
+    margin: clamp(5px, .9dvh, 8px) 0 clamp(7px, 1.25dvh, 11px);
+  }
+  .login-hero-copy h1::after {
+    width: clamp(76px, 8.4vw, 108px);
+    height: clamp(4px, .7dvh, 5px);
+    margin-top: clamp(8px, 1.45dvh, 12px);
+  }
+  .login-hero-copy p {
+    max-width: 96%;
+    font-size: clamp(11px, min(1.35vw, 2.15dvh), 14px);
+    line-height: 1.48;
+  }
+  .login-feature-grid {
+    gap: clamp(6px, 1dvh, 9px);
+  }
+  .login-feature-grid article {
+    min-height: clamp(42px, 7.5dvh, 54px);
+    padding: clamp(8px, 1.45dvh, 12px);
+    align-items: center;
+  }
+  .login-feature-grid article > svg {
+    width: clamp(17px, 3dvh, 21px);
+    height: clamp(17px, 3dvh, 21px);
+  }
+  .login-feature-grid strong { font-size: clamp(9px, 1.65dvh, 11px); }
+  .login-feature-grid span { font-size: clamp(7px, 1.25dvh, 8.5px); }
+}
+
+/* Em telas muito baixas ainda cabe sem rolagem, preservando a hierarquia visual. */
+@media (min-width: 841px) and (max-height: 560px) {
+  .login-hero-copy h1 { font-size: clamp(35px, min(5vw, 8.2dvh), 48px); }
+  .login-hero-copy p { font-size: clamp(9.5px, 1.9dvh, 12px); }
+  .login-feature-grid article { min-height: 38px; padding: 7px 9px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar, .nav-item, .nav-item::after, .sidebar-footer .icon-button::after { transition: none !important; }
+}
+
+
+@media (min-width: 841px) and (max-height: 720px) {
+  .login-brand-panel {
+    gap: clamp(6px, 1.1dvh, 12px);
+    padding-top: clamp(8px, 1.6dvh, 14px);
+    padding-bottom: clamp(8px, 1.6dvh, 14px);
+  }
+  .login-brand-content {
+    padding-top: 0;
+    transform: translateY(clamp(-18px, -2.2dvh, -8px));
+  }
+  .login-hero-copy h1,
+  .login-hero-copy h2 {
+    margin-top: clamp(4px, 0.8dvh, 8px);
+    margin-bottom: clamp(8px, 1.6dvh, 14px);
+  }
+  .login-feature-grid {
+    gap: clamp(7px, 1.1dvh, 11px);
+  }
+  .login-brand-footer {
+    padding-top: clamp(4px, .8dvh, 7px);
+  }
+}
+
+
+@media (min-width: 841px) and (max-height: 720px) {
+  .login-feature-grid strong { font-size: clamp(12px, 1.9dvh, 16px); }
+  .login-feature-grid span { font-size: clamp(9.5px, 1.45dvh, 13px); }
+}
+
+
+@media (min-width: 841px) {
+  .login-card input { font-size: clamp(13px, 1.8dvh, 16px); }
+  .login-card .input-with-icon svg { width: clamp(17px, 2.2dvh, 20px); height: clamp(17px, 2.2dvh, 20px); }
+}
+@media (max-width: 840px) {
+  .login-card input { font-size: clamp(12px, 1.8dvh, 15px); }
+  .login-card .field > span { font-size: clamp(8px, 1.25dvh, 10px); }
+  .portal-option strong { font-size: clamp(9px, 1.35dvh, 11px); }
+  .portal-option small { font-size: clamp(7px, 1.1dvh, 8.5px); }
+  .login-card .button.large { font-size: clamp(12px, 1.8dvh, 14px); }
+  .login-help { font-size: clamp(8px, 1.2dvh, 9.5px); }
+}

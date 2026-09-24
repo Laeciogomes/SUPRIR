@@ -1,34 +1,47 @@
-Versão 4.8 — Sistema de Pedidos e Entrega de Materiais de Canindé
+# Manual de instalação — SUPRIR Educação V5.1.11
 
-# Manual de instalação — Sistema Canindé V4.8
+## 1. Banco de dados
 
-## 1. Preparar o banco no Supabase
+Faça backup do Supabase antes da atualização.
 
-Para uma instalação nova, abra o Supabase, entre em **SQL Editor**, crie uma nova query e execute o arquivo:
+### Instalação nova
 
-```txt
-supabase/BANCO_COMPLETO_V4_7.sql
-```
-
-Esse arquivo cria as tabelas, políticas de segurança, funções, configurações, permissões, catálogo inicial de materiais e identidade visual definitiva.
-
-Se você já estava usando a versão anterior e quer apenas aplicar a logo nova, execute:
+Execute no SQL Editor:
 
 ```txt
-supabase/migrations/008_logo_definitiva_secretaria_educacao.sql
+supabase/BANCO_COMPLETO_V5_1.sql
 ```
 
-## 2. Criar o administrador da SME
+### Atualização de uma V5.0
 
-No Supabase, vá em **Authentication > Users** e crie o usuário da SME.
+Execute:
 
-Depois, no **SQL Editor**, rode:
+```txt
+supabase/migrations/010_remover_entregador_confirmacao_escola_v5_1.sql
+```
+
+### Atualização de uma V4.8
+
+Execute, nesta ordem:
+
+```txt
+supabase/migrations/009_perfis_operacionais_v5.sql
+supabase/migrations/010_remover_entregador_confirmacao_escola_v5_1.sql
+```
+
+A V5.1.11 mantém apenas quatro perfis: `school_user`, `sme_authorizer`, `warehouse_operator` e `system_admin`.
+
+Se uma base V5.0 possuir contas `delivery_agent`, a migração as converte para `warehouse_operator` **desativado**, evitando concessão automática de novas permissões. O administrador pode revisar e reativar apenas as contas que realmente devam operar no almoxarifado.
+
+## 2. Administrador do sistema
+
+Crie o usuário em **Supabase > Authentication > Users** e depois execute:
 
 ```sql
 update public.profiles
 set
   account_type = 'sme',
-  permission_level = 'sme_admin',
+  permission_level = 'system_admin',
   role = 'admin',
   active = true,
   must_change_password = false,
@@ -37,59 +50,29 @@ set
 where lower(email) = lower('SEU_EMAIL_AQUI');
 ```
 
-Confira:
+## 3. Equipe interna
 
-```sql
-select email, account_type, permission_level, active
-from public.profiles
-where lower(email) = lower('SEU_EMAIL_AQUI');
-```
+Pelo próprio sistema, o administrador pode criar:
 
-O resultado precisa mostrar:
+- **SME — Análise e autorização** (`sme_authorizer`);
+- **Almoxarifado — Separação e expedição** (`warehouse_operator`);
+- **Administrador do sistema** (`system_admin`).
 
-```txt
-account_type: sme
-permission_level: sme_admin
-active: true
-```
+A escola permanece com `school_user` e confirma o recebimento da própria remessa.
 
-## 3. Configurar o sistema local
-
-Copie os arquivos de exemplo:
-
-```powershell
-Copy-Item .env.example .env -Force
-Copy-Item .dev.vars.example .dev.vars -Force
-```
-
-Abra o `.env`:
-
-```powershell
-notepad .env
-```
-
-Preencha:
+## 4. Variáveis de ambiente
 
 ```env
 VITE_SUPABASE_URL=https://SEU-PROJETO.supabase.co
 VITE_SUPABASE_ANON_KEY=SUA_CHAVE_PUBLICA
+VITE_NOME_SISTEMA="SUPRIR Educação"
+VITE_SUBTITULO_SISTEMA="Gestão de pedidos e distribuição de materiais"
 VITE_MUNICIPIO_NOME="Prefeitura Municipal de Canindé"
 VITE_SECRETARIA_NOME="Secretaria Municipal de Educação"
-VITE_TITULO_SISTEMA="Sistema Integrado de Pedidos e Entrega de Materiais"
-VITE_LOGO_URL=/assets/brand/logo-secretaria-educacao-caninde.png
-VITE_LOGO_COMPACTA_URL=/assets/brand/brasao-caninde.webp
-VITE_LOGO_PLANEJAMENTO_URL=/assets/brand/brasao-caninde.webp
-VITE_LOGO_FALLBACK_URL=/assets/brand/brasao-caninde.webp
 VITE_SCHOOL_LOGIN_DOMAIN=escolas.caninde.ce.gov.br
 ```
 
-Abra o `.dev.vars`:
-
-```powershell
-notepad .dev.vars
-```
-
-Preencha:
+Functions:
 
 ```env
 SUPABASE_URL=https://SEU-PROJETO.supabase.co
@@ -97,78 +80,30 @@ SUPABASE_SERVICE_ROLE_KEY=SUA_CHAVE_SECRETA_DO_SUPABASE
 SCHOOL_LOGIN_DOMAIN=escolas.caninde.ce.gov.br
 ```
 
-Atenção: `SUPABASE_SERVICE_ROLE_KEY` não é a chave pública. Não coloque `sb_publishable_...` nessa variável. Use `sb_secret_...` ou a chave `service_role` legacy.
-
-## 4. Rodar localmente
-
-No PowerShell, dentro da pasta do projeto:
+## 5. Teste local
 
 ```powershell
 npm.cmd install
 npm.cmd run dev
 ```
 
-Abra:
+## 6. Teste do fluxo
 
-```txt
-http://127.0.0.1:8788
-```
+Use contas diferentes e valide:
 
-Não use a porta `5173` para importação de escolas. A importação usa as Functions do Cloudflare e precisa rodar pela porta `8788`.
+1. Escola cria e envia o pedido.
+2. SME recebe, analisa e autoriza.
+3. Almoxarifado inicia a separação e registra a remessa.
+4. A remessa fica como **Aguardando recebimento**.
+5. A própria escola informa a data e confirma o recebimento.
+6. O sistema registra o usuário da escola responsável e recalcula automaticamente a situação do pedido.
+7. Administrador confere o histórico e os relatórios.
 
-## 5. Importar as escolas
-
-Entre pelo portal **SME** com o administrador.
-
-Vá em:
-
-```txt
-Usuários → Importar escolas
-```
-
-Use o arquivo:
-
-```txt
-private/importacao/escolas_caninde_credenciais.csv
-```
-
-Na primeira importação, deixe desmarcada a opção de redefinir senhas existentes.
-
-## 6. Conferir a logo
-
-Teste direto no navegador:
-
-```txt
-http://127.0.0.1:8788/assets/brand/logo-secretaria-educacao-caninde.png
-```
-
-Se aparecer a logo da Secretaria Municipal de Educação, o arquivo está correto.
-
-Se a logo antiga aparecer por cache do PWA:
-
-1. Aperte `Ctrl + Shift + R`.
-2. Se continuar, aperte `F12`.
-3. Vá em **Application > Service Workers**.
-4. Clique em **Unregister**.
-5. Vá em **Storage**.
-6. Clique em **Clear site data**.
-7. Abra o sistema novamente.
-
-## 7. Publicar no Cloudflare Pages
-
-No projeto do Cloudflare Pages, configure:
+## 7. Cloudflare Pages
 
 ```txt
 Build command: npm run build
 Build output directory: dist
 ```
 
-Adicione as mesmas variáveis públicas do `.env` e as variáveis secretas do `.dev.vars` em **Settings > Variables and Secrets**.
-
-A variável `SUPABASE_SERVICE_ROLE_KEY` deve ser marcada como segredo.
-
-
-## Atualização V4.8
-
-- Relatório de pedidos detalhado por produto, com material, categoria, unidade, quantidade solicitada, autorizada, entregue, saldo e observações.
-- Impressão/PDF e exportação CSV geram os produtos discriminados por pedido.
+O cache do PWA da V5.1.11 usa uma nova chave. Se um aparelho insistir em exibir a versão anterior, remova/reinstale o app ou limpe os dados do site.

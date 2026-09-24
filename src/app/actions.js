@@ -1,5 +1,5 @@
 import { state, resetSecureState } from './state.js';
-import { isSchool, getRequest } from './helpers.js';
+import { isSchool, isAdmin, canAuthorizeRequests, canOperateWarehouse, getRequest, getAllDeliveries } from './helpers.js';
 import { app, render, navigate, openRequest } from './router.js';
 import { openConfirm, setToast } from './notices.js';
 import {
@@ -62,6 +62,11 @@ export const ACTIONS = {
     state.mobileMenu = false;
     render();
   },
+  'toggle-sidebar': () => {
+    state.sidebarCollapsed = !state.sidebarCollapsed;
+    localStorage.setItem('suprir_sidebar_collapsed', state.sidebarCollapsed ? '1' : '0');
+    render();
+  },
   'new-request': () => {
     state.draft = createBlankDraft();
     state.view = 'newRequest';
@@ -100,6 +105,7 @@ export const ACTIONS = {
     }
   },
   'receive-request': (button) => {
+    if (!canAuthorizeRequests()) throw new Error('Seu perfil não possui permissão para receber pedidos para análise.');
     const requestId = button.dataset.id;
     openConfirm({
       title: 'Receber pedido para análise',
@@ -111,14 +117,17 @@ export const ACTIONS = {
     render();
   },
   'open-authorize-request': (button) => {
+    if (!canAuthorizeRequests()) throw new Error('Seu perfil não possui permissão para autorizar pedidos.');
     state.modal = { type: 'authorize', requestId: button.dataset.id };
     render();
   },
   'open-reject-request': (button) => {
+    if (!canAuthorizeRequests()) throw new Error('Seu perfil não possui permissão para rejeitar pedidos.');
     state.modal = { type: 'reject', requestId: button.dataset.id };
     render();
   },
   'start-preparation': (button) => {
+    if (!canOperateWarehouse()) throw new Error('Seu perfil não possui permissão para iniciar a separação.');
     const requestId = button.dataset.id;
     openConfirm({
       title: 'Iniciar separação',
@@ -130,11 +139,8 @@ export const ACTIONS = {
     render();
   },
   'open-dispatch': (button) => {
+    if (!canOperateWarehouse()) throw new Error('Seu perfil não possui permissão para registrar remessas.');
     state.modal = { type: 'dispatch', requestId: button.dataset.id };
-    render();
-  },
-  'open-receipt': (button) => {
-    state.modal = { type: 'receipt', deliveryId: button.dataset.id };
     render();
   },
   'open-confirm-delivery': (button) => {
@@ -163,10 +169,12 @@ export const ACTIONS = {
     await handleInstallApp();
   },
   'open-school-form': (button) => {
+    if (!isAdmin()) throw new Error('Somente o administrador do sistema pode alterar escolas.');
     state.modal = { type: 'schoolForm', schoolId: button.dataset.id || null };
     render();
   },
   'open-school-delete': (button) => {
+    if (!isAdmin()) throw new Error('Somente o administrador do sistema pode excluir escolas.');
     state.modal = { type: 'schoolDelete', schoolId: button.dataset.id };
     render();
   },
@@ -176,14 +184,17 @@ export const ACTIONS = {
     await deleteSchool(button.dataset.id);
   },
   'open-material-form': (button) => {
+    if (!isAdmin()) throw new Error('Somente o administrador do sistema pode alterar o catálogo.');
     state.modal = { type: 'materialForm', materialId: button.dataset.id || null };
     render();
   },
   'open-user-create': () => {
+    if (!isAdmin()) throw new Error('Somente o administrador do sistema pode criar usuários.');
     state.modal = { type: 'userCreate' };
     render();
   },
   'open-school-import': () => {
+    if (!isAdmin()) throw new Error('Somente o administrador do sistema pode importar escolas.');
     state.modal = { type: 'schoolImport' };
     render();
   },
@@ -194,11 +205,13 @@ export const ACTIONS = {
     downloadSchoolImportReport();
   },
   'open-user-edit': (button) => {
+    if (!isAdmin()) throw new Error('Somente o administrador do sistema pode editar usuários.');
     const profile = state.profiles.find((item) => item.id === button.dataset.id);
     state.modal = { type: 'userEdit', profileId: button.dataset.id, accountType: profile?.account_type };
     render();
   },
   'reset-user-password': async (button) => {
+    if (!isAdmin()) throw new Error('Somente o administrador do sistema pode redefinir acessos.');
     await resetUserPassword(button.dataset.id);
   },
   'copy-password': async (button) => {

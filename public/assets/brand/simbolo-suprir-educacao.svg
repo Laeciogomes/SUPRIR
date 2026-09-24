@@ -1,0 +1,8 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Símbolo SUPRIR Educação</title>
+  <desc id="desc">Símbolo gráfico do sistema SUPRIR Educação.</desc>
+  <rect x="4" y="4" width="88" height="88" rx="23" fill="#FFD000"/>
+  <path d="M65 26H38C30.8 26 25 31.8 25 39C25 46.2 30.8 52 38 52H58C65.2 52 71 57.8 71 65C71 72.2 65.2 78 58 78H31" stroke="#17160F" stroke-width="10" stroke-linecap="round"/>
+  <path d="M62 19L71 26L62 33" stroke="#F04423" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M34 71L25 78L34 85" stroke="#F04423" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

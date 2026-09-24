@@ -16,8 +16,9 @@ import {
 import { state } from '../app/state.js';
 import {
   isSchool,
-  isSme,
-  isManager,
+  isAdmin,
+  canAuthorizeRequests,
+  canOperateWarehouse,
   statusBadge,
   priorityBadge,
   getRequest,
@@ -29,6 +30,9 @@ import {
 export function getFilteredRequests() {
   const search = state.filters.requestSearch.trim().toLowerCase();
   return state.requests.filter((request) => {
+    const roleVisible = isSchool() || isAdmin()
+      || (canAuthorizeRequests() && ['submitted', 'under_review', 'approved', 'rejected', 'cancelled'].includes(request.status))
+      || (canOperateWarehouse() && ['approved', 'preparing', 'dispatched', 'partially_delivered', 'delivered'].includes(request.status));
     const matchesStatus = state.filters.requestStatus === 'all' || request.status === state.filters.requestStatus;
     const matchesSchool = state.filters.requestSchool === 'all' || request.school_id === state.filters.requestSchool;
     const haystack = [
@@ -38,7 +42,7 @@ export function getFilteredRequests() {
       request.created_by_name,
       ...(request.request_items || []).map((item) => item.material_name_snapshot)
     ].join(' ').toLowerCase();
-    return matchesStatus && matchesSchool && (!search || haystack.includes(search));
+    return roleVisible && matchesStatus && matchesSchool && (!search || haystack.includes(search));
   });
 }
 
@@ -129,7 +133,7 @@ export function renderRequestForm() {
   const school = state.schools.find((item) => item.id === state.profile.school_id);
 
   if (!state.profile.school_id || !school) {
-    return `<section class="panel">${renderEmptyState('alert', 'Usuário sem escola vinculada', 'O administrador da SME precisa vincular sua conta a uma unidade escolar antes de criar pedidos.')}</section>`;
+    return `<section class="panel">${renderEmptyState('alert', 'Usuário sem escola vinculada', 'O administrador do sistema precisa vincular sua conta a uma unidade escolar antes de criar pedidos.')}</section>`;
   }
 
   return `
@@ -193,7 +197,7 @@ export function renderRequestDetail() {
   const events = state.events[request.id] || [];
   const context = isSchool() ? 'school' : 'default';
   const canEditDraft = isSchool() && request.status === 'draft';
-  const unconfirmedDeliveries = (request.deliveries || []).filter((delivery) => delivery.status === 'delivered' && !delivery.school_confirmed_at && !String(delivery.delivery_number || '').startsWith('LEG-'));
+  const unconfirmedDeliveries = (request.deliveries || []).filter((delivery) => ['dispatched', 'delivered'].includes(delivery.status) && !delivery.school_confirmed_at && !String(delivery.delivery_number || '').startsWith('LEG-'));
 
   return `
     <div class="stack-lg request-detail-page">
@@ -224,7 +228,7 @@ export function renderRequestDetail() {
           <div class="panel-heading inline"><div><span class="eyebrow">Ação da escola</span><h3>Confirme o recebimento</h3><p>Valide as remessas entregues para concluir a conferência institucional.</p></div></div>
           <div class="delivery-confirm-grid">
             ${unconfirmedDeliveries.map((delivery) => `
-              <article><div><strong>${escapeHtml(delivery.delivery_number || 'Remessa')}</strong><span>Recebida em ${formatDate(delivery.receipt_date || delivery.delivery_date)} por ${escapeHtml(delivery.received_by_name || '—')}</span></div><button type="button" class="button primary small" data-action="open-confirm-delivery" data-id="${delivery.id}">${icon('check', 17)} Confirmar</button></article>`).join('')}
+              <article><div><strong>${escapeHtml(delivery.delivery_number || 'Remessa')}</strong><span>Enviada em ${formatDate(delivery.dispatch_date || delivery.delivery_date)} pelo almoxarifado</span></div><button type="button" class="button primary small" data-action="open-confirm-delivery" data-id="${delivery.id}">${icon('check', 17)} Confirmar</button></article>`).join('')}
           </div>
         </section>` : ''}
 
@@ -296,29 +300,45 @@ export function renderSmeActionPanel(request) {
 
   const dispatched = (request.deliveries || []).filter((delivery) => delivery.status === 'dispatched');
   const dispatchable = ['approved', 'preparing', 'partially_delivered'].includes(request.status) && hasRemainingAuthorizedItems(request);
-  let title = 'Pedido processado';
-  let text = 'Não há ações pendentes para este pedido.';
+  let title = 'Acompanhamento do pedido';
+  let text = 'Não há ações disponíveis para sua função nesta etapa.';
   let buttons = '';
 
   if (request.status === 'submitted') {
-    title = 'Pedido aguardando recebimento pela SME';
-    text = 'Ao receber, o sistema registra automaticamente seu nome, data e horário e inicia a análise.';
-    buttons = `<button type="button" class="button primary" data-action="receive-request" data-id="${request.id}">${icon('mail', 18)} Receber para análise</button>`;
+    title = 'Pedido aguardando análise';
+    text = canAuthorizeRequests()
+      ? 'Receba o pedido para iniciar a conferência e registrar a decisão da SME.'
+      : 'A equipe de análise da SME ainda precisa receber esta solicitação.';
+    if (canAuthorizeRequests()) {
+      buttons = `<button type="button" class="button primary" data-action="receive-request" data-id="${request.id}">${icon('mail', 18)} Receber para análise</button>`;
+    }
   } else if (request.status === 'under_review') {
-    title = isManager() ? 'Análise e decisão do pedido' : 'Pedido em análise';
-    text = isManager() ? 'Confira os itens e registre as quantidades autorizadas ou o motivo da rejeição.' : 'Um gestor/autorizador da SME deve registrar a decisão.';
-    if (isManager()) buttons = `<button type="button" class="button success" data-action="open-authorize-request" data-id="${request.id}">${icon('shield', 18)} Autorizar pedido</button><button type="button" class="button danger-outline" data-action="open-reject-request" data-id="${request.id}">${icon('x', 18)} Rejeitar</button>`;
+    title = canAuthorizeRequests() ? 'Análise e decisão do pedido' : 'Pedido em análise';
+    text = canAuthorizeRequests()
+      ? 'Confira os itens e registre as quantidades autorizadas ou o motivo da rejeição.'
+      : 'A decisão está sob responsabilidade da equipe de análise e autorização.';
+    if (canAuthorizeRequests()) {
+      buttons = `<button type="button" class="button success" data-action="open-authorize-request" data-id="${request.id}">${icon('shield', 18)} Autorizar pedido</button><button type="button" class="button danger-outline" data-action="open-reject-request" data-id="${request.id}">${icon('x', 18)} Rejeitar</button>`;
+    }
   } else if (request.status === 'approved') {
     title = 'Pedido autorizado';
-    text = 'Inicie a separação para preparar os materiais e liberar o registro da remessa.';
-    buttons = `<button type="button" class="button primary" data-action="start-preparation" data-id="${request.id}">${icon('archive', 18)} Iniciar separação</button>`;
+    text = canOperateWarehouse()
+      ? 'O pedido está liberado para separação. Inicie a preparação física dos materiais.'
+      : 'O pedido foi autorizado e aguarda o almoxarifado iniciar a separação.';
+    if (canOperateWarehouse()) {
+      buttons = `<button type="button" class="button primary" data-action="start-preparation" data-id="${request.id}">${icon('archive', 18)} Iniciar separação</button>`;
+    }
   } else if (dispatchable) {
-    title = request.status === 'partially_delivered' ? 'Entrega parcial registrada' : 'Materiais em separação';
-    text = 'Registre uma nova remessa com as quantidades que sairão para a escola.';
-    buttons = `<button type="button" class="button primary" data-action="open-dispatch" data-id="${request.id}">${icon('truck', 18)} Registrar saída / remessa</button>`;
+    title = request.status === 'partially_delivered' ? 'Há saldo autorizado para nova remessa' : 'Materiais em separação';
+    text = canOperateWarehouse()
+      ? 'Registre a saída somente do que foi conferido. A escola confirmará o recebimento no próprio portal.'
+      : 'O almoxarifado está responsável pela preparação e expedição.';
+    if (canOperateWarehouse()) {
+      buttons = `<button type="button" class="button primary" data-action="open-dispatch" data-id="${request.id}">${icon('truck', 18)} Registrar saída / remessa</button>`;
+    }
   } else if (request.status === 'dispatched') {
-    title = 'Remessa em transporte';
-    text = 'Quando a escola receber, registre o recebedor e a data para atualizar o pedido.';
+    title = 'Remessa enviada';
+    text = 'O almoxarifado registrou a saída. A confirmação do recebimento será feita pela escola.';
   } else if (request.status === 'delivered') {
     title = 'Pedido concluído';
     text = 'Todas as quantidades autorizadas foram registradas como entregues.';
@@ -330,11 +350,10 @@ export function renderSmeActionPanel(request) {
     text = 'Este pedido não possui mais ações operacionais.';
   }
 
-  if (dispatched.length) {
-    buttons += dispatched.map((delivery) => `<button type="button" class="button success" data-action="open-receipt" data-id="${delivery.id}">${icon('check', 18)} Registrar recebimento ${escapeHtml(delivery.delivery_number || '')}</button>`).join('');
-  }
 
-  const canCancel = isManager() && !['delivered', 'cancelled', 'rejected'].includes(request.status);
+  const canCancel = isAdmin()
+    ? ['draft', 'submitted', 'under_review', 'approved', 'preparing'].includes(request.status)
+    : canAuthorizeRequests() && ['submitted', 'under_review', 'approved'].includes(request.status);
   if (canCancel) buttons += `<button type="button" class="button danger-outline" data-action="open-cancel-request" data-id="${request.id}">${icon('x', 18)} Cancelar</button>`;
 
   return `
@@ -365,18 +384,17 @@ export function renderDeliveriesForRequest(request) {
             </div>
             <div class="delivery-card-grid">
               <div><span>Saída</span><strong>${formatDate(delivery.dispatch_date || delivery.delivery_date)}</strong><small>registrada por ${escapeHtml(delivery.registered_by_name || '—')}</small></div>
-              <div><span>Responsável pela entrega</span><strong>${escapeHtml(delivery.delivered_by_name || '—')}</strong><small>${escapeHtml(delivery.delivered_by_department || '')}</small></div>
-              <div><span>Recebimento</span><strong>${delivery.status === 'delivered' ? formatDate(delivery.receipt_date || delivery.delivery_date) : 'Aguardando'}</strong><small>${delivery.received_by_name ? `por ${escapeHtml(delivery.received_by_name)}` : ''}</small></div>
-              <div><span>Registrado por</span><strong>${escapeHtml(delivery.receipt_registered_by_name || delivery.registered_by_name || '—')}</strong><small>${delivery.receipt_registered_by_email ? 'recebimento' : 'saída'}</small></div>
+              <div><span>Expedição</span><strong>${escapeHtml(delivery.registered_by_name || delivery.delivered_by_name || '—')}</strong><small>${escapeHtml(delivery.document_number ? `Documento ${delivery.document_number}` : '')}</small></div>
+              <div><span>Recebimento</span><strong>${delivery.status === 'delivered' ? formatDate(delivery.receipt_date || delivery.delivery_date) : 'Aguardando escola'}</strong><small>${delivery.received_by_name ? `confirmado por ${escapeHtml(delivery.received_by_name)}` : 'a escola ainda não confirmou'}</small></div>
+              <div><span>Confirmação da escola</span><strong>${escapeHtml(delivery.school_confirmed_by_name || 'Pendente')}</strong><small>${delivery.school_confirmed_at ? formatDateTime(delivery.school_confirmed_at) : 'aguardando recebimento'}</small></div>
             </div>
             <div class="delivery-items-mini">
               ${(delivery.delivery_items || []).map((item) => `<span><strong>${formatNumber(item.quantity)}</strong> ${escapeHtml(item.unit_snapshot || '')} • ${escapeHtml(item.material_name_snapshot || item.materials?.nome || '')}</span>`).join('')}
             </div>
-            ${delivery.status === 'delivered' ? `<div class="receipt-box"><div><span>${icon('check', 17)}</span><p><strong>Recebido por ${escapeHtml(delivery.received_by_name || '—')}</strong><small>${escapeHtml([delivery.received_by_position, delivery.received_by_document].filter(Boolean).join(' • '))}</small></p></div>${delivery.school_confirmed_at ? `<span class="badge badge-green">Escola confirmou em ${formatDate(delivery.school_confirmed_at)}</span>` : `<span class="badge badge-amber">Aguardando confirmação da escola</span>`}</div>` : ''}
-            ${isSme() && delivery.status === 'dispatched' ? `<div class="delivery-card-actions"><button type="button" class="button success small" data-action="open-receipt" data-id="${delivery.id}">${icon('check', 17)} Registrar recebimento</button></div>` : ''}
-            ${isSchool() && delivery.status === 'delivered' && !delivery.school_confirmed_at ? `<div class="delivery-card-actions"><button type="button" class="button primary small" data-action="open-confirm-delivery" data-id="${delivery.id}">${icon('check', 17)} Confirmar recebimento</button></div>` : ''}
+            ${delivery.school_confirmed_at ? `<div class="receipt-box"><div><span>${icon('check', 17)}</span><p><strong>Recebimento confirmado pela escola</strong><small>${escapeHtml(delivery.received_by_name || delivery.school_confirmed_by_name || 'Usuário da escola')}</small></p></div><span class="badge badge-green">Confirmado em ${formatDate(delivery.school_confirmed_at)}</span></div>` : `<div class="receipt-box"><div><span>${icon('truck', 17)}</span><p><strong>Remessa enviada</strong><small>Aguardando confirmação de recebimento pela escola</small></p></div><span class="badge badge-amber">Aguardando escola</span></div>`}
+            ${isSchool() && ['dispatched', 'delivered'].includes(delivery.status) && !delivery.school_confirmed_at ? `<div class="delivery-card-actions"><button type="button" class="button primary small" data-action="open-confirm-delivery" data-id="${delivery.id}">${icon('check', 17)} Confirmar recebimento</button></div>` : ''}
           </article>`).join('')}
-      </div>` : renderEmptyState('truck', 'Nenhuma remessa registrada', 'As entregas aparecerão aqui depois que a SME registrar a saída dos materiais.')}
+      </div>` : renderEmptyState('truck', 'Nenhuma remessa registrada', 'As entregas aparecerão aqui depois que o almoxarifado registrar a saída dos materiais.')}
     </section>`;
 }
 

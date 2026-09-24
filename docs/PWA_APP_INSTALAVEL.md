@@ -1,48 +1,26 @@
-# App instalável — PWA
+# SUPRIR Educação como aplicativo — PWA
 
-A versão 4.7 já vem configurada como PWA com:
+A V5.1 permanece configurada como PWA:
 
-- `manifest.webmanifest` vinculado no `index.html`;
+- `manifest.webmanifest` vinculado ao `index.html`;
+- nome do aplicativo: **SUPRIR Educação — Canindé**;
+- nome curto: **SUPRIR**;
 - ícones para Android, iPhone e computador;
 - `apple-touch-icon` para iOS;
-- `service worker` atualizado;
-- botão **Instalar como aplicativo** no login e no cabeçalho interno.
+- service worker com cache próprio da V5.1;
+- botão de instalação no login e no cabeçalho interno.
 
-## Como instalar no Android
+## Android / computador
 
-1. Acesse o sistema pelo endereço publicado no Cloudflare Pages, usando HTTPS.
-2. Toque em **Instalar como aplicativo**.
-3. Quando o navegador abrir a janela de instalação, confirme.
+Acesse o endereço HTTPS publicado no Cloudflare Pages e use **Instalar app**. O navegador também pode oferecer a instalação pelo próprio menu.
 
-Também é possível abrir o menu do Chrome e escolher **Instalar app** ou **Adicionar à tela inicial**.
-
-## Como instalar no iPhone
-
-O iOS não permite que sites instalem o app automaticamente por botão. O botão do sistema mostra a orientação correta.
-
-No iPhone:
+## iPhone
 
 1. Abra o sistema no Safari.
-2. Toque no botão **Compartilhar**.
-3. Toque em **Adicionar à Tela de Início**.
-4. Confirme o nome do app.
+2. Toque em **Compartilhar**.
+3. Escolha **Adicionar à Tela de Início**.
+4. Confirme.
 
-## Teste local
+## Atualização da V4.x para V5.1
 
-Para a instalação automática aparecer em teste local, use:
-
-```txt
-http://127.0.0.1:8788
-```
-
-Evite testar instalação automática por IP da rede local, como:
-
-```txt
-http://192.168.0.11:8788
-```
-
-Nesse caso, o navegador pode bloquear o instalador porque não considera a página um ambiente seguro.
-
-## Publicação no Cloudflare
-
-No Cloudflare Pages, o sistema usa HTTPS automaticamente. Após publicar, limpe o cache do navegador ou reinstale o app antigo para garantir que o ícone e a logo novos apareçam.
+O cache da V5.1 usa a chave `suprir-educacao-v5-1-0`. Caso um aparelho continue exibindo a interface anterior, remova/reinstale o PWA ou limpe dados do site/service worker.

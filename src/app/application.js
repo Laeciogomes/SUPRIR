@@ -30,7 +30,7 @@ import { registerEventListeners } from './events.js';
 let supabase = null;
 
 async function initialize() {
-  document.title = `${CONFIG.reportTitle} | Canindé`;
+  document.title = `${CONFIG.productName} | ${CONFIG.municipalityName.replace('Prefeitura Municipal de ', '')}`;
   // Injeta nos módulos de infraestrutura os helpers de UI/negócio.
   initSupabase({ setToast, friendlyError, isSchool, getAllDeliveries });
   initPwa({ openNotice, friendlyError });

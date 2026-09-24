@@ -9,6 +9,9 @@ import { state } from '../app/state.js';
 import {
   isSchool,
   isAdmin,
+  canAuthorizeRequests,
+  canOperateWarehouse,
+  internalRoleKey,
   imageTag,
   institution
 } from '../app/helpers.js';
@@ -36,15 +39,41 @@ export const SCHOOL_NAV = [
 ];
 
 export function smeNav() {
+  const role = internalRoleKey();
+  const submitted = state.requests.filter((r) => ['submitted', 'under_review'].includes(r.status)).length;
+  const warehouseQueue = state.requests.filter((r) => ['approved', 'preparing', 'partially_delivered'].includes(r.status)).length;
+  const openDeliveries = state.requests.flatMap((r) => r.deliveries || []).filter((d) => d.status === 'dispatched').length;
+
+
+  if (role === 'authorizer') {
+    return [
+      { id: 'dashboard', label: 'Painel de análise', icon: 'dashboard' },
+      { id: 'requests', label: 'Pedidos para análise', icon: 'clipboard', count: submitted },
+      { id: 'reports', label: 'Relatórios', icon: 'report' },
+      { id: 'profile', label: 'Meu perfil', icon: 'user' }
+    ];
+  }
+
+  if (role === 'warehouse') {
+    return [
+      { id: 'dashboard', label: 'Painel do almoxarifado', icon: 'dashboard' },
+      { id: 'requests', label: 'Fila de separação', icon: 'archive', count: warehouseQueue },
+      { id: 'deliveries', label: 'Remessas', icon: 'truck', count: openDeliveries },
+      { id: 'materials', label: 'Catálogo', icon: 'box' },
+      { id: 'reports', label: 'Relatórios', icon: 'report' },
+      { id: 'profile', label: 'Meu perfil', icon: 'user' }
+    ];
+  }
+
   const items = [
-    { id: 'dashboard', label: 'Painel da SME', icon: 'dashboard' },
-    { id: 'requests', label: 'Pedidos', icon: 'clipboard', count: state.requests.filter((r) => r.status === 'submitted').length },
-    { id: 'deliveries', label: 'Entregas', icon: 'truck', count: state.requests.flatMap((r) => r.deliveries || []).filter((d) => d.status === 'dispatched').length },
+    { id: 'dashboard', label: 'Visão geral', icon: 'dashboard' },
+    { id: 'requests', label: 'Pedidos', icon: 'clipboard', count: submitted },
+    { id: 'deliveries', label: 'Remessas', icon: 'truck', count: openDeliveries },
     { id: 'schools', label: 'Escolas', icon: 'school' },
     { id: 'materials', label: 'Materiais', icon: 'box' },
     { id: 'reports', label: 'Relatórios', icon: 'report' }
   ];
-  if (isAdmin()) items.push({ id: 'users', label: 'Usuários', icon: 'users' }, { id: 'settings', label: 'Configurações', icon: 'settings' });
+  if (isAdmin()) items.push({ id: 'users', label: 'Usuários e acessos', icon: 'users' }, { id: 'settings', label: 'Configurações', icon: 'settings' });
   items.push({ id: 'profile', label: 'Meu perfil', icon: 'user' });
   return items;
 }
@@ -58,18 +87,38 @@ export function getViewMeta() {
     profile: ['Meu perfil', 'Confira seus dados de acesso e vínculo com a escola.'],
     requestDetail: ['Detalhes do pedido', 'Histórico completo desde a solicitação até a entrega.']
   };
-  const sme = {
-    dashboard: ['Painel da SME', 'Visão operacional dos pedidos, autorizações e entregas.'],
-    requests: ['Gestão de pedidos', 'Receba, analise, autorize e acompanhe as solicitações das escolas.'],
-    deliveries: ['Gestão de entregas', 'Controle remessas em transporte e recebimentos registrados.'],
-    schools: ['Cadastro de escolas', 'Gerencie as unidades escolares atendidas pela rede.'],
-    materials: ['Catálogo de materiais', 'Mantenha os materiais disponíveis para solicitação.'],
-    reports: ['Relatórios gerenciais', 'Consolide dados por escola, período, situação e material.'],
-    users: ['Usuários e acessos', 'Crie contas e controle permissões de escolas e SME.'],
-    settings: ['Configurações institucionais', 'Defina os dados exibidos no sistema e nos relatórios.'],
-    profile: ['Meu perfil', 'Confira seus dados e nível de permissão.'],
-    requestDetail: ['Processamento do pedido', 'Analise os itens, registre decisões, remessas e recebimentos.']
+  const role = internalRoleKey();
+  const roleMeta = {
+    authorizer: {
+      dashboard: ['Painel de análise', 'Receba, confira e decida os pedidos enviados pelas escolas.'],
+      requests: ['Análise e autorização', 'Registre o recebimento, as quantidades autorizadas ou a justificativa de rejeição.'],
+      reports: ['Relatórios', 'Acompanhe os pedidos analisados e os indicadores da rede.'],
+      profile: ['Meu perfil', 'Confira seus dados e sua função no fluxo.'],
+      requestDetail: ['Análise do pedido', 'Confira a solicitação e registre a decisão da SME.']
+    },
+    warehouse: {
+      dashboard: ['Painel do almoxarifado', 'Organize a separação e a expedição dos pedidos já autorizados.'],
+      requests: ['Fila de separação', 'Prepare os materiais autorizados e registre as remessas.'],
+      deliveries: ['Remessas', 'Acompanhe as saídas preparadas pelo almoxarifado.'],
+      materials: ['Catálogo de materiais', 'Consulte os materiais disponíveis no sistema.'],
+      reports: ['Relatórios', 'Consulte pedidos, materiais e remessas processadas.'],
+      profile: ['Meu perfil', 'Confira seus dados e sua função no fluxo.'],
+      requestDetail: ['Separação e expedição', 'Confira o autorizado, separe os itens e registre a saída.']
+    },
+    admin: {
+      dashboard: ['Administração do sistema', 'Acompanhe todo o fluxo e a operação da rede.'],
+      requests: ['Pedidos', 'Acompanhe solicitações, decisões, separação e expedição.'],
+      deliveries: ['Remessas', 'Acompanhe as saídas do almoxarifado e as confirmações registradas pelas escolas.'],
+      schools: ['Escolas', 'Gerencie as unidades escolares atendidas pela rede.'],
+      materials: ['Materiais', 'Gerencie o catálogo disponível para solicitação.'],
+      reports: ['Relatórios gerenciais', 'Consolide dados por escola, período, situação e material.'],
+      users: ['Usuários e acessos', 'Crie contas e defina responsabilidades por etapa.'],
+      settings: ['Configurações institucionais', 'Defina os dados exibidos no sistema e nos relatórios.'],
+      profile: ['Meu perfil', 'Confira seus dados e nível de permissão.'],
+      requestDetail: ['Processamento do pedido', 'Acompanhe todas as etapas e intervenha quando necessário.']
+    }
   };
+  const sme = roleMeta[role] || roleMeta.admin;
   const source = isSchool() ? school : sme;
   return source[state.view] || source.dashboard;
 }
@@ -81,32 +130,35 @@ export function renderShell() {
   const currentSchool = isSchool() ? state.schools.find((school) => school.id === state.profile.school_id) : null;
 
   return `
-    <div class="app-shell ${state.mobileMenu ? 'menu-open' : ''}">
+    <div class="app-shell ${state.mobileMenu ? 'menu-open' : ''} ${state.sidebarCollapsed ? 'sidebar-collapsed' : ''}">
       <div class="mobile-scrim" data-action="close-mobile-menu"></div>
       <aside class="sidebar">
         <div class="sidebar-brand">
           ${imageTag(inst.logoUrl, 'Prefeitura Municipal de Canindé e Secretaria de Educação', 'sidebar-brand-full', CONFIG.logoFallbackUrl)}
+          <img class="sidebar-brand-compact" src="/assets/brand/simbolo-suprir-educacao.svg" alt="SUPRIR Educação" />
+          <div class="sidebar-product"><strong>${escapeHtml(CONFIG.productName)}</strong><span>${escapeHtml(CONFIG.productSubtitle)}</span></div>
+          <button type="button" class="icon-button sidebar-collapse-toggle" data-action="toggle-sidebar" aria-label="${state.sidebarCollapsed ? 'Expandir menu lateral' : 'Recolher menu lateral'}" title="${state.sidebarCollapsed ? 'Expandir menu' : 'Recolher menu'}">${icon('menu', 20)}</button>
           <button type="button" class="icon-button sidebar-close" data-action="close-mobile-menu">${icon('x', 20)}</button>
         </div>
         <div class="portal-label">
           <span>${isSchool() ? icon('school', 17) : icon('building', 17)}</span>
-          <div><small>Portal</small><strong>${isSchool() ? 'Escola' : 'SME'}</strong></div>
+          <div><small>Ambiente</small><strong>${isSchool() ? 'Escola' : (PERMISSIONS[state.profile.permission_level] || 'Equipe SME')}</strong></div>
         </div>
         ${currentSchool ? `<div class="school-context"><small>Unidade vinculada</small><strong>${escapeHtml(currentSchool.nome)}</strong>${currentSchool.inep ? `<span>INEP ${escapeHtml(currentSchool.inep)}</span>` : ''}</div>` : ''}
         <nav class="sidebar-nav">
           ${nav.map((item) => `
-            <button type="button" class="nav-item ${state.view === item.id ? 'active' : ''}" data-action="navigate" data-view="${item.id}">
+            <button type="button" class="nav-item ${state.view === item.id ? 'active' : ''}" data-action="navigate" data-view="${item.id}" data-label="${attr(item.label)}" aria-label="${attr(item.label)}">
               <span class="nav-icon">${icon(item.icon, 20)}</span>
-              <span>${escapeHtml(item.label)}</span>
+              <span class="nav-label">${escapeHtml(item.label)}</span>
               ${item.count ? `<b class="nav-count">${item.count}</b>` : ''}
             </button>`).join('')}
         </nav>
         <div class="sidebar-footer">
-          <div class="sidebar-user">
+          <div class="sidebar-user" title="${attr(state.profile.full_name || 'Usuário')} — ${attr(PERMISSIONS[state.profile.permission_level] || state.profile.email)}">
             <div class="avatar">${escapeHtml(initials(state.profile.full_name || state.profile.email))}</div>
             <div><strong>${escapeHtml(state.profile.full_name || 'Usuário')}</strong><span>${escapeHtml(PERMISSIONS[state.profile.permission_level] || state.profile.email)}</span></div>
           </div>
-          <button type="button" class="icon-button" data-action="logout" title="Sair">${icon('logout', 20)}</button>
+          <button type="button" class="icon-button sidebar-logout" data-action="logout" data-label="Sair" aria-label="Sair do sistema" title="Sair">${icon('logout', 20)}</button>
         </div>
       </aside>
 
@@ -121,7 +173,7 @@ export function renderShell() {
             <div class="date-chip">${icon('calendar', 17)} ${new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long' }).format(new Date())}</div>
             <button type="button" class="user-chip" data-action="navigate" data-view="profile">
               <span class="avatar small">${escapeHtml(initials(state.profile.full_name || state.profile.email))}</span>
-              <span><strong>${escapeHtml((state.profile.full_name || 'Usuário').split(' ')[0])}</strong><small>${isSchool() ? 'Escola' : 'SME'}</small></span>
+              <span><strong>${escapeHtml((state.profile.full_name || 'Usuário').split(' ')[0])}</strong><small>${isSchool() ? 'Escola' : escapeHtml(PERMISSIONS[state.profile.permission_level] || 'Equipe SME')}</small></span>
             </button>
           </div>
         </header>
@@ -138,19 +190,20 @@ export function renderShell() {
 
 export function renderCurrentView() {
   if (state.view === 'requestDetail') return renderRequestDetail();
-  if (state.view === 'reports') return renderReports();
   if (state.view === 'profile') return renderProfile();
 
   if (isSchool()) {
+    if (state.view === 'reports') return renderReports();
     if (state.view === 'newRequest') return renderRequestForm();
     if (state.view === 'myRequests') return renderRequestsList(true);
     return renderSchoolDashboard();
   }
 
-  if (state.view === 'requests') return renderRequestsList(false);
-  if (state.view === 'deliveries') return renderDeliveries();
-  if (state.view === 'schools') return renderSchools();
-  if (state.view === 'materials') return renderMaterials();
+  if (state.view === 'reports' && (isAdmin() || canAuthorizeRequests() || canOperateWarehouse())) return renderReports();
+  if (state.view === 'requests' && (isAdmin() || canAuthorizeRequests() || canOperateWarehouse())) return renderRequestsList(false);
+  if (state.view === 'deliveries' && (isAdmin() || canOperateWarehouse())) return renderDeliveries();
+  if (state.view === 'schools' && isAdmin()) return renderSchools();
+  if (state.view === 'materials' && (isAdmin() || canOperateWarehouse())) return renderMaterials();
   if (state.view === 'users' && isAdmin()) return renderUsers();
   if (state.view === 'settings' && isAdmin()) return renderSettings();
   return renderSmeDashboard();

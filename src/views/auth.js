@@ -69,18 +69,24 @@ export function renderLogin() {
       <section class="login-brand-panel">
         <div class="login-brand-top">
           ${imageTag(inst.logoUrl, 'Prefeitura Municipal de Canindé e Secretaria de Educação', 'brand-logo-horizontal', CONFIG.logoFallbackUrl)}
+          <span class="suprir-symbol-badge" title="SUPRIR Educação" aria-label="SUPRIR Educação">
+            <img src="/assets/brand/simbolo-suprir-educacao.svg" alt="" aria-hidden="true" />
+          </span>
         </div>
         ${imageTag(inst.planningLogoUrl, 'Brasão de Canindé', 'login-brand-seal', inst.compactLogoUrl)}
-        <div class="login-hero-copy">
-          <span class="eyebrow light">Gestão integrada de materiais</span>
-          <h2>Do pedido da escola à confirmação da entrega.</h2>
-          <p>Um fluxo seguro e rastreável para solicitar, analisar, autorizar, separar, entregar e acompanhar materiais escolares.</p>
-        </div>
-        <div class="login-feature-grid">
-          <article>${icon('clipboard', 22)}<div><strong>Pedidos digitais</strong><span>Protocolo e acompanhamento em tempo real</span></div></article>
-          <article>${icon('shield', 22)}<div><strong>Auditoria completa</strong><span>Quem pediu, recebeu, autorizou e registrou</span></div></article>
-          <article>${icon('truck', 22)}<div><strong>Entrega controlada</strong><span>Remessas parciais e confirmação de recebimento</span></div></article>
-          <article>${icon('report', 22)}<div><strong>Relatórios gerenciais</strong><span>Por escola, período, situação e material</span></div></article>
+
+        <div class="login-brand-content">
+          <div class="login-hero-copy">
+            <span class="eyebrow light">Gestão integrada de materiais</span>
+            <h1>Do pedido da escola à confirmação da entrega.</h1>
+            <p>Um fluxo seguro e rastreável para solicitar, analisar, autorizar, separar, expedir e acompanhar materiais escolares.</p>
+          </div>
+          <div class="login-feature-grid">
+            <article>${icon('clipboard', 22)}<div><strong>Pedidos digitais</strong><span>Protocolo e acompanhamento em tempo real</span></div></article>
+            <article>${icon('shield', 22)}<div><strong>Auditoria completa</strong><span>Quem solicitou, analisou, expediu e confirmou</span></div></article>
+            <article>${icon('truck', 22)}<div><strong>Entrega controlada</strong><span>Remessas parciais e confirmação pela escola</span></div></article>
+            <article>${icon('report', 22)}<div><strong>Relatórios gerenciais</strong><span>Por escola, período, situação e material</span></div></article>
+          </div>
         </div>
         <div class="login-brand-footer">Sistema institucional • acesso restrito a usuários autorizados</div>
       </section>
@@ -104,7 +110,7 @@ export function renderLogin() {
             </button>
             <button type="button" class="portal-option ${!schoolActive ? 'active' : ''}" data-action="choose-portal" data-portal="sme">
               <span class="portal-option-icon">${icon('building', 22)}</span>
-              <span><strong>SME</strong><small>Analisar, autorizar e entregar</small></span>
+              <span><strong>SME</strong><small>Analisar, autorizar e expedir</small></span>
             </button>
           </div>
 

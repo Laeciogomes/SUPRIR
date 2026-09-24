@@ -1,9 +1,11 @@
 export const CONFIG = Object.freeze({
+  productName: import.meta.env.VITE_NOME_SISTEMA || 'SUPRIR Educação',
+  productSubtitle: import.meta.env.VITE_SUBTITULO_SISTEMA || 'Gestão de pedidos e distribuição de materiais',
   supabaseUrl: import.meta.env.VITE_SUPABASE_URL || '',
   supabaseAnonKey: import.meta.env.VITE_SUPABASE_ANON_KEY || '',
   municipalityName: import.meta.env.VITE_MUNICIPIO_NOME || 'Prefeitura Municipal de Canindé',
   departmentName: import.meta.env.VITE_SECRETARIA_NOME || 'Secretaria Municipal de Educação',
-  reportTitle: import.meta.env.VITE_TITULO_SISTEMA || 'Sistema Integrado de Pedidos e Entrega de Materiais',
+  reportTitle: import.meta.env.VITE_TITULO_SISTEMA || 'SUPRIR Educação — Gestão de Pedidos e Distribuição de Materiais',
   logoUrl: import.meta.env.VITE_LOGO_URL || '/assets/brand/logo-secretaria-educacao-caninde.png',
   compactLogoUrl: import.meta.env.VITE_LOGO_COMPACTA_URL || '/assets/brand/brasao-caninde.webp',
   planningLogoUrl: import.meta.env.VITE_LOGO_PLANEJAMENTO_URL || '/assets/brand/brasao-caninde.webp',

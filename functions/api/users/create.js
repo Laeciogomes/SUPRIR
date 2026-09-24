@@ -10,7 +10,7 @@ import { requireSmeAdmin } from '../../_shared/supabase-admin.js';
 
 export async function onRequestPost(context) {
   try {
-    const auth = await requireSmeAdmin(context, 'Somente administradores da SME podem criar usuários.');
+    const auth = await requireSmeAdmin(context, 'Somente administradores do sistema podem criar usuários.');
     if (auth.errorResponse) return auth.errorResponse;
 
     const body = await context.request.json();
@@ -19,7 +19,7 @@ export async function onRequestPost(context) {
     const accountType = body.accountType === 'sme' ? 'sme' : 'school';
     const permissionLevel = accountType === 'school'
       ? 'school_user'
-      : String(body.permissionLevel || 'sme_operator');
+      : String(body.permissionLevel || 'sme_authorizer');
     const schoolId = accountType === 'school' ? String(body.schoolId || '').trim() : null;
     const position = String(body.position || '').trim() || null;
     const phone = String(body.phone || '').trim() || null;
@@ -48,7 +48,7 @@ export async function onRequestPost(context) {
 
     if (fullName.length < 3) return json({ error: 'Informe o nome completo.' }, 400);
     if (accountType === 'sme' && !/^\S+@\S+\.\S+$/.test(email)) return json({ error: 'Informe um e-mail válido.' }, 400);
-    if (accountType === 'sme' && !['sme_operator', 'sme_manager', 'sme_admin'].includes(permissionLevel)) {
+    if (accountType === 'sme' && !['sme_authorizer', 'warehouse_operator', 'system_admin'].includes(permissionLevel)) {
       return json({ error: 'Nível de permissão inválido.' }, 400);
     }
 
@@ -60,7 +60,7 @@ export async function onRequestPost(context) {
       return json({ error: 'Para escolas, informe um PIN de 6 dígitos ou uma senha com ao menos 8 caracteres.' }, 400);
     }
     if (accountType === 'sme' && temporaryPassword.length < 8) {
-      return json({ error: 'A senha temporária da SME deve ter ao menos 8 caracteres.' }, 400);
+      return json({ error: 'A senha temporária da equipe interna deve ter ao menos 8 caracteres.' }, 400);
     }
 
     const passwordForAuth = accountType === 'school'

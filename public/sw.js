@@ -1,4 +1,4 @@
-const CACHE_NAME = 'materiais-caninde-v4-8-0';
+const CACHE_NAME = 'suprir-educacao-5.1.11';
 const APP_SHELL = [
   '/',
   '/index.html',

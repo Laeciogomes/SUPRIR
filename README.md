@@ -1,88 +1,83 @@
-Versão 4.8 — Sistema de Pedidos e Entrega de Materiais de Canindé
+# SUPRIR Educação — Canindé V5.1.11
 
-# Sistema Integrado de Pedidos e Entrega de Materiais — Canindé V4.8
+**Gestão de pedidos, autorização, separação, expedição e recebimento de materiais da rede municipal de ensino.**
 
-Sistema web para a Secretaria Municipal de Educação controlar pedidos, autorizações, entregas, recebimentos e relatórios de materiais solicitados pelas escolas.
+O SUPRIR Educação organiza o fluxo entre escolas, Secretaria Municipal de Educação e almoxarifado, com responsabilidades separadas, auditoria e regras de segurança no Supabase.
 
-## Destaques da V4.8
+## Fluxo da V5.1.11
 
-- Logo definitiva da Secretaria Municipal de Educação aplicada no login, sistema e relatórios.
-- Compatibilidade com caminhos antigos de logo: mesmo se o banco ainda apontar para a logo anterior, a imagem exibida será a nova.
-- Cache PWA atualizado para evitar exibição da marca antiga.
-- Fonte ampliada para melhor leitura.
-- Todas as mensagens importantes em modais do próprio sistema.
-- Correção do fechamento de modais.
-- Exclusão de escolas pelo sistema, somente para administrador da SME e com proteção de histórico.
-- App instalável no Android, iPhone e computador.
-- Importação em lote das 59 escolas com código e senha inicial.
-- Catálogo inicial com 215 materiais separados por categoria.
-- Cloudflare Pages Functions para criação de usuários, redefinição de senha e importação das escolas.
+1. **Escola** cria e envia o pedido.
+2. **SME — Análise e autorização** recebe, analisa, autoriza ou rejeita.
+3. **Almoxarifado — Separação e expedição** separa os materiais e registra a remessa.
+4. **Escola** confirma o recebimento da remessa no próprio portal.
+5. **Administrador do sistema** acompanha e administra toda a operação.
+
+A V5.1.11 remove o antigo perfil de entregador. Não existe mais usuário `delivery_agent`, atribuição de remessa a entregador ou confirmação intermediária por equipe de entrega.
+
+## Perfis
+
+| Perfil | Código | Responsabilidade principal |
+|---|---|---|
+| Escola | `school_user` | Solicitar, acompanhar e confirmar o recebimento da própria unidade |
+| SME — Análise e autorização | `sme_authorizer` | Receber, analisar, autorizar e rejeitar pedidos |
+| Almoxarifado | `warehouse_operator` | Separar materiais e registrar a expedição/remessa |
+| Administrador do sistema | `system_admin` | Administração total, cadastros e visão global |
+
+As permissões são aplicadas na interface, nas RPCs e nas políticas RLS do Supabase.
+
+## Banco de dados
+
+### Instalação nova
+
+Execute:
+
+```txt
+supabase/BANCO_COMPLETO_V5_1.sql
+```
+
+### Banco já atualizado para V5.0
+
+Execute:
+
+```txt
+supabase/migrations/010_remover_entregador_confirmacao_escola_v5_1.sql
+```
+
+### Banco ainda na V4.8
+
+Execute, nesta ordem:
+
+```txt
+supabase/migrations/009_perfis_operacionais_v5.sql
+supabase/migrations/010_remover_entregador_confirmacao_escola_v5_1.sql
+```
+
+Faça backup antes de qualquer migração.
 
 ## Estrutura principal
 
 ```txt
-src/                         código do sistema
+src/                         aplicação web
 functions/                   APIs administrativas do Cloudflare Pages
-public/assets/brand/          logos, brasão e identidade visual
-public/assets/pwa/            ícones do aplicativo instalável
+public/                      PWA, assets e arquivos públicos
 supabase/                     SQL completo e migrações
 data/                         catálogo inicial de materiais
-private/importacao/           CSV das escolas e modelo de importação
-docs/                         documentação de apoio
+private/importacao/           modelos de importação
+docs/                         documentação operacional
 ```
 
-## Instalação rápida
+## Configuração
 
-Leia primeiro o arquivo:
-
-```txt
-LEIA_PRIMEIRO.txt
-```
-
-Para banco novo, execute no Supabase:
-
-```txt
-supabase/BANCO_COMPLETO_V4_7.sql
-```
-
-Para banco já usado e só corrigir a logo definitiva:
-
-```txt
-supabase/migrations/008_logo_definitiva_secretaria_educacao.sql
-```
-
-Depois configure `.env` e `.dev.vars`, rode:
-
-```powershell
-npm.cmd install
-npm.cmd run dev
-```
-
-Abra:
-
-```txt
-http://127.0.0.1:8788
-```
-
-## Publicação no Cloudflare Pages
-
-```txt
-Build command: npm run build
-Build output directory: dist
-```
-
-Variáveis públicas:
+Variáveis públicas recomendadas:
 
 ```env
 VITE_SUPABASE_URL=https://SEU-PROJETO.supabase.co
 VITE_SUPABASE_ANON_KEY=SUA_CHAVE_PUBLICA
+VITE_NOME_SISTEMA="SUPRIR Educação"
+VITE_SUBTITULO_SISTEMA="Gestão de pedidos e distribuição de materiais"
 VITE_MUNICIPIO_NOME="Prefeitura Municipal de Canindé"
 VITE_SECRETARIA_NOME="Secretaria Municipal de Educação"
-VITE_TITULO_SISTEMA="Sistema Integrado de Pedidos e Entrega de Materiais"
-VITE_LOGO_URL=/assets/brand/logo-secretaria-educacao-caninde.png
-VITE_LOGO_COMPACTA_URL=/assets/brand/brasao-caninde.webp
-VITE_LOGO_PLANEJAMENTO_URL=/assets/brand/brasao-caninde.webp
-VITE_LOGO_FALLBACK_URL=/assets/brand/brasao-caninde.webp
+VITE_TITULO_SISTEMA="SUPRIR Educação — Gestão de Pedidos e Distribuição de Materiais"
 VITE_SCHOOL_LOGIN_DOMAIN=escolas.caninde.ce.gov.br
 ```
 
@@ -94,10 +89,25 @@ SUPABASE_SERVICE_ROLE_KEY=SUA_CHAVE_SECRETA
 SCHOOL_LOGIN_DOMAIN=escolas.caninde.ce.gov.br
 ```
 
-A `SUPABASE_SERVICE_ROLE_KEY` deve ser a chave secreta, normalmente `sb_secret_...`, ou a `service_role` legacy. Não use `sb_publishable_...` nessa variável.
+## Execução local
+
+```powershell
+npm.cmd install
+npm.cmd run dev
+```
+
+## Publicação
+
+No Cloudflare Pages:
+
+```txt
+Build command: npm run build
+Build output directory: dist
+```
+
+Antes de publicar em produção, use `docs/CHECKLIST_PUBLICACAO.md`.
 
 
-## Atualização V4.8
+## Indexação no Google
 
-- Relatório de pedidos detalhado por produto, com material, categoria, unidade, quantidade solicitada, autorizada, entregue, saldo e observações.
-- Impressão/PDF e exportação CSV geram os produtos discriminados por pedido.
+A V5.1.11 inclui metadados SEO, dados estruturados, `robots.txt` e `sitemap.xml`. Consulte `docs/SEO_GOOGLE.md` antes da publicação, principalmente se for usado domínio próprio em vez do endereço padrão do Cloudflare Pages.

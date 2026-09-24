@@ -12,6 +12,7 @@ export const state = {
   view: 'dashboard',
   previousView: 'dashboard',
   mobileMenu: false,
+  sidebarCollapsed: localStorage.getItem('suprir_sidebar_collapsed') === '1',
   loading: false,
   toast: null,
   notice: null,

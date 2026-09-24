@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /private/
+Disallow: /supabase/
+
+Sitemap: https://sistema-materiais-caninde.pages.dev/sitemap.xml

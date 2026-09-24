@@ -1,0 +1,14 @@
+<svg width="470" height="112" viewBox="0 0 470 112" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">SUPRIR Educação</title>
+  <desc id="desc">Marca do sistema SUPRIR Educação.</desc>
+  <g transform="translate(4 12)">
+    <rect x="0" y="0" width="88" height="88" rx="23" fill="#FFD000"/>
+    <path d="M61 22H34C26.8 22 21 27.8 21 35C21 42.2 26.8 48 34 48H54C61.2 48 67 53.8 67 61C67 68.2 61.2 74 54 74H27" stroke="#17160F" stroke-width="10" stroke-linecap="round"/>
+    <path d="M58 15L67 22L58 29" stroke="#F04423" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M30 67L21 74L30 81" stroke="#F04423" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g transform="translate(116 24)">
+    <text x="0" y="34" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="37" font-weight="800" letter-spacing="0.7">SUPRIR</text>
+    <text x="2" y="66" fill="#FFD000" font-family="Inter, Arial, sans-serif" font-size="25" font-weight="650" letter-spacing="0.2">Educação</text>
+  </g>
+</svg>

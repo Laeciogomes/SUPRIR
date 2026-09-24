@@ -16,7 +16,7 @@ export function renderProfile() {
         <div class="profile-avatar">${escapeHtml(initials(state.profile.full_name || state.profile.email))}</div>
         <h2>${escapeHtml(state.profile.full_name || 'Usuário')}</h2>
         <p>${escapeHtml(profileLoginLabel(state.profile))}</p>
-        <div class="profile-tags">${state.profile.account_type === 'school' ? '<span class="badge badge-blue">Portal Escola</span>' : '<span class="badge badge-green">Portal SME</span>'}<span class="badge badge-slate">${escapeHtml(PERMISSIONS[state.profile.permission_level] || '')}</span></div>
+        <div class="profile-tags">${state.profile.account_type === 'school' ? '<span class="badge badge-blue">Portal Escola</span>' : '<span class="badge badge-green">Equipe SME</span>'}<span class="badge badge-slate">${escapeHtml(PERMISSIONS[state.profile.permission_level] || '')}</span></div>
         <dl class="profile-facts"><div><dt>Vínculo</dt><dd>${escapeHtml(school?.nome || state.profile.position || institution().departmentName)}</dd></div><div><dt>Situação</dt><dd>Ativo</dd></div><div><dt>Usuário desde</dt><dd>${formatDate(state.profile.created_at)}</dd></div></dl>
       </section>
       <form id="profile-form" class="panel form-section">

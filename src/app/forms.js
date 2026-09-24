@@ -48,15 +48,15 @@ export async function submitLogin(form) {
   if (profileError) throw profileError;
   if (!profile) {
     await supabase.auth.signOut();
-    throw new Error('O perfil deste usuário não foi criado. Execute o SQL da versão 4 no Supabase.');
+    throw new Error('O perfil deste usuário não foi criado. Execute o SQL da versão 5 no Supabase.');
   }
   if (!profile.active) {
     await supabase.auth.signOut();
-    throw new Error('Este acesso está desativado. Procure o administrador da SME.');
+    throw new Error('Este acesso está desativado. Procure o administrador do sistema.');
   }
   if (profile.account_type !== state.loginPortal) {
     await supabase.auth.signOut();
-    const correct = profile.account_type === 'school' ? 'Escola' : 'SME';
+    const correct = profile.account_type === 'school' ? 'Escola' : 'Equipe SME';
     throw new Error(`Este usuário pertence ao portal ${correct}. Selecione o ambiente correto na tela de login.`);
   }
 
@@ -65,13 +65,13 @@ export async function submitLogin(form) {
   state.view = 'dashboard';
   await loadAuthenticatedData(false);
   state.loading = false;
-  setToast('success', `Acesso realizado como ${profile.account_type === 'school' ? 'Escola' : 'SME'}.`);
+  setToast('success', `Acesso realizado como ${profile.account_type === 'school' ? 'Escola' : 'Equipe SME'}.`);
   render();
 }
 
 export async function handleForgotPassword() {
   if (state.loginPortal === 'school') {
-    setToast('warning', 'A escola deve solicitar uma nova senha temporária ao administrador da SME.');
+    setToast('warning', 'A escola deve solicitar uma nova senha temporária ao administrador do sistema.');
     render();
     return;
   }
@@ -194,34 +194,23 @@ export async function submitDispatch(form) {
   })).filter((item) => item.quantity > 0);
   if (!items.length) throw new Error('Informe ao menos uma quantidade para a remessa.');
 
+
   await executeRpc('register_dispatch', {
     p_request_id: request.id,
     p_dispatch_date: String(data.get('dispatchDate') || ''),
     p_document_number: String(data.get('documentNumber') || '').trim() || null,
-    p_delivered_by_name: String(data.get('deliveredByName') || '').trim(),
-    p_delivered_by_department: String(data.get('deliveredByDepartment') || '').trim() || null,
     p_observations: String(data.get('observations') || '').trim() || null,
     p_items: items
-  }, 'Remessa registrada. O pedido está em transporte.');
+  }, 'Remessa registrada. A escola poderá confirmar o recebimento.');
 }
 
-export async function submitReceipt(form) {
-  const data = new FormData(form);
-  await executeRpc('register_delivery_receipt', {
-    p_delivery_id: state.modal.deliveryId,
-    p_receipt_date: String(data.get('receiptDate') || ''),
-    p_received_by_name: String(data.get('receivedByName') || '').trim(),
-    p_received_by_position: String(data.get('receivedByPosition') || '').trim() || null,
-    p_received_by_document: String(data.get('receivedByDocument') || '').trim() || null,
-    p_receipt_notes: String(data.get('receiptNotes') || '').trim() || null
-  }, 'Recebimento registrado com sucesso.');
-}
 
 export async function submitSchoolConfirmation(form) {
   const data = new FormData(form);
   if (!data.get('confirmed')) throw new Error('Marque a confirmação de recebimento.');
   await executeRpc('confirm_delivery_by_school', {
     p_delivery_id: state.modal.deliveryId,
+    p_receipt_date: String(data.get('receiptDate') || ''),
     p_notes: String(data.get('notes') || '').trim() || null
   }, 'Recebimento confirmado pela escola.');
 }
@@ -266,7 +255,7 @@ export async function submitSchool(form) {
 
 export async function deleteSchool(schoolId) {
   const supabase = getSupabase();
-  if (!isAdmin()) throw new Error('Somente administradores da SME podem excluir escolas.');
+  if (!isAdmin()) throw new Error('Somente administradores do sistema podem excluir escolas.');
   const school = state.schools.find((item) => item.id === schoolId);
   if (!school) throw new Error('Escola não encontrada.');
   const usage = schoolUsage(schoolId);
@@ -323,7 +312,7 @@ export async function submitUserCreate(form) {
     position: String(data.get('position') || '').trim(),
     accountType,
     schoolId: accountType === 'school' ? String(data.get('schoolId') || '') : null,
-    permissionLevel: accountType === 'sme' ? String(data.get('permissionLevel') || 'sme_operator') : 'school_user',
+    permissionLevel: accountType === 'sme' ? String(data.get('permissionLevel') || 'sme_authorizer') : 'school_user',
     password: String(data.get('password') || '')
   };
   state.loading = true;
@@ -418,7 +407,7 @@ export async function submitUserEdit(form) {
     p_profile_id: profile.id,
     p_full_name: String(data.get('fullName') || '').trim(),
     p_account_type: accountType,
-    p_permission_level: accountType === 'school' ? 'school_user' : String(data.get('permissionLevel') || 'sme_operator'),
+    p_permission_level: accountType === 'school' ? 'school_user' : String(data.get('permissionLevel') || 'sme_authorizer'),
     p_school_id: accountType === 'school' ? String(data.get('schoolId') || '') || null : null,
     p_active: Boolean(data.get('active')),
     p_position: String(data.get('position') || '').trim() || null,
@@ -518,7 +507,6 @@ export const SUBMIT_HANDLERS = {
   'authorization-form': (form) => submitAuthorization(form),
   'reject-form': (form) => submitRejection(form),
   'dispatch-form': (form) => submitDispatch(form),
-  'receipt-form': (form) => submitReceipt(form),
   'confirm-delivery-form': (form) => submitSchoolConfirmation(form),
   'cancel-request-form': (form) => submitCancellation(form),
   'school-form': (form) => submitSchool(form),

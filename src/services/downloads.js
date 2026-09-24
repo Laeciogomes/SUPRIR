@@ -123,8 +123,8 @@ export function exportCurrentReport() {
     materials.forEach((item) => rows.push([item.material, item.category, item.unit, item.requests.size, item.schools.size, formatNumber(item.requested), formatNumber(item.approved), formatNumber(item.delivered)]));
     downloadCsv(`relatorio-materiais-${stamp}.csv`, rows);
   } else {
-    const rows = [['Remessa', 'Pedido', 'Escola', 'Documento', 'Data da saída', 'Data do recebimento', 'Autorizado por', 'Entregador', 'Recebedor', 'Registro da saída', 'Registro do recebimento', 'Confirmação da escola']];
-    deliveries.forEach((delivery) => rows.push([delivery.delivery_number, delivery.request.protocol_number, delivery.request.schools?.nome || deps.getSchoolName(delivery.request.school_id), delivery.document_number, formatDate(delivery.dispatch_date || delivery.delivery_date), delivery.status === 'delivered' ? formatDate(delivery.receipt_date || delivery.delivery_date) : '', delivery.request.authorized_by_name, delivery.delivered_by_name, delivery.received_by_name, delivery.registered_by_name, delivery.receipt_registered_by_name, delivery.school_confirmed_at ? formatDateTime(delivery.school_confirmed_at) : 'Pendente']));
+    const rows = [['Remessa', 'Pedido', 'Escola', 'Documento', 'Data da saída', 'Data do recebimento', 'Autorizado por', 'Expedido por', 'Confirmado pela escola', 'Data da confirmação']];
+    deliveries.forEach((delivery) => rows.push([delivery.delivery_number, delivery.request.protocol_number, delivery.request.schools?.nome || deps.getSchoolName(delivery.request.school_id), delivery.document_number, formatDate(delivery.dispatch_date || delivery.delivery_date), delivery.status === 'delivered' ? formatDate(delivery.receipt_date || delivery.delivery_date) : '', delivery.request.authorized_by_name, delivery.registered_by_name, delivery.school_confirmed_by_name || delivery.received_by_name, delivery.school_confirmed_at ? formatDateTime(delivery.school_confirmed_at) : 'Pendente']));
     downloadCsv(`relatorio-entregas-${stamp}.csv`, rows);
   }
   deps.setToast('success', 'Arquivo CSV gerado.');

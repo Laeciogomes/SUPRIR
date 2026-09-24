@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { json } from './http.js';
 
-export async function requireSmeAdmin(context, forbiddenMessage = 'Somente administradores da SME podem executar esta operação.') {
+export async function requireSmeAdmin(context, forbiddenMessage = 'Somente administradores do sistema podem executar esta operação.') {
   const supabaseUrl = context.env.SUPABASE_URL || context.env.VITE_SUPABASE_URL;
   const serviceRoleKey = context.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -32,7 +32,7 @@ export async function requireSmeAdmin(context, forbiddenMessage = 'Somente admin
     .eq('id', userData.user.id)
     .maybeSingle();
 
-  if (profileError || !profile || !profile.active || profile.account_type !== 'sme' || profile.permission_level !== 'sme_admin') {
+  if (profileError || !profile || !profile.active || profile.account_type !== 'sme' || !['system_admin', 'sme_admin'].includes(profile.permission_level)) {
     return { errorResponse: json({ error: forbiddenMessage }, 403) };
   }
 
