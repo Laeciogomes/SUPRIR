@@ -1,10 +1,10 @@
-# SUPRIR Educação — Canindé V5.1.11
+# SUPRIR Educação — Canindé V5.1.13
 
 **Gestão de pedidos, autorização, separação, expedição e recebimento de materiais da rede municipal de ensino.**
 
 O SUPRIR Educação organiza o fluxo entre escolas, Secretaria Municipal de Educação e almoxarifado, com responsabilidades separadas, auditoria e regras de segurança no Supabase.
 
-## Fluxo da V5.1.11
+## Fluxo da V5.1.13
 
 1. **Escola** cria e envia o pedido.
 2. **SME — Análise e autorização** recebe, analisa, autoriza ou rejeita.
@@ -12,7 +12,7 @@ O SUPRIR Educação organiza o fluxo entre escolas, Secretaria Municipal de Educ
 4. **Escola** confirma o recebimento da remessa no próprio portal.
 5. **Administrador do sistema** acompanha e administra toda a operação.
 
-A V5.1.11 remove o antigo perfil de entregador. Não existe mais usuário `delivery_agent`, atribuição de remessa a entregador ou confirmação intermediária por equipe de entrega.
+A V5.1.13 remove o antigo perfil de entregador. Não existe mais usuário `delivery_agent`, atribuição de remessa a entregador ou confirmação intermediária por equipe de entrega.
 
 ## Perfis
 
@@ -101,13 +101,24 @@ npm.cmd run dev
 No Cloudflare Pages:
 
 ```txt
+Projeto: suprir
 Build command: npm run build
 Build output directory: dist
+Domínio oficial: https://suprir.caninde.codeedu.dev
 ```
+
+Publicação manual:
+
+```powershell
+npm run build
+npx wrangler pages deploy dist --project-name suprir
+```
+
+Repositório oficial: `https://github.com/Laeciogomes/SUPRIR`.
 
 Antes de publicar em produção, use `docs/CHECKLIST_PUBLICACAO.md`.
 
 
 ## Indexação no Google
 
-A V5.1.11 inclui metadados SEO, dados estruturados, `robots.txt` e `sitemap.xml`. Consulte `docs/SEO_GOOGLE.md` antes da publicação, principalmente se for usado domínio próprio em vez do endereço padrão do Cloudflare Pages.
+A V5.1.13 inclui metadados SEO, dados estruturados, `robots.txt` e `sitemap.xml`. Consulte `docs/SEO_GOOGLE.md` antes da publicação, principalmente se for usado domínio próprio em vez do endereço padrão do Cloudflare Pages.

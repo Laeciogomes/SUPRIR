@@ -1,3 +1,4 @@
+import { CONFIG } from '../config/app-config.js';
 import {
   buildSchoolLoginEmail,
   normalizeSchoolLogin,
@@ -89,7 +90,9 @@ export async function submitForgotPassword(form) {
   if (!email) throw new Error('Informe o e-mail do seu acesso.');
   state.loading = true;
   render();
-  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+  const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+  const redirectTo = isLocal ? window.location.origin : CONFIG.publicUrl;
+  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
   state.loading = false;
   state.modal = null;
   if (error) throw error;

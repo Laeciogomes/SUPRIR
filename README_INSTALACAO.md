@@ -1,4 +1,4 @@
-# Manual de instalação — SUPRIR Educação V5.1.11
+# Manual de instalação — SUPRIR Educação V5.1.13
 
 ## 1. Banco de dados
 
@@ -29,7 +29,7 @@ supabase/migrations/009_perfis_operacionais_v5.sql
 supabase/migrations/010_remover_entregador_confirmacao_escola_v5_1.sql
 ```
 
-A V5.1.11 mantém apenas quatro perfis: `school_user`, `sme_authorizer`, `warehouse_operator` e `system_admin`.
+A V5.1.13 mantém apenas quatro perfis: `school_user`, `sme_authorizer`, `warehouse_operator` e `system_admin`.
 
 Se uma base V5.0 possuir contas `delivery_agent`, a migração as converte para `warehouse_operator` **desativado**, evitando concessão automática de novas permissões. O administrador pode revisar e reativar apenas as contas que realmente devam operar no almoxarifado.
 
@@ -70,6 +70,7 @@ VITE_SUBTITULO_SISTEMA="Gestão de pedidos e distribuição de materiais"
 VITE_MUNICIPIO_NOME="Prefeitura Municipal de Canindé"
 VITE_SECRETARIA_NOME="Secretaria Municipal de Educação"
 VITE_SCHOOL_LOGIN_DOMAIN=escolas.caninde.ce.gov.br
+VITE_PUBLIC_URL=https://suprir.caninde.codeedu.dev
 ```
 
 Functions:
@@ -80,14 +81,28 @@ SUPABASE_SERVICE_ROLE_KEY=SUA_CHAVE_SECRETA_DO_SUPABASE
 SCHOOL_LOGIN_DOMAIN=escolas.caninde.ce.gov.br
 ```
 
-## 5. Teste local
+## 5. Domínio oficial e Supabase Auth
+
+Domínio oficial de produção:
+
+`https://suprir.caninde.codeedu.dev`
+
+No Supabase, em **Authentication > URL Configuration**, use:
+
+- Site URL: `https://suprir.caninde.codeedu.dev`
+- Redirect URL: `https://suprir.caninde.codeedu.dev/**`
+- Desenvolvimento local: `http://localhost:8788/**`
+
+O frontend usa `VITE_PUBLIC_URL` opcionalmente; se não for informado, o padrão já é `https://suprir.caninde.codeedu.dev`.
+
+## 6. Teste local
 
 ```powershell
 npm.cmd install
 npm.cmd run dev
 ```
 
-## 6. Teste do fluxo
+## 7. Teste do fluxo
 
 Use contas diferentes e valide:
 
@@ -99,11 +114,20 @@ Use contas diferentes e valide:
 6. O sistema registra o usuário da escola responsável e recalcula automaticamente a situação do pedido.
 7. Administrador confere o histórico e os relatórios.
 
-## 7. Cloudflare Pages
+## 8. Cloudflare Pages
 
 ```txt
+Projeto Cloudflare Pages: suprir
 Build command: npm run build
 Build output directory: dist
+Domínio oficial: https://suprir.caninde.codeedu.dev
 ```
 
-O cache do PWA da V5.1.11 usa uma nova chave. Se um aparelho insistir em exibir a versão anterior, remova/reinstale o app ou limpe os dados do site.
+Para publicar manualmente:
+
+```powershell
+npm run build
+npx wrangler pages deploy dist --project-name suprir
+```
+
+O cache do PWA da V5.1.13 usa uma nova chave. Se um aparelho insistir em exibir a versão anterior, remova/reinstale o app ou limpe os dados do site.

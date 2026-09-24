@@ -10,5 +10,6 @@ export const CONFIG = Object.freeze({
   compactLogoUrl: import.meta.env.VITE_LOGO_COMPACTA_URL || '/assets/brand/brasao-caninde.webp',
   planningLogoUrl: import.meta.env.VITE_LOGO_PLANEJAMENTO_URL || '/assets/brand/brasao-caninde.webp',
   logoFallbackUrl: import.meta.env.VITE_LOGO_FALLBACK_URL || '/assets/brand/brasao-caninde.webp',
-  schoolLoginDomain: import.meta.env.VITE_SCHOOL_LOGIN_DOMAIN || 'escolas.caninde.ce.gov.br'
+  schoolLoginDomain: import.meta.env.VITE_SCHOOL_LOGIN_DOMAIN || 'escolas.caninde.ce.gov.br',
+  publicUrl: import.meta.env.VITE_PUBLIC_URL || 'https://suprir.caninde.codeedu.dev'
 });

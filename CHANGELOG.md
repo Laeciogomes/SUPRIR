@@ -1,3 +1,26 @@
+# V5.1.13 — Renomeação oficial Cloudflare/GitHub
+
+## 5.1.13
+
+- Projeto Cloudflare Pages oficial passa a ser `suprir`.
+- Repositório GitHub oficial passa a ser `Laeciogomes/SUPRIR`.
+- Mantém `https://suprir.caninde.codeedu.dev` como domínio canônico oficial.
+- Redireciona `suprir.pages.dev` para o domínio oficial.
+- Mantém o redirecionamento legado de `sistema-materiais-caninde.pages.dev`.
+- Atualiza documentação e cache do PWA.
+- Não altera banco, perfis, permissões ou fluxo operacional.
+
+# V5.1.12 — Domínio oficial e SEO
+
+## 5.1.12
+
+- Define `https://suprir.caninde.codeedu.dev` como URL pública oficial.
+- Atualiza canonical, Open Graph, Twitter Cards, Schema.org, robots.txt e sitemap.xml.
+- Adiciona redirecionamento 301 do alias `sistema-materiais-caninde.pages.dev` para o domínio oficial.
+- Recuperação de senha passa a usar o domínio oficial em produção e mantém localhost no desenvolvimento.
+- Atualiza a documentação de Supabase Auth e Google Search Console.
+- Não altera banco, perfis, permissões nem fluxo operacional.
+
 # V5.1.11 — Melhor aproveitamento do painel institucional do login
 
 ## 5.1.11

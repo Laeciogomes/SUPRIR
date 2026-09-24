@@ -16,22 +16,22 @@
     <meta name="googlebot" content="index,follow" />
     <meta name="author" content="Secretaria Municipal de Educação de Canindé" />
     <meta name="application-name" content="SUPRIR Educação" />
-    <link rel="canonical" href="https://sistema-materiais-caninde.pages.dev/" />
-    <link rel="sitemap" type="application/xml" href="https://sistema-materiais-caninde.pages.dev/sitemap.xml" />
+    <link rel="canonical" href="https://suprir.caninde.codeedu.dev/" />
+    <link rel="sitemap" type="application/xml" href="https://suprir.caninde.codeedu.dev/sitemap.xml" />
 
     <meta property="og:locale" content="pt_BR" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="SUPRIR Educação" />
     <meta property="og:title" content="SUPRIR Educação | Gestão de Materiais Escolares — Canindé" />
     <meta property="og:description" content="Gestão integrada de pedidos e distribuição de materiais da rede municipal de ensino de Canindé." />
-    <meta property="og:url" content="https://sistema-materiais-caninde.pages.dev/" />
-    <meta property="og:image" content="/assets/brand/logo-secretaria-educacao-caninde.png" />
+    <meta property="og:url" content="https://suprir.caninde.codeedu.dev/" />
+    <meta property="og:image" content="https://suprir.caninde.codeedu.dev/assets/brand/logo-secretaria-educacao-caninde.png" />
     <meta property="og:image:alt" content="Prefeitura Municipal de Canindé e Secretaria Municipal de Educação" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="SUPRIR Educação | Canindé" />
     <meta name="twitter:description" content="Gestão integrada de pedidos e materiais escolares da rede municipal de ensino de Canindé." />
-    <meta name="twitter:image" content="/assets/brand/logo-secretaria-educacao-caninde.png" />
+    <meta name="twitter:image" content="https://suprir.caninde.codeedu.dev/assets/brand/logo-secretaria-educacao-caninde.png" />
 
     <link rel="icon" type="image/png" href="/assets/brand/favicon-caninde.png" />
     <link rel="apple-touch-icon" href="/assets/pwa/apple-touch-icon.png" />
@@ -46,6 +46,7 @@
         "applicationCategory": "BusinessApplication",
         "operatingSystem": "Web",
         "inLanguage": "pt-BR",
+        "url": "https://suprir.caninde.codeedu.dev/",
         "description": "Sistema para gestão de pedidos, autorização, separação, expedição e confirmação de recebimento de materiais escolares da rede municipal de ensino de Canindé.",
         "publisher": {
           "@type": "GovernmentOrganization",
@@ -53,20 +54,7 @@
         }
       }
     </script>
-    <script>
-      (() => {
-        const absoluteHome = new URL('/', window.location.origin).href;
-        const canonical = document.querySelector('link[rel="canonical"]');
-        const ogUrl = document.querySelector('meta[property="og:url"]');
-        const ogImage = document.querySelector('meta[property="og:image"]');
-        const twitterImage = document.querySelector('meta[name="twitter:image"]');
-        if (canonical) canonical.href = absoluteHome;
-        if (ogUrl) ogUrl.content = absoluteHome;
-        const absoluteLogo = new URL('/assets/brand/logo-secretaria-educacao-caninde.png', window.location.origin).href;
-        if (ogImage) ogImage.content = absoluteLogo;
-        if (twitterImage) twitterImage.content = absoluteLogo;
-      })();
-    </script>
+
   </head>
   <body>
     <div id="app"></div>
