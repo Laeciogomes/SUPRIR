@@ -69,9 +69,6 @@ export function renderLogin() {
       <section class="login-brand-panel">
         <div class="login-brand-top">
           ${imageTag(inst.logoUrl, 'Prefeitura Municipal de Canindé e Secretaria de Educação', 'brand-logo-horizontal', CONFIG.logoFallbackUrl)}
-          <span class="suprir-brand-badge" title="SUPRIR Educação" aria-label="SUPRIR Educação">
-            <img src="/assets/brand/logo-suprir-educacao.svg" alt="SUPRIR Educação" />
-          </span>
         </div>
         ${imageTag(inst.planningLogoUrl, 'Brasão de Canindé', 'login-brand-seal', inst.compactLogoUrl)}
 

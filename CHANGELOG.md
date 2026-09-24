@@ -1,3 +1,11 @@
+# V5.1.17 — remoção do símbolo extra no topo do login
+
+## 5.1.17
+
+- Removido o símbolo do SUPRIR do lado direito da faixa superior da tela de login.
+- Mantida apenas a marca da Prefeitura Municipal de Canindé / Secretaria de Educação no topo.
+- Mantida a logo do SUPRIR acima do card “Acesso ao sistema”.
+
 # V5.1.16 — atualização das marcas e refinamento da tela de acesso
 
 ## 5.1.16
