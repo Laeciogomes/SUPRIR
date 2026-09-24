@@ -671,3 +671,54 @@
   .login-card .button.large { font-size: clamp(12px, 1.8dvh, 14px); }
   .login-help { font-size: clamp(8px, 1.2dvh, 9.5px); }
 }
+
+
+/* V5.1.16 — ajustes de marca no login e menu lateral */
+.suprir-brand-badge {
+  position: absolute;
+  z-index: 3;
+  right: clamp(10px, 1.5vw, 18px);
+  bottom: clamp(8px, 1.1vw, 14px);
+  display: grid;
+  place-items: center;
+  width: clamp(92px, 9.2vw, 136px);
+  min-height: clamp(36px, 3.8vw, 48px);
+  padding: clamp(5px, .55vw, 8px) clamp(8px, .9vw, 12px);
+  border-radius: 14px;
+  background: rgba(255,255,255,.96);
+  border: 1px solid rgba(255,208,0,.34);
+  box-shadow: 0 10px 24px rgba(15, 13, 6, .18);
+}
+.suprir-brand-badge img { width: 100%; height: auto; display: block; }
+.login-system-brand {
+  width: min(470px, 100%);
+  display: grid;
+  place-items: center;
+  margin: 0 auto clamp(12px, 2.2dvh, 18px);
+}
+.login-system-brand-logo {
+  width: min(260px, 78%);
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 8px 14px rgba(61, 48, 8, .08));
+}
+.sidebar-brand-surface {
+  grid-column: 1 / -1;
+  width: 100%;
+  background: rgba(255,255,255,.98);
+  border: 1px solid rgba(255,208,0,.22);
+  border-radius: 18px;
+  padding: clamp(8px, 1dvh, 11px) clamp(10px, 1vw, 14px);
+  box-shadow: 0 12px 24px rgba(0,0,0,.14);
+}
+.sidebar-brand .sidebar-brand-full {
+  width: 100%;
+  max-height: clamp(46px, 8.6dvh, 64px);
+  object-fit: contain;
+  object-position: left center;
+}
+@media (max-width: 840px) {
+  .login-system-brand { width: min(390px, 100%); margin-bottom: 10px; }
+  .login-system-brand-logo { width: min(220px, 72%); }
+  .suprir-brand-badge { width: clamp(84px, 22vw, 118px); min-height: 34px; }
+}

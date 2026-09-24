@@ -6,7 +6,7 @@ export const CONFIG = Object.freeze({
   municipalityName: import.meta.env.VITE_MUNICIPIO_NOME || 'Prefeitura Municipal de Canindé',
   departmentName: import.meta.env.VITE_SECRETARIA_NOME || 'Secretaria Municipal de Educação',
   reportTitle: import.meta.env.VITE_TITULO_SISTEMA || 'SUPRIR Educação — Gestão de Pedidos e Distribuição de Materiais',
-  logoUrl: import.meta.env.VITE_LOGO_URL || '/assets/brand/logo-secretaria-educacao-caninde.png',
+  logoUrl: import.meta.env.VITE_LOGO_URL || '/assets/brand/logo-secretaria-educacao-caninde-atual.png',
   compactLogoUrl: import.meta.env.VITE_LOGO_COMPACTA_URL || '/assets/brand/brasao-caninde.webp',
   planningLogoUrl: import.meta.env.VITE_LOGO_PLANEJAMENTO_URL || '/assets/brand/brasao-caninde.webp',
   logoFallbackUrl: import.meta.env.VITE_LOGO_FALLBACK_URL || '/assets/brand/brasao-caninde.webp',
