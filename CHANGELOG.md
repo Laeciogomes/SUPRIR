@@ -1,3 +1,14 @@
+# V5.1.15 — Favicon oficial do SUPRIR Educação
+
+## 5.1.15
+
+- Cria uma identidade de favicon própria do SUPRIR Educação, otimizada para uso em navegador e mecanismos de busca.
+- Adiciona `favicon.ico` e PNGs 48x48, 96x96, 192x192 e 512x512.
+- Atualiza `apple-touch-icon` e ícones do PWA para a nova identidade.
+- Atualiza o `<head>` da página para declarar explicitamente os favicons.
+- Atualiza o cache do service worker para `5.1.15`.
+- Mantém domínio oficial, banco, perfis, permissões e fluxo operacional sem alterações.
+
 # V5.1.14 — Correção do alias técnico do Cloudflare Pages
 
 ## 5.1.14

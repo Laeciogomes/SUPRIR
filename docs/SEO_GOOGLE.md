@@ -1,6 +1,6 @@
 # SEO e indexação no Google — SUPRIR Educação
 
-A V5.1.14 está preparada para o domínio oficial:
+A V5.1.15 está preparada para o domínio oficial:
 
 `https://suprir.caninde.codeedu.dev/`
 
@@ -44,3 +44,10 @@ As áreas autenticadas não devem ser indexadas; o conteúdo público indexável
 - Repositório GitHub: `Laeciogomes/SUPRIR`
 - Domínio oficial: `https://suprir.caninde.codeedu.dev/`
 - Alias técnico Pages (imutável): `https://sistema-materiais-caninde.pages.dev/` (redirecionado para o domínio oficial)
+
+
+## Favicon do Google
+
+A V5.1.15 inclui um favicon próprio do SUPRIR Educação em `/favicon.ico`, `/favicon-48x48.png`, `/favicon-96x96.png` e `/favicon-192x192.png`. Os ícones do PWA e o `apple-touch-icon` usam a mesma identidade visual.
+
+Após publicar a versão, solicite novamente a inspeção/indexação da página inicial no Google Search Console. A troca do favicon nos resultados de pesquisa depende de novo rastreamento pelo Google e pode não ser imediata.
