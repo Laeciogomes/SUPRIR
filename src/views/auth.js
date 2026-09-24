@@ -94,7 +94,7 @@ export function renderLogin() {
           <div><strong>Prefeitura Municipal de Canindé</strong><span>${escapeHtml(inst.departmentName)}</span></div>
         </div>
         <div class="login-system-brand">
-          <img src="/assets/brand/logo-suprir-educacao.svg" alt="SUPRIR Educação" class="login-system-brand-logo" />
+          <img src="/favicon-192x192.png" alt="SUPRIR Educação" class="login-system-brand-logo" />
         </div>
         <div class="login-card">
           <div class="login-card-heading">

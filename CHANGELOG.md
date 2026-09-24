@@ -1,3 +1,11 @@
+# V5.1.18 — padronização da marca do SUPRIR com o favicon
+
+## 5.1.18
+
+- Substituída a logo textual do SUPRIR exibida acima do card de acesso pelo mesmo ícone do favicon.
+- Mantida a faixa superior apenas com a marca da Prefeitura Municipal de Canindé / Secretaria de Educação.
+- Ajustado o tamanho do símbolo para ficar proporcional e limpo na tela de login.
+
 # V5.1.17 — remoção do símbolo extra no topo do login
 
 ## 5.1.17
