@@ -5,6 +5,8 @@ import { openConfirm, setToast } from './notices.js';
 import {
   getSupabase,
   loadAuthenticatedData,
+  startRealtimeSync,
+  stopRealtimeSync,
   refreshData,
   executeRpc
 } from '../services/supabase.js';
@@ -39,12 +41,14 @@ export const ACTIONS = {
   'retry-auth': async () => {
     state.authError = null;
     await loadAuthenticatedData(true);
+    startRealtimeSync();
     render();
   },
   'logout': async () => {
     const supabase = getSupabase();
     state.loading = true;
     render();
+    stopRealtimeSync();
     await supabase.auth.signOut();
     state.loading = false;
     state.recoveryMode = false;

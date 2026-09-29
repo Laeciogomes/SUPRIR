@@ -65,6 +65,7 @@ export function renderMaterials() {
     const stock = Number(material.stock_quantity || 0);
     return minimum > 0 && stock > 0 && stock <= minimum;
   });
+  const totalUnits = active.reduce((sum, material) => sum + Number(material.stock_quantity || 0), 0);
   const movements = state.inventoryMovements || [];
   const canManage = canManageMaterials();
   const search = normalizeSearch(state.filters.materialSearch);
@@ -75,10 +76,10 @@ export function renderMaterials() {
   return `
     <div class="stack-lg stock-page">
       <section class="stats-grid four">
-        ${statCard('box', 'Materiais ativos', String(active.length), 'itens cadastrados no catálogo', 'primary')}
-        ${statCard('check', 'Com estoque', String(withStock.length), 'visíveis para solicitação', 'green')}
-        ${statCard('alert', 'Sem estoque', String(outOfStock.length), 'ocultos para as escolas', 'slate')}
+        ${statCard('check', 'Materiais disponíveis', String(withStock.length), 'itens com saldo positivo', 'green')}
+        ${statCard('box', 'Unidades em estoque', formatNumber(totalUnits), 'saldo físico total disponível', 'primary')}
         ${statCard('clock', 'Estoque baixo', String(lowStock.length), 'no mínimo ou abaixo dele', 'amber')}
+        ${statCard('alert', 'Sem estoque', String(outOfStock.length), `${active.length} materiais ativos no catálogo`, 'slate')}
       </section>
 
       <section class="panel filter-panel">

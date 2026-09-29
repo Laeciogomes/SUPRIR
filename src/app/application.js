@@ -4,7 +4,9 @@ import { isSchool } from './helpers.js';
 import {
   initSupabase,
   createSupabaseClient,
-  loadAuthenticatedData
+  loadAuthenticatedData,
+  startRealtimeSync,
+  stopRealtimeSync
 } from '../services/supabase.js';
 import { initPwa, setupPwaFeatures } from './pwa.js';
 import { initPrint } from './print.js';
@@ -58,7 +60,10 @@ async function initialize() {
   if (error) setToast('error', friendlyError(error));
   state.session = data?.session || null;
 
-  if (state.session) await loadAuthenticatedData(false);
+  if (state.session) {
+    await loadAuthenticatedData(false);
+    startRealtimeSync();
+  }
   render();
 
   supabase.auth.onAuthStateChange(async (event, session) => {
@@ -66,6 +71,7 @@ async function initialize() {
     if (event === 'PASSWORD_RECOVERY') state.recoveryMode = true;
 
     if (!session) {
+      stopRealtimeSync();
       resetSecureState();
       render();
       return;
@@ -73,6 +79,7 @@ async function initialize() {
 
     if (!state.profile || state.profile.id !== session.user.id) {
       await loadAuthenticatedData(false);
+      startRealtimeSync();
       render();
     }
   });

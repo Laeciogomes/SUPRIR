@@ -2,7 +2,7 @@
 // application.js sem alteração do HTML gerado.
 import { STATUS } from '../constants/workflow.js';
 import { icon } from '../ui/icons.js';
-import { escapeHtml, formatDate, todayISO } from '../utils/formatters.js';
+import { escapeHtml, formatDate, formatNumber, todayISO } from '../utils/formatters.js';
 import { state } from '../app/state.js';
 import { internalRoleKey, getAllDeliveries } from '../app/helpers.js';
 import { statCard } from './shell.js';
@@ -90,6 +90,7 @@ export function renderSmeDashboard() {
     const approvedMonth = requests.filter((r) => r.status === 'approved' && String(r.authorized_at || '').slice(0, 7) === todayISO().slice(0, 7)).length;
     const rejectedMonth = requests.filter((r) => r.status === 'rejected' && String(r.rejected_at || '').slice(0, 7) === todayISO().slice(0, 7)).length;
     const stockedMaterials = state.materials.filter((m) => m.ativo && Number(m.stock_quantity || 0) > 0).length;
+    const totalStockUnits = state.materials.filter((m) => m.ativo).reduce((sum, m) => sum + Number(m.stock_quantity || 0), 0);
     const queue = requests.filter((r) => ['submitted', 'under_review'].includes(r.status)).slice(0, 10);
     return `
       <div class="page-grid">
@@ -105,7 +106,7 @@ export function renderSmeDashboard() {
         <section class="stats-grid five">
           ${statCard('mail', 'A receber', String(submitted.length), 'pedidos enviados pelas escolas', 'blue')}
           ${statCard('search', 'Em análise', String(review.length), 'aguardando decisão', 'amber')}
-          ${statCard('box', 'Itens com estoque', String(stockedMaterials), 'materiais disponíveis agora', 'violet')}
+          ${statCard('box', 'Estoque disponível', formatNumber(totalStockUnits), `${stockedMaterials} materiais com saldo`, 'violet')}
           ${statCard('shield', 'Autorizados no mês', String(approvedMonth), 'liberados ao almoxarifado', 'green')}
           ${statCard('x', 'Rejeitados no mês', String(rejectedMonth), 'com justificativa registrada', 'slate')}
         </section>
@@ -122,6 +123,7 @@ export function renderSmeDashboard() {
     const partial = requests.filter((r) => r.status === 'partially_delivered');
     const inTransit = deliveries.filter((d) => d.status === 'dispatched');
     const stockedMaterials = state.materials.filter((m) => m.ativo && Number(m.stock_quantity || 0) > 0).length;
+    const totalStockUnits = state.materials.filter((m) => m.ativo).reduce((sum, m) => sum + Number(m.stock_quantity || 0), 0);
     const queue = requests.filter((r) => ['approved', 'preparing', 'partially_delivered'].includes(r.status)).slice(0, 10);
     return `
       <div class="page-grid">
@@ -135,7 +137,7 @@ export function renderSmeDashboard() {
           <div class="banner-kpis"><div><strong>${approved.length + preparing.length}</strong><span>para preparar</span></div><div><strong>${inTransit.length}</strong><span>em transporte</span></div></div>
         </section>
         <section class="stats-grid five">
-          ${statCard('box', 'Itens com estoque', String(stockedMaterials), 'materiais disponíveis agora', 'blue')}
+          ${statCard('box', 'Estoque disponível', formatNumber(totalStockUnits), `${stockedMaterials} materiais com saldo`, 'blue')}
           ${statCard('shield', 'Autorizados', String(approved.length), 'aguardando separação', 'green')}
           ${statCard('archive', 'Em separação', String(preparing.length), 'em preparação física', 'violet')}
           ${statCard('truck', 'Em transporte', String(inTransit.length), 'remessas já expedidas', 'cyan')}

@@ -12,6 +12,7 @@ import { openConfirm, setToast } from './notices.js';
 import {
   getSupabase,
   loadAuthenticatedData,
+  startRealtimeSync,
   refreshData,
   loadRequestEvents,
   executeRpc
@@ -65,6 +66,7 @@ export async function submitLogin(form) {
   state.profile = profile;
   state.view = 'dashboard';
   await loadAuthenticatedData(false);
+  startRealtimeSync();
   state.loading = false;
   setToast('success', `Acesso realizado como ${profile.account_type === 'school' ? 'Escola' : 'Equipe SME'}.`);
   render();

@@ -1,3 +1,16 @@
+# V5.3.0 — atualização automática em tempo real
+
+## 5.3.0
+
+- Integra Supabase Realtime ao fluxo operacional.
+- Pedido enviado pela escola passa a aparecer automaticamente para a SME.
+- Autorização/rejeição da SME atualiza automaticamente a escola e a fila do almoxarifado.
+- Expedição e confirmação de recebimento atualizam todos os portais sem F5.
+- Alterações de estoque são sincronizadas automaticamente; há fallback silencioso a cada 60 segundos.
+- Tela de Estoque destaca materiais disponíveis, total de unidades, estoque baixo e itens sem saldo.
+- Adiciona migração `012_realtime_v5_3.sql` e validação específica.
+- Não altera saldos, usuários ou permissões existentes.
+
 # V5.2.1 — pesquisa e paginação em Usuários e Materiais
 
 ## 5.2.1

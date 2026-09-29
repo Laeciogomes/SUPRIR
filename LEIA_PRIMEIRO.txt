@@ -1,26 +1,29 @@
-SUPRIR EDUCAÇÃO — CANINDÉ V5.1.5
+SUPRIR EDUCAÇÃO — CANINDÉ V5.3.0
 
 FLUXO ATUAL
 - Escola: solicita, acompanha e confirma o recebimento.
 - SME — Análise e autorização: recebe, analisa, autoriza ou rejeita.
-- Almoxarifado — Separação e expedição: separa e registra a remessa.
+- Almoxarifado — Separação e expedição: controla estoque, separa e registra a remessa.
 - Administrador do sistema: gerencia toda a operação.
 
-NÃO EXISTE MAIS PERFIL DE ENTREGADOR.
-A escola é quem confirma o recebimento no sistema.
+ATUALIZAÇÃO AUTOMÁTICA
+A V5.3.0 usa Supabase Realtime. Pedidos, autorizações, expedições, confirmações e alterações de estoque passam a aparecer automaticamente nos demais portais, sem F5.
+
+ATUALIZAÇÃO DE V5.2.x
+Execute:
+  supabase/migrations/012_realtime_v5_3.sql
+
+Depois valide:
+  supabase/VALIDACAO_REALTIME_V5_3.sql
+
+ATUALIZAÇÃO DE V5.1.x
+Execute nesta ordem:
+  1) supabase/migrations/011_estoque_v5_2.sql
+  2) supabase/migrations/012_realtime_v5_3.sql
 
 INSTALAÇÃO NOVA
 Execute:
-  supabase/BANCO_COMPLETO_V5_1.sql
-
-ATUALIZAÇÃO DE V5.0
-Execute:
-  supabase/migrations/010_remover_entregador_confirmacao_escola_v5_1.sql
-
-ATUALIZAÇÃO DE V4.8
-Execute nesta ordem:
-  1) supabase/migrations/009_perfis_operacionais_v5.sql
-  2) supabase/migrations/010_remover_entregador_confirmacao_escola_v5_1.sql
+  supabase/BANCO_COMPLETO_V5_3.sql
 
 Faça backup do Supabase antes de executar qualquer migração.
-Depois atualize o projeto e publique a V5.1.5.
+A migração 012 não altera saldos nem pedidos; apenas habilita as tabelas operacionais no Realtime.

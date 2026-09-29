@@ -10,6 +10,124 @@ import { state, render } from '../app/state.js';
 
 let supabase = null;
 
+
+// Sincronização em tempo real entre Escola, SME e Almoxarifado.
+// Os eventos do Realtime apenas sinalizam que houve alteração; em seguida o
+// cliente refaz as consultas já protegidas por RLS. Isso mantém uma única
+// fonte de verdade e evita replicar regras de permissão no navegador.
+let realtimeChannel = null;
+let realtimeRefreshTimer = null;
+let realtimeFallbackTimer = null;
+let realtimeRefreshInFlight = false;
+let realtimeRefreshQueued = false;
+let visibilityListenerRegistered = false;
+
+const REALTIME_TABLES = [
+  'requests',
+  'request_items',
+  'deliveries',
+  'delivery_items',
+  'materials',
+  'inventory_movements',
+  'request_events'
+];
+
+function userIsEditing() {
+  if (typeof document === 'undefined') return false;
+  const tag = document.activeElement?.tagName;
+  return Boolean(state.modal || state.draft || ['INPUT', 'TEXTAREA', 'SELECT'].includes(tag));
+}
+
+function scheduleRealtimeRefresh(delay = 260) {
+  if (!state.session) return;
+  window.clearTimeout(realtimeRefreshTimer);
+  realtimeRefreshTimer = window.setTimeout(() => runRealtimeRefresh(), delay);
+}
+
+async function runRealtimeRefresh() {
+  if (!state.session) return;
+
+  if (state.loading) {
+    scheduleRealtimeRefresh(500);
+    return;
+  }
+
+  if (realtimeRefreshInFlight) {
+    realtimeRefreshQueued = true;
+    return;
+  }
+
+  realtimeRefreshInFlight = true;
+  try {
+    const selectedRequestId = state.selectedRequestId;
+    await loadAuthenticatedData(false);
+
+    if (selectedRequestId && state.view === 'requestDetail') {
+      delete state.events[selectedRequestId];
+      await loadRequestEvents(selectedRequestId);
+    }
+
+    // Não interrompe quem estiver digitando ou com um formulário/modal aberto.
+    // O estado já foi sincronizado e será exibido no próximo render natural.
+    if (!userIsEditing()) render();
+  } catch (error) {
+    console.warn('SUPRIR Realtime: não foi possível sincronizar os dados.', error);
+  } finally {
+    realtimeRefreshInFlight = false;
+    if (realtimeRefreshQueued) {
+      realtimeRefreshQueued = false;
+      scheduleRealtimeRefresh(180);
+    }
+  }
+}
+
+export function stopRealtimeSync() {
+  window.clearTimeout(realtimeRefreshTimer);
+  window.clearInterval(realtimeFallbackTimer);
+  realtimeRefreshTimer = null;
+  realtimeFallbackTimer = null;
+  realtimeRefreshQueued = false;
+
+  if (realtimeChannel && supabase) {
+    supabase.removeChannel(realtimeChannel);
+  }
+  realtimeChannel = null;
+}
+
+export function startRealtimeSync() {
+  if (!supabase || !state.session || !state.profile) return;
+
+  stopRealtimeSync();
+
+  let channel = supabase.channel(`suprir-live-${state.session.user.id}-${Date.now()}`);
+  REALTIME_TABLES.forEach((table) => {
+    channel = channel.on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table },
+      () => scheduleRealtimeRefresh()
+    );
+  });
+
+  realtimeChannel = channel.subscribe((status) => {
+    if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+      console.warn(`SUPRIR Realtime: canal em estado ${status}. O fallback automático permanece ativo.`);
+    }
+  });
+
+  // Fallback silencioso: cobre suspensão do navegador, troca de rede e casos
+  // em que uma alteração deixa de gerar evento visível por causa de RLS.
+  realtimeFallbackTimer = window.setInterval(() => {
+    if (document.visibilityState === 'visible') scheduleRealtimeRefresh(80);
+  }, 60000);
+
+  if (!visibilityListenerRegistered) {
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && state.session) scheduleRealtimeRefresh(100);
+    });
+    visibilityListenerRegistered = true;
+  }
+}
+
 // Dependências injetadas por application.js.
 let deps = {
   setToast: () => {},

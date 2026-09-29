@@ -1,8 +1,8 @@
-# SUPRIR Educação — Canindé V5.2.1
+# SUPRIR Educação — Canindé V5.3.0
 
 **Gestão de pedidos, estoque, autorização, separação, expedição e recebimento de materiais da rede municipal de ensino.**
 
-A V5.2.1 incorpora controle físico de estoque ao fluxo já existente. O saldo é mantido pelo almoxarifado, consultado pela SME, usado para limitar as solicitações das escolas e baixado automaticamente quando a remessa sai do almoxarifado.
+A V5.3.0 mantém o controle físico de estoque da V5.2.x e adiciona sincronização automática em tempo real entre Escola, SME e Almoxarifado. O saldo continua sendo mantido pelo almoxarifado, consultado pela SME, usado para limitar as solicitações das escolas e baixado automaticamente quando a remessa sai do almoxarifado.
 
 ## Fluxo operacional
 
@@ -37,18 +37,25 @@ O estoque **não é reduzido na autorização**. A baixa ocorre na expedição f
 
 ## Banco de dados
 
-### Atualização da V5.1.x para V5.2.1
+### Atualização para V5.3.0
 
-Execute no SQL Editor do Supabase:
+Se a base já está na **V5.2.x**, execute somente:
+
+```txt
+supabase/migrations/012_realtime_v5_3.sql
+```
+
+Se a base ainda está na **V5.1.x**, execute nesta ordem:
 
 ```txt
 supabase/migrations/011_estoque_v5_2.sql
+supabase/migrations/012_realtime_v5_3.sql
 ```
 
-ou:
+Depois valide o Realtime com:
 
 ```txt
-supabase/MIGRACAO_V5_1_PARA_V5_2_0.sql
+supabase/VALIDACAO_REALTIME_V5_3.sql
 ```
 
 ### Instalação nova
@@ -56,7 +63,7 @@ supabase/MIGRACAO_V5_1_PARA_V5_2_0.sql
 Execute:
 
 ```txt
-supabase/BANCO_COMPLETO_V5_2.sql
+supabase/BANCO_COMPLETO_V5_3.sql
 ```
 
 **Importante:** após a migração, os materiais existentes começam com saldo `0`. O almoxarifado deve registrar o estoque físico real como entrada antes de liberar os materiais às escolas.
@@ -91,4 +98,4 @@ npx wrangler pages deploy dist --project-name suprir
 - GitHub: `https://github.com/Laeciogomes/SUPRIR`
 - Produção: `https://suprir.caninde.codeedu.dev`
 
-Consulte `docs/ATUALIZACAO_V5_2.md` antes da atualização do banco em produção.
+Consulte `docs/ATUALIZACAO_V5_3.md` antes da atualização do banco em produção.
