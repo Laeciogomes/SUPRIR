@@ -1,3 +1,14 @@
+# V5.3.1 — edição e exclusão do pedido pela escola antes da autorização
+
+## 5.3.1
+
+- A escola pode editar pedidos em `draft`, `submitted` ou `under_review`.
+- A escola pode excluir definitivamente o pedido enquanto ele ainda não foi autorizado pela SME.
+- Após `approved` (ou qualquer etapa posterior/final), edição e exclusão ficam bloqueadas na interface e no banco.
+- Edições de pedidos já enviados preservam o status atual; o fluxo não volta para rascunho.
+- Exclusões ficam registradas em `request_deletion_audit` antes da remoção operacional do pedido.
+- As alterações continuam integradas ao Supabase Realtime da V5.3.0.
+
 # V5.3.0 — atualização automática em tempo real
 
 ## 5.3.0

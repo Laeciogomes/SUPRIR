@@ -85,7 +85,7 @@ export function renderRequestTable(requests, options = {}) {
               <td data-label="Data">${formatDate(request.submitted_at || request.created_at)}<small class="cell-sub">${request.submitted_at ? 'enviado' : 'criado'}</small></td>
               <td data-label="Prioridade">${priorityBadge(request.priority)}</td>
               <td data-label="Situação">${statusBadge(request.status, isSchool() ? 'school' : 'default')}</td>
-              <td class="align-right" data-label="Ação"><button type="button" class="button icon-only secondary" data-action="open-request" data-id="${request.id}" title="Abrir pedido">${icon('eye', 18)}</button></td>
+              <td class="align-right" data-label="Ação"><div class="button-row compact-actions"><button type="button" class="button icon-only secondary" data-action="open-request" data-id="${request.id}" title="Abrir pedido">${icon('eye', 18)}</button>${isSchool() && ['draft','submitted','under_review'].includes(request.status) ? `<button type="button" class="button icon-only secondary" data-action="edit-school-request" data-id="${request.id}" title="Editar pedido">${icon('edit', 18)}</button><button type="button" class="button icon-only danger-soft" data-action="delete-school-request" data-id="${request.id}" title="Excluir pedido">${icon('trash', 18)}</button>` : ''}</div></td>
             </tr>`).join('')}
         </tbody>
       </table>
@@ -105,6 +105,7 @@ export function createBlankDraft() {
     notes: '',
     schoolContactName: state.profile?.full_name || '',
     schoolContactPhone: state.profile?.phone || '',
+    originalStatus: 'draft',
     items: [{ material_id: '', quantity: '', notes: '' }]
   };
 }
@@ -118,6 +119,7 @@ export function draftFromRequest(request) {
     notes: request.notes || '',
     schoolContactName: request.school_contact_name || state.profile?.full_name || '',
     schoolContactPhone: request.school_contact_phone || state.profile?.phone || '',
+    originalStatus: request.status || 'draft',
     items: (request.request_items || []).map((item) => ({
       material_id: item.material_id,
       quantity: String(item.requested_quantity || ''),
@@ -183,12 +185,18 @@ export function renderRequestForm() {
       </section>
 
       <section class="form-actions sticky-actions">
-        <div><strong>${draft.id ? 'Editando rascunho existente' : 'Novo pedido'}</strong><span>O envio gera um protocolo e bloqueia a edição pela escola.</span></div>
-        <div class="button-row">
-          <button type="button" class="button secondary" data-action="cancel-request-form">Cancelar</button>
-          <button type="submit" class="button secondary" data-mode="draft" ${!activeMaterials.length ? 'disabled' : ''}>${icon('save', 18)} Salvar rascunho</button>
-          <button type="submit" class="button primary" data-mode="submit" ${!activeMaterials.length ? 'disabled' : ''}>${icon('send', 18)} Enviar para a SME</button>
-        </div>
+        ${draft.id && ['submitted', 'under_review'].includes(draft.originalStatus) ? `
+          <div><strong>Editando pedido enviado</strong><span>As alterações ficam visíveis para a SME. Depois da autorização, a edição e a exclusão ficam bloqueadas.</span></div>
+          <div class="button-row">
+            <button type="button" class="button secondary" data-action="cancel-request-form">Cancelar</button>
+            <button type="submit" class="button primary" data-mode="update" ${!activeMaterials.length ? 'disabled' : ''}>${icon('save', 18)} Salvar alterações</button>
+          </div>` : `
+          <div><strong>${draft.id ? 'Editando rascunho existente' : 'Novo pedido'}</strong><span>Depois que a SME autorizar o pedido, a escola não poderá mais editar nem excluir.</span></div>
+          <div class="button-row">
+            <button type="button" class="button secondary" data-action="cancel-request-form">Cancelar</button>
+            <button type="submit" class="button secondary" data-mode="draft" ${!activeMaterials.length ? 'disabled' : ''}>${icon('save', 18)} Salvar rascunho</button>
+            <button type="submit" class="button primary" data-mode="submit" ${!activeMaterials.length ? 'disabled' : ''}>${icon('send', 18)} Enviar para a SME</button>
+          </div>`}
       </section>
     </form>`;
 }
@@ -200,7 +208,7 @@ export function renderRequestDetail() {
   const totals = requestTotals(request);
   const events = state.events[request.id] || [];
   const context = isSchool() ? 'school' : 'default';
-  const canEditDraft = isSchool() && request.status === 'draft';
+  const canSchoolModify = isSchool() && ['draft', 'submitted', 'under_review'].includes(request.status);
   const unconfirmedDeliveries = (request.deliveries || []).filter((delivery) => ['dispatched', 'delivered'].includes(delivery.status) && !delivery.school_confirmed_at && !String(delivery.delivery_number || '').startsWith('LEG-'));
 
   return `
@@ -209,7 +217,7 @@ export function renderRequestDetail() {
         <button type="button" class="button secondary" data-action="back-from-detail">${icon('back', 18)} Voltar</button>
         <div class="button-row">
           <button type="button" class="button secondary" data-action="print-request" data-id="${request.id}">${icon('print', 18)} Imprimir pedido</button>
-          ${canEditDraft ? `<button type="button" class="button primary" data-action="edit-draft" data-id="${request.id}">${icon('edit', 18)} Editar rascunho</button>` : ''}
+          ${canSchoolModify ? `<button type="button" class="button primary" data-action="edit-school-request" data-id="${request.id}">${icon('edit', 18)} Editar pedido</button><button type="button" class="button danger-outline" data-action="delete-school-request" data-id="${request.id}">${icon('trash', 18)} Excluir pedido</button>` : ''}
         </div>
       </div>
 
@@ -290,14 +298,19 @@ export function renderRequestDetail() {
 
 export function renderSmeActionPanel(request) {
   if (isSchool()) {
-    const canCancel = ['draft', 'submitted'].includes(request.status);
-    if (!canCancel) return '';
+    const canModify = ['draft', 'submitted', 'under_review'].includes(request.status);
+    if (!canModify) return '';
+    const statusText = request.status === 'draft'
+      ? 'Este pedido ainda é um rascunho.'
+      : request.status === 'under_review'
+        ? 'A SME já iniciou a análise deste pedido.'
+        : 'O pedido foi enviado para a SME.';
     return `
       <section class="action-panel school-action-panel">
-        <div><span>${icon('info', 21)}</span><div><strong>${request.status === 'draft' ? 'Este pedido ainda é um rascunho.' : 'O pedido foi enviado para a SME.'}</strong><p>${request.status === 'draft' ? 'Você pode editar os itens ou enviar para análise.' : 'É possível cancelar enquanto a SME ainda não iniciou a análise.'}</p></div></div>
+        <div><span>${icon('info', 21)}</span><div><strong>${statusText}</strong><p>A escola pode editar ou excluir o pedido até a autorização pela SME. Depois de autorizado, essas ações ficam bloqueadas também no banco de dados.</p></div></div>
         <div class="button-row">
-          ${request.status === 'draft' ? `<button type="button" class="button primary" data-action="edit-draft" data-id="${request.id}">${icon('edit', 18)} Editar e enviar</button>` : ''}
-          <button type="button" class="button danger-outline" data-action="open-cancel-request" data-id="${request.id}">${icon('x', 18)} Cancelar pedido</button>
+          <button type="button" class="button primary" data-action="edit-school-request" data-id="${request.id}">${icon('edit', 18)} Editar pedido</button>
+          <button type="button" class="button danger-outline" data-action="delete-school-request" data-id="${request.id}">${icon('trash', 18)} Excluir pedido</button>
         </div>
       </section>`;
   }

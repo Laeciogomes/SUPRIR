@@ -155,7 +155,7 @@ export async function submitSchoolRequest(event) {
     p_school_contact_name: draft.schoolContactName || null,
     p_school_contact_phone: draft.schoolContactPhone || null,
     p_items: validItems,
-    p_submit: mode === 'submit'
+    p_submit: mode !== 'draft'
   });
   if (error) throw error;
 
@@ -167,7 +167,7 @@ export async function submitSchoolRequest(event) {
   state.previousView = 'myRequests';
   state.view = 'requestDetail';
   state.loading = false;
-  setToast('success', mode === 'submit' ? 'Pedido enviado à SME e protocolo gerado.' : 'Rascunho salvo com sucesso.');
+  setToast('success', mode === 'update' ? 'Pedido atualizado. As alterações já estão disponíveis para a SME.' : mode === 'submit' ? 'Pedido enviado à SME e protocolo gerado.' : 'Rascunho salvo com sucesso.');
   render();
 }
 

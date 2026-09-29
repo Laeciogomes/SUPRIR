@@ -1,8 +1,8 @@
-# SUPRIR Educação — Canindé V5.3.0
+# SUPRIR Educação — Canindé V5.3.1
 
 **Gestão de pedidos, estoque, autorização, separação, expedição e recebimento de materiais da rede municipal de ensino.**
 
-A V5.3.0 mantém o controle físico de estoque da V5.2.x e adiciona sincronização automática em tempo real entre Escola, SME e Almoxarifado. O saldo continua sendo mantido pelo almoxarifado, consultado pela SME, usado para limitar as solicitações das escolas e baixado automaticamente quando a remessa sai do almoxarifado.
+A V5.3.1 mantém o controle físico de estoque da V5.2.x e adiciona sincronização automática em tempo real entre Escola, SME e Almoxarifado. Nesta revisão, a escola também pode editar ou excluir seus próprios pedidos até a autorização pela SME; depois da autorização, o bloqueio é aplicado tanto na interface quanto no banco de dados. O saldo continua sendo mantido pelo almoxarifado, consultado pela SME, usado para limitar as solicitações das escolas e baixado automaticamente quando a remessa sai do almoxarifado.
 
 ## Fluxo operacional
 
@@ -37,7 +37,7 @@ O estoque **não é reduzido na autorização**. A baixa ocorre na expedição f
 
 ## Banco de dados
 
-### Atualização para V5.3.0
+### Atualização para V5.3.1
 
 Se a base já está na **V5.2.x**, execute somente:
 

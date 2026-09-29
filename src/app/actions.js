@@ -108,6 +108,44 @@ export const ACTIONS = {
       render();
     }
   },
+  'edit-school-request': (button) => {
+    if (!isSchool()) throw new Error('Somente a escola responsável pode editar este pedido.');
+    const request = getRequest(button.dataset.id);
+    if (!request || !['draft', 'submitted', 'under_review'].includes(request.status)) {
+      throw new Error('Este pedido já foi liberado ou encerrado e não pode mais ser editado pela escola.');
+    }
+    state.draft = draftFromRequest(request);
+    state.view = 'newRequest';
+    state.modal = null;
+    render();
+  },
+  'delete-school-request': (button) => {
+    if (!isSchool()) throw new Error('Somente a escola responsável pode excluir este pedido.');
+    const request = getRequest(button.dataset.id);
+    if (!request || !['draft', 'submitted', 'under_review'].includes(request.status)) {
+      throw new Error('Este pedido já foi liberado ou encerrado e não pode mais ser excluído pela escola.');
+    }
+    openConfirm({
+      title: 'Excluir pedido',
+      message: `Deseja excluir definitivamente o pedido ${request.protocol_number || ''}? Esta ação só é permitida antes da autorização da SME e não poderá ser desfeita.`,
+      confirmLabel: 'Excluir pedido',
+      tone: 'danger',
+      onConfirm: async () => {
+        state.loading = true;
+        render();
+        const { error } = await getSupabase().rpc('delete_school_request_before_approval', { p_request_id: request.id });
+        if (error) throw error;
+        state.selectedRequestId = null;
+        state.draft = null;
+        state.view = 'myRequests';
+        await loadAuthenticatedData(false);
+        state.loading = false;
+        setToast('success', 'Pedido excluído com sucesso.');
+        render();
+      }
+    });
+    render();
+  },
   'receive-request': (button) => {
     if (!canAuthorizeRequests()) throw new Error('Seu perfil não possui permissão para receber pedidos para análise.');
     const requestId = button.dataset.id;

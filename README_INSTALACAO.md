@@ -1,4 +1,4 @@
-# Manual de instalação — SUPRIR Educação V5.3.0
+# Manual de instalação — SUPRIR Educação V5.3.1
 
 ## 1. Faça backup do Supabase
 
@@ -90,4 +90,9 @@ npm run build
 npx wrangler pages deploy dist --project-name suprir
 ```
 
-O cache PWA da V5.3.0 possui nova chave para forçar a atualização da interface.
+O cache PWA da V5.3.1 possui nova chave para forçar a atualização da interface.
+
+
+## Atualização da V5.3.0 para V5.3.1
+
+Execute apenas `supabase/migrations/013_edicao_exclusao_pedido_escola_v5_3_1.sql` e depois `supabase/VALIDACAO_PEDIDOS_V5_3_1.sql`. Não é necessário repetir as migrations de estoque ou Realtime.
