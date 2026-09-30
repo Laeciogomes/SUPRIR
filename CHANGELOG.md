@@ -1,3 +1,20 @@
+# V5.3.3 — saldo oculto para escolas na seleção de materiais
+
+## 5.3.3
+
+- Portal Escola: a seleção de materiais apresenta somente o nome dos produtos ativos que estão em estoque, sem revelar quantidade ou saldo numérico.
+- Remove o texto com saldo ao selecionar um item e o limite `max` do campo de quantidade, que expunha o saldo no formulário/validação nativa do navegador.
+- Mantém a conferência interna do estoque ao salvar e exibe mensagem genérica quando a solicitação ultrapassa o saldo; também oculta mensagens de saldo retornadas pela RPC em casos de concorrência.
+- SME e Almoxarifado continuam a visualizar o saldo normalmente; nenhuma alteração na movimentação de estoque ou no banco.
+- Cache do aplicativo atualizado para `suprir-educacao-5.3.3`.
+
+# V5.3.2 — correção de dependências
+
+## 5.3.2
+
+- Dependências corrigidas na pasta local com `npm audit fix` (resultado informado: 0 vulnerabilidades); `package.json` e `package-lock.json` da sua V5.3.2 devem ser preservados ao aplicar o pacote parcial.
+- A identificação da versão 5.3.3 deve ser atualizada com `npm version 5.3.3 --no-git-tag-version` na pasta que já possui as dependências corrigidas.
+
 # V5.3.1 — edição e exclusão do pedido pela escola antes da autorização
 
 ## 5.3.1

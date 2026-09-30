@@ -172,11 +172,10 @@ export function renderRequestForm() {
             <div class="editor-head"><span>Material</span><span>Quantidade</span><span>Observação do item</span><span></span></div>
             ${draft.items.map((item, index) => {
               const selectedMaterial = activeMaterials.find((material) => material.id === item.material_id);
-              const available = Number(selectedMaterial?.stock_quantity || 0);
               return `
               <div class="editor-row" data-index="${index}">
-                <label class="field mobile-label"><span>Material</span><select data-draft-item="material_id" data-index="${index}" required><option value="">Selecione um material</option>${activeMaterials.map((material) => `<option value="${material.id}" ${selected(item.material_id === material.id)}>${escapeHtml(material.nome)} — disponível ${formatNumber(material.stock_quantity || 0)} ${escapeHtml(material.unidade)}</option>`).join('')}</select>${selectedMaterial ? `<small>Disponível em estoque: <strong>${formatNumber(available)} ${escapeHtml(selectedMaterial.unidade)}</strong></small>` : ''}</label>
-                <label class="field mobile-label"><span>Quantidade</span><input type="number" min="0.01" ${selectedMaterial ? `max="${attr(available)}"` : ''} step="0.01" data-draft-item="quantity" data-index="${index}" value="${attr(item.quantity)}" placeholder="0" required /></label>
+                <label class="field mobile-label"><span>Material</span><select data-draft-item="material_id" data-index="${index}" required><option value="">Selecione um material</option>${activeMaterials.map((material) => `<option value="${material.id}" ${selected(item.material_id === material.id)}>${escapeHtml(material.nome)}</option>`).join('')}</select>${selectedMaterial ? `<small>Material disponível para solicitação.</small>` : ''}</label>
+                <label class="field mobile-label"><span>Quantidade</span><input type="number" min="0.01" step="0.01" data-draft-item="quantity" data-index="${index}" value="${attr(item.quantity)}" placeholder="0" required /></label>
                 <label class="field mobile-label"><span>Observação do item</span><input type="text" data-draft-item="notes" data-index="${index}" value="${attr(item.notes)}" maxlength="300" placeholder="Tamanho, série, especificação..." /></label>
                 <button type="button" class="icon-button danger-soft" data-action="remove-draft-item" data-index="${index}" title="Remover item" ${draft.items.length === 1 ? 'disabled' : ''}>${icon('x', 18)}</button>
               </div>`;

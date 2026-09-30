@@ -141,7 +141,7 @@ export async function submitSchoolRequest(event) {
     const material = state.materials.find((entry) => entry.id === item.material_id);
     const available = Number(material?.stock_quantity || 0);
     if (!material || available <= 0) throw new Error('Um dos materiais selecionados ficou sem estoque. Atualize o pedido.');
-    if (item.quantity > available) throw new Error(`A quantidade de ${material.nome} ultrapassa o estoque disponível (${available} ${material.unidade}).`);
+    if (item.quantity > available) throw new Error(`A quantidade solicitada de ${material.nome} não pode ser atendida no momento. Reduza a quantidade ou escolha outro material.`);
   }
 
   state.loading = true;
@@ -157,7 +157,12 @@ export async function submitSchoolRequest(event) {
     p_items: validItems,
     p_submit: mode !== 'draft'
   });
-  if (error) throw error;
+  if (error) {
+    if (/ultrapassa o estoque dispon[ií]vel|estoque insuficiente/i.test(String(error.message || ''))) {
+      throw new Error('A quantidade solicitada não pode ser atendida no momento. Reduza a quantidade e tente novamente.');
+    }
+    throw error;
+  }
 
   state.draft = null;
   await loadAuthenticatedData(false);

@@ -1,0 +1,43 @@
+SUPRIR Educação — patch V5.3.3 sobre a V5.3.2
+=================================================
+
+OBJETIVO
+A Escola enxerga apenas os materiais ativos que possuem estoque positivo,
+mas não vê a quantidade física disponível ao escolher o material nem nas
+mensagens de validação do formulário. SME/Almoxarifado preservam suas telas.
+
+ATENÇÃO: NÃO substitua package.json nem package-lock.json com versões antigas.
+O patch inclui apenas os 3 arquivos alterados da interface/cache e o changelog.
+Assim, as correções de segurança feitas na sua versão 5.3.2 serão mantidas.
+
+COMO INSTALAR
+1. Faça uma cópia de segurança da pasta atual (já corrigida e com 0 vulnerabilidades).
+2. Extraia este ZIP DENTRO DA PASTA RAIZ do projeto (a pasta onde está package.json).
+   Permita substituir src/views/requests.js, src/app/forms.js, public/sw.js
+   e CHANGELOG.md.
+3. Na pasta do projeto, execute no PowerShell:
+
+   npm version 5.3.3 --no-git-tag-version
+   npm audit
+   npm run build
+
+4. Teste como Escola: abra Novo Pedido e Editar Pedido, confirme que a lista exibe
+   apenas nomes de materiais com saldo positivo, sem quantidade de estoque.
+   Teste digitar uma quantidade acima da disponível: aparece uma mensagem
+   genérica, sem mostrar o saldo. Teste também um pedido normal.
+5. Teste como SME/Almoxarifado: saldos continuam visíveis nas telas próprias.
+6. Se os testes passarem, publique no GitHub ANTES do Cloudflare:
+
+   git add -A
+   git diff --cached --check
+   git commit -m "SUPRIR Educacao v5.3.3 - ocultar saldo para escolas"
+   git push origin main
+   git tag -a v5.3.3 -m "SUPRIR Educacao v5.3.3"
+   git push origin v5.3.3
+   npx wrangler pages deploy dist --project-name suprir
+
+BANCO
+Nenhuma migration SQL nova para este ajuste de apresentação. A quantidade
+real continua consultada pelo navegador para filtrar e validar pedidos.
+Para impedir também acesso técnico via API, será necessária uma etapa distinta
+de restrição das consultas e revisão das políticas/RPCs do Supabase.
