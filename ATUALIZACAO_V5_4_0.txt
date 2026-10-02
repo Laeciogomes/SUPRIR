@@ -1,0 +1,27 @@
+SUPRIR Educação V5.4.0 — Redefinição em massa das senhas das escolas
+
+OBJETIVO
+Permitir que o Administrador do Sistema redefina, em uma única operação, as senhas temporárias de todos os acessos escolares ativos.
+
+REGRA
+- Usuário afetado: somente account_type=school + permission_level=school_user + active=true.
+- Senha temporária: código de acesso da própria escola.
+- Próximo login: troca obrigatória de senha, usando must_change_password=true.
+- SME, Almoxarifado e Administradores: não são alterados.
+- Escola inativa ou com código inválido: não é alterada e aparece no relatório final.
+
+SEGURANÇA
+A redefinição é executada no servidor por Cloudflare Pages Function. SUPABASE_SERVICE_ROLE_KEY continua somente nas variáveis secretas do Cloudflare e nunca deve ser criada como VITE_* nem enviada ao navegador.
+
+INSTALAÇÃO
+1. Extraia este ZIP por cima da pasta atual do projeto, permitindo substituição.
+2. Rode: npm version 5.4.0 --no-git-tag-version
+3. Rode: npm audit
+4. Rode: npm run build
+5. Publique somente depois de testar.
+
+BANCO
+Não há SQL novo para executar.
+
+TESTE RECOMENDADO
+Antes do reset em massa, escolha uma escola de teste e anote o código de acesso. Após a publicação, Admin > Usuários > Redefinir senhas das escolas. Confirme a operação. Entre como escola usando código = login e código = senha temporária. O sistema deve exigir imediatamente uma nova senha de ao menos 8 caracteres.

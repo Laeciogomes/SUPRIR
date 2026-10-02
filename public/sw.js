@@ -1,4 +1,4 @@
-const CACHE_NAME = 'suprir-educacao-5.3.3';
+const CACHE_NAME = 'suprir-educacao-5.4.0';
 const APP_SHELL = [
   '/',
   '/index.html',

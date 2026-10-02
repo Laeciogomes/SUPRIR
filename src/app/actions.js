@@ -18,7 +18,7 @@ import {
   exportCurrentReport
 } from '../services/downloads.js';
 import { createBlankDraft, draftFromRequest } from '../views/requests.js';
-import { handleForgotPassword, deleteSchool, resetUserPassword } from './forms.js';
+import { handleForgotPassword, deleteSchool, resetUserPassword, resetAllSchoolPasswords } from './forms.js';
 
 // Mapa de ações do listener de click, substituindo a antiga cadeia if/else
 // baseada em data-action. Cada entrada recebe (button, event) e reproduz
@@ -260,6 +260,10 @@ export const ACTIONS = {
   'reset-user-password': async (button) => {
     if (!isAdmin()) throw new Error('Somente o administrador do sistema pode redefinir acessos.');
     await resetUserPassword(button.dataset.id);
+  },
+  'reset-all-school-passwords': async () => {
+    if (!isAdmin()) throw new Error('Somente o administrador do sistema pode redefinir todas as senhas das escolas.');
+    await resetAllSchoolPasswords();
   },
   'copy-password': async (button) => {
     await navigator.clipboard.writeText(button.dataset.password || '');

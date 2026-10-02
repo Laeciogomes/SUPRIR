@@ -1,3 +1,17 @@
+# V5.4.0 — redefinição em massa das senhas das escolas
+
+## 5.4.0
+
+- Administrador do sistema ganha o botão **Redefinir senhas das escolas** na tela de Usuários.
+- A operação afeta somente usuários ativos com perfil `school_user`; SME, Almoxarifado e Administradores permanecem inalterados.
+- A senha temporária de cada escola passa a ser o próprio código de acesso da escola (`login_code`, com fallback para INEP/código cadastrado).
+- Todos os acessos redefinidos recebem `must_change_password = true`; no próximo login o sistema bloqueia o restante da aplicação até a criação de uma nova senha pessoal.
+- O processamento ocorre exclusivamente em Cloudflare Pages Function usando `SUPABASE_SERVICE_ROLE_KEY`; a chave administrativa nunca é exposta ao navegador.
+- A tela apresenta relatório final com quantidade redefinida, ignorada e com erro, sem armazenar ou exibir novas senhas pessoais.
+- Escolas inativas, vínculos ausentes ou códigos inválidos são preservados e listados para revisão.
+- Nenhuma migration SQL é necessária: a coluna `must_change_password` e a tela de troca obrigatória já existiam no sistema.
+- Cache do aplicativo atualizado para `suprir-educacao-5.4.0`.
+
 # V5.3.3 — saldo oculto para escolas na seleção de materiais
 
 ## 5.3.3

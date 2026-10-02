@@ -468,6 +468,41 @@ export async function submitUserEdit(form) {
   }, 'Acesso do usuário atualizado.');
 }
 
+export async function resetAllSchoolPasswords() {
+  openConfirm({
+    title: 'Redefinir senhas de todas as escolas',
+    message: 'Todos os usuários ATIVOS de escola terão a senha temporária redefinida para o código de acesso da própria escola. No próximo login, o sistema exigirá uma nova senha pessoal. Usuários da SME, Almoxarifado e Administração não serão alterados.',
+    confirmLabel: 'Redefinir todas as senhas',
+    tone: 'danger',
+    onConfirm: async () => {
+      state.loading = true;
+      render();
+      const response = await fetch('/api/users/reset-school-passwords', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          authorization: `Bearer ${state.session.access_token}`
+        },
+        body: JSON.stringify({ confirmation: 'RESET_ALL_SCHOOL_PASSWORDS' })
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || 'Não foi possível redefinir as senhas das escolas.');
+      await loadAuthenticatedData(false);
+      state.loading = false;
+      state.modal = {
+        type: 'bulkPasswordResetResult',
+        summary: result.summary || {},
+        results: result.results || []
+      };
+      setToast(result.summary?.errors ? 'warning' : 'success', result.summary?.errors
+        ? `Redefinição concluída com ${result.summary.errors} acesso(s) para revisar.`
+        : `${result.summary?.reset || 0} senha(s) de escola redefinida(s).`);
+      render();
+    }
+  });
+  render();
+}
+
 export async function resetUserPassword(profileId) {
   const profile = state.profiles.find((item) => item.id === profileId);
   openConfirm({

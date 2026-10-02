@@ -174,6 +174,14 @@ function renderPasswordResultModal(modal) {
   return { content };
 }
 
+function renderBulkPasswordResetResultModal(modal) {
+  const summary = modal.summary || {};
+  const results = modal.results || [];
+  const hasErrors = Number(summary.errors || 0) > 0;
+  const content = `<div class="modal-heading"><span class="modal-icon ${hasErrors ? 'warning' : 'success'}">${icon(hasErrors ? 'alert' : 'key', 24)}</span><div><h2>Redefinição das senhas das escolas</h2><p>A senha temporária de cada acesso redefinido é o código de acesso da própria escola.</p></div></div><div class="modal-body stack-lg"><div class="import-result-summary"><article><span>Usuários ativos</span><strong>${Number(summary.total || 0)}</strong></article><article><span>Redefinidos</span><strong>${Number(summary.reset || 0)}</strong></article><article><span>Ignorados</span><strong>${Number(summary.skipped || 0)}</strong></article><article class="${hasErrors ? 'has-error' : ''}"><span>Erros</span><strong>${Number(summary.errors || 0)}</strong></article></div><div class="callout warning">${icon('alert', 19)}<p>As escolas devem usar o código de acesso como senha temporária. No primeiro login após a redefinição, o sistema exigirá uma nova senha pessoal.</p></div>${results.length ? `<div class="table-wrap import-result-table"><table class="data-table"><thead><tr><th>Código</th><th>Escola</th><th>Resultado</th><th>Observação</th></tr></thead><tbody>${results.map((item) => `<tr><td data-label="Código"><span class="login-code-badge">${escapeHtml(item.loginCode || '—')}</span></td><td data-label="Escola"><strong class="cell-title">${escapeHtml(item.name || '—')}</strong></td><td data-label="Resultado">${item.status === 'success' ? '<span class="badge badge-green">Redefinida</span>' : item.status === 'skipped' ? '<span class="badge badge-blue">Ignorada</span>' : '<span class="badge badge-red">Erro</span>'}</td><td data-label="Observação">${escapeHtml(item.message || '')}</td></tr>`).join('')}</tbody></table></div>` : ''}<div class="modal-actions"><button type="button" class="button primary" data-action="close-modal">Concluído</button></div></div>`;
+  return { content, size: 'large' };
+}
+
 function renderOwnPasswordModal() {
   const content = `<div class="modal-heading"><span class="modal-icon primary">${icon('key', 24)}</span><div><h2>Alterar minha senha</h2><p>Cadastre uma nova senha de acesso.</p></div></div><form id="own-password-form" class="modal-body form-stack"><label class="field"><span>Nova senha *</span><input type="password" name="password" minlength="8" required /></label><label class="field"><span>Confirmar senha *</span><input type="password" name="confirmPassword" minlength="8" required /></label><div class="modal-actions"><button type="button" class="button secondary" data-action="close-modal">Cancelar</button><button type="submit" class="button primary">${icon('key', 18)} Alterar senha</button></div></form>`;
   return { content };
@@ -197,6 +205,7 @@ export const MODAL_REGISTRY = {
   schoolImportResult: renderSchoolImportResultModal,
   userEdit: renderUserEditModal,
   passwordResult: renderPasswordResultModal,
+  bulkPasswordResetResult: renderBulkPasswordResetResultModal,
   ownPassword: renderOwnPasswordModal
 };
 
