@@ -477,26 +477,68 @@ export async function resetAllSchoolPasswords() {
     onConfirm: async () => {
       state.loading = true;
       render();
-      const response = await fetch('/api/users/reset-school-passwords', {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-          authorization: `Bearer ${state.session.access_token}`
-        },
-        body: JSON.stringify({ confirmation: 'RESET_ALL_SCHOOL_PASSWORDS' })
-      });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(result.error || 'Não foi possível redefinir as senhas das escolas.');
+
+      const results = [];
+      const summary = { total: 0, reset: 0, skipped: 0, errors: 0 };
+      const batchSize = 5;
+      let offset = 0;
+      let completed = false;
+      let iterations = 0;
+
+      // A operação é dividida em várias invocações pequenas do Cloudflare Worker.
+      // Isso evita o limite de subrequests atingido pela implementação V5.4.0.
+      while (!completed) {
+        iterations += 1;
+        if (iterations > 100) {
+          throw new Error('A redefinição foi interrompida por segurança porque excedeu o número esperado de lotes.');
+        }
+
+        const response = await fetch('/api/users/reset-school-passwords', {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            authorization: `Bearer ${state.session.access_token}`
+          },
+          body: JSON.stringify({
+            confirmation: 'RESET_ALL_SCHOOL_PASSWORDS',
+            offset,
+            batchSize
+          })
+        });
+
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(result.error || `Não foi possível redefinir as senhas no lote iniciado em ${offset + 1}.`);
+        }
+
+        const batchResults = Array.isArray(result.results) ? result.results : [];
+        results.push(...batchResults);
+        summary.total = Number(result.pagination?.total ?? result.summary?.total ?? summary.total ?? 0);
+        summary.reset += Number(result.summary?.reset || 0);
+        summary.skipped += Number(result.summary?.skipped || 0);
+        summary.errors += Number(result.summary?.errors || 0);
+
+        const nextOffset = Number(result.pagination?.nextOffset);
+        completed = Boolean(result.pagination?.done);
+
+        if (!completed) {
+          if (!Number.isFinite(nextOffset) || nextOffset <= offset) {
+            throw new Error('O servidor não informou corretamente a continuação da redefinição das senhas.');
+          }
+          offset = nextOffset;
+        }
+      }
+
       await loadAuthenticatedData(false);
       state.loading = false;
       state.modal = {
         type: 'bulkPasswordResetResult',
-        summary: result.summary || {},
-        results: result.results || []
+        summary,
+        results
       };
-      setToast(result.summary?.errors ? 'warning' : 'success', result.summary?.errors
-        ? `Redefinição concluída com ${result.summary.errors} acesso(s) para revisar.`
-        : `${result.summary?.reset || 0} senha(s) de escola redefinida(s).`);
+      setToast(summary.errors ? 'warning' : 'success', summary.errors
+        ? `Redefinição concluída com ${summary.errors} acesso(s) para revisar.`
+        : `${summary.reset || 0} senha(s) de escola redefinida(s).`);
       render();
     }
   });

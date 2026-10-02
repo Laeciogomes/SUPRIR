@@ -6,13 +6,13 @@ import {
 import { requireSmeAdmin } from '../../_shared/supabase-admin.js';
 
 const CONFIRMATION = 'RESET_ALL_SCHOOL_PASSWORDS';
+const DEFAULT_BATCH_SIZE = 5;
+const MAX_BATCH_SIZE = 8;
 
-function chunks(items, size = 5) {
-  const result = [];
-  for (let index = 0; index < items.length; index += size) {
-    result.push(items.slice(index, index + size));
-  }
-  return result;
+function safeInteger(value, fallback = 0) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return fallback;
+  return Math.max(0, Math.trunc(number));
 }
 
 async function resetOne(auth, profile, school) {
@@ -94,16 +94,27 @@ export async function onRequestPost(context) {
       return json({ error: 'Confirmação de segurança inválida.' }, 400);
     }
 
-    const { data: profiles, error: profilesError } = await auth.admin
+    const offset = safeInteger(body.offset, 0);
+    const requestedBatchSize = safeInteger(body.batchSize, DEFAULT_BATCH_SIZE) || DEFAULT_BATCH_SIZE;
+    const batchSize = Math.min(MAX_BATCH_SIZE, Math.max(1, requestedBatchSize));
+
+    // IMPORTANTE: cada requisição processa somente um pequeno lote. A V5.4.0
+    // percorria todos os usuários dentro de uma única invocação do Worker e
+    // atingia o limite de subrequests do Cloudflare. O navegador chama este
+    // endpoint novamente com o próximo offset até concluir todos os acessos.
+    const { data: profiles, error: profilesError, count } = await auth.admin
       .from('profiles')
-      .select('id, full_name, school_id, active, account_type, permission_level, must_change_password')
+      .select('id, full_name, school_id, active, account_type, permission_level, must_change_password', { count: 'exact' })
       .eq('account_type', 'school')
       .eq('permission_level', 'school_user')
       .eq('active', true)
-      .order('full_name');
+      .order('full_name')
+      .order('id')
+      .range(offset, offset + batchSize - 1);
 
     if (profilesError) return json({ error: profilesError.message }, 400);
 
+    const total = Number(count || 0);
     const schoolIds = [...new Set((profiles || []).map((profile) => profile.school_id).filter(Boolean))];
     let schools = [];
 
@@ -119,16 +130,17 @@ export async function onRequestPost(context) {
     const schoolsById = new Map(schools.map((school) => [school.id, school]));
     const results = [];
 
-    // Processamento em pequenos lotes reduz o tempo total sem bombardear a API administrativa.
-    for (const batch of chunks(profiles || [], 5)) {
-      const batchResults = await Promise.all(
-        batch.map((profile) => resetOne(auth, profile, schoolsById.get(profile.school_id)))
-      );
-      results.push(...batchResults);
+    // Sequencial dentro do lote para evitar picos simultâneos na API administrativa.
+    for (const profile of profiles || []) {
+      results.push(await resetOne(auth, profile, schoolsById.get(profile.school_id)));
     }
 
+    const processed = results.length;
+    const nextOffset = offset + processed;
+    const done = processed === 0 || nextOffset >= total;
     const summary = {
-      total: results.length,
+      total,
+      processed,
       reset: results.filter((item) => item.status === 'success').length,
       skipped: results.filter((item) => item.status === 'skipped').length,
       errors: results.filter((item) => item.status === 'error').length
@@ -137,6 +149,13 @@ export async function onRequestPost(context) {
     return json({
       summary,
       results,
+      pagination: {
+        offset,
+        batchSize,
+        total,
+        nextOffset,
+        done
+      },
       temporaryPasswordRule: 'Código de acesso da própria escola',
       mustChangePassword: true
     });

@@ -1,3 +1,16 @@
+# V5.4.1 — correção do reset em massa de senhas no Cloudflare
+
+## 5.4.1
+
+- Corrige o erro `Too many subrequests by single Worker invocation` ocorrido ao redefinir as senhas das 59 escolas em uma única invocação do Cloudflare Pages Function.
+- O reset em massa passa a ser dividido em lotes de 5 escolas, cada lote executado em uma nova invocação do Worker.
+- O navegador percorre os lotes automaticamente até concluir todos os usuários escolares ativos; o administrador continua clicando apenas uma vez.
+- Cada lote é processado sequencialmente para reduzir picos de chamadas à API administrativa do Supabase.
+- O relatório final volta a consolidar todos os acessos redefinidos, ignorados e com erro.
+- A operação pode ser repetida após a tentativa parcial da V5.4.0; todos os usuários escolares ativos serão novamente ajustados para código da escola + troca obrigatória, garantindo estado consistente.
+- Não há alteração de banco de dados nem nova migration SQL.
+- Cache do aplicativo atualizado para `suprir-educacao-5.4.1`.
+
 # V5.4.0 — redefinição em massa das senhas das escolas
 
 ## 5.4.0

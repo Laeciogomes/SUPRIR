@@ -1,0 +1,26 @@
+SUPRIR Educação V5.4.1 — Correção do reset em massa de senhas
+
+PROBLEMA CORRIGIDO
+A V5.4.0 tentava processar todas as escolas dentro de uma única invocação do Cloudflare Worker. Como cada conta exige chamadas ao Supabase para marcar a troca obrigatória e redefinir a senha, a operação atingia o limite de subrequests do Cloudflare antes de concluir as 59 escolas.
+
+CORREÇÃO
+- O navegador continua executando uma única ação para o administrador.
+- Internamente, a operação é dividida em lotes de 5 escolas.
+- Cada lote usa uma nova invocação da Pages Function, reiniciando o orçamento de subrequests.
+- O processo continua automaticamente até terminar todos os usuários escolares ativos.
+- O relatório final consolida o resultado de todos os lotes.
+
+IMPORTANTE APÓS A TENTATIVA PARCIAL DA V5.4.0
+Execute novamente o botão Redefinir senhas das escolas após publicar a V5.4.1. A operação reprocessará todos os acessos escolares ativos. Isso garante que as contas que falharam no meio da tentativa anterior fiquem com senha temporária = código da escola e must_change_password=true.
+
+INSTALAÇÃO
+1. Extraia este pacote por cima da V5.4.0.
+2. Rode: npm version 5.4.1 --no-git-tag-version
+3. Rode: npm audit
+4. Rode: npm run build
+5. Commit/push no GitHub.
+6. Publique no Cloudflare.
+7. Admin > Usuários > Redefinir senhas das escolas e confirme uma única vez.
+
+BANCO
+Nenhum SQL novo.
