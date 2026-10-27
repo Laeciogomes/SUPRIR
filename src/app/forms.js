@@ -178,25 +178,41 @@ export async function submitSchoolRequest(event) {
 
 export async function submitAuthorization(form) {
   const request = getRequest(state.modal.requestId);
+  if (!request) throw new Error('Pedido não encontrado.');
   const data = new FormData(form);
-  const items = (request.request_items || []).map((item) => ({
-    request_item_id: item.id,
-    approved_quantity: Number(String(data.get(`approved_${item.id}`) || 0).replace(',', '.')),
-    notes: String(data.get(`notes_${item.id}`) || '').trim() || null
-  }));
+  const totalsByMaterial = new Map();
+  const items = (request.request_items || []).map((item) => {
+    const approved_quantity = Number(String(data.get(`approved_${item.id}`) || 0).replace(',', '.'));
+    const approved_material_id = String(data.get(`authorized_material_${item.id}`) || item.material_id);
+    const notes = String(data.get(`notes_${item.id}`) || '').trim() || null;
+    if (!Number.isFinite(approved_quantity) || approved_quantity < 0 || approved_quantity > Number(item.requested_quantity || 0)) {
+      throw new Error(`Quantidade inválida em ${item.material_name_snapshot}.`);
+    }
+    if (approved_quantity > 0) {
+      const material = state.materials.find((m) => m.id === approved_material_id);
+      if (!material?.ativo) throw new Error('O material autorizado não está ativo.');
+      if (String(material.unidade).trim().toLowerCase() !== String(item.unit_snapshot).trim().toLowerCase()) {
+        throw new Error('Selecione um material com a mesma unidade de medida do pedido.');
+      }
+      if (approved_material_id !== item.material_id && (!notes || notes.length < 5)) {
+        throw new Error(`Informe a justificativa para substituir ${item.material_name_snapshot}.`);
+      }
+      totalsByMaterial.set(approved_material_id, (totalsByMaterial.get(approved_material_id) || 0) + approved_quantity);
+    }
+    return { request_item_id: item.id, approved_quantity, approved_material_id, notes };
+  });
   if (!items.some((item) => item.approved_quantity > 0)) throw new Error('Autorize ao menos um item ou rejeite o pedido.');
-  for (const item of items) {
-    if (item.approved_quantity <= 0) continue;
-    const requestItem = request.request_items.find((entry) => entry.id === item.request_item_id);
-    const material = state.materials.find((entry) => entry.id === requestItem?.material_id);
-    const available = Number(material?.stock_quantity || 0);
-    if (item.approved_quantity > available) throw new Error(`A autorização de ${requestItem?.material_name_snapshot || 'um material'} ultrapassa o estoque atual (${available} ${requestItem?.unit_snapshot || ''}).`);
+  for (const [materialId, total] of totalsByMaterial) {
+    const material = state.materials.find((m) => m.id === materialId);
+    if (total > Number(material?.stock_quantity || 0)) {
+      throw new Error(`A autorização de ${material?.nome || 'um material'} supera o estoque atual. Revise a quantidade.`);
+    }
   }
   await executeRpc('authorize_request', {
     p_request_id: request.id,
     p_items: items,
     p_authorization_notes: String(data.get('authorizationNotes') || '').trim() || null
-  }, 'Pedido autorizado e quantidades registradas.');
+  }, 'Pedido autorizado. Os materiais autorizados foram registrados para a expedição.');
 }
 
 export async function submitRejection(form) {
@@ -209,6 +225,7 @@ export async function submitRejection(form) {
 
 export async function submitDispatch(form) {
   const request = getRequest(state.modal.requestId);
+  if (!request) throw new Error('Pedido não encontrado.');
   const data = new FormData(form);
   const items = (request.request_items || []).map((item) => ({
     request_item_id: item.id,
@@ -216,22 +233,39 @@ export async function submitDispatch(form) {
     notes: null
   })).filter((item) => item.quantity > 0);
   if (!items.length) throw new Error('Informe ao menos uma quantidade para a remessa.');
+  const totalsByMaterial = new Map();
   for (const item of items) {
     const requestItem = request.request_items.find((entry) => entry.id === item.request_item_id);
-    const material = state.materials.find((entry) => entry.id === requestItem?.material_id);
-    const available = Number(material?.stock_quantity || 0);
-    if (item.quantity > available) throw new Error(`Estoque insuficiente para ${requestItem?.material_name_snapshot || 'um material'}. Disponível: ${available} ${requestItem?.unit_snapshot || ''}.`);
+    const materialId = requestItem?.approved_material_id || requestItem?.material_id;
+    const material = state.materials.find((entry) => entry.id === materialId);
+    totalsByMaterial.set(materialId, (totalsByMaterial.get(materialId) || 0) + item.quantity);
+  }
+  for (const [materialId, total] of totalsByMaterial) {
+    const material = state.materials.find((entry) => entry.id === materialId);
+    if (total > Number(material?.stock_quantity || 0)) {
+      throw new Error(`Estoque insuficiente para ${material?.nome || 'um material'} no momento da remessa.`);
+    }
   }
 
-  await executeRpc('register_dispatch', {
+  state.loading = true;
+  render();
+  const { data: deliveryId, error } = await getSupabase().rpc('register_dispatch', {
     p_request_id: request.id,
     p_dispatch_date: String(data.get('dispatchDate') || ''),
     p_document_number: String(data.get('documentNumber') || '').trim() || null,
     p_observations: String(data.get('observations') || '').trim() || null,
     p_items: items
-  }, 'Remessa registrada. A escola poderá confirmar o recebimento.');
+  });
+  if (error) throw error;
+  await loadAuthenticatedData(false);
+  delete state.events[request.id];
+  await loadRequestEvents(request.id);
+  state.selectedRequestId = request.id;
+  state.loading = false;
+  state.modal = { type: 'dispatchSuccess', deliveryId };
+  setToast('success', 'Remessa registrada. O termo em duas vias já está disponível para impressão.');
+  render();
 }
-
 
 export async function submitSchoolConfirmation(form) {
   const data = new FormData(form);
@@ -353,6 +387,28 @@ export async function submitStockEntry(form) {
   if (error) throw error;
   state.modal = null;
   await refreshData('Entrada de estoque registrada.');
+}
+
+export async function submitStockAdjustment(form) {
+  if (!canManageMaterials()) throw new Error('Seu perfil não pode ajustar quantidades de estoque.');
+  const data = new FormData(form);
+  const materialId = String(data.get('materialId') || '');
+  const newQuantity = Number(String(data.get('newQuantity') || '').replace(',', '.'));
+  const reason = String(data.get('reason') || '').trim();
+  if (!materialId || !state.materials.some((m) => m.id === materialId)) throw new Error('Selecione um material válido.');
+  if (!Number.isFinite(newQuantity) || newQuantity < 0 || Math.round(newQuantity * 100) / 100 !== newQuantity) throw new Error('Informe o novo saldo, com até duas casas decimais.');
+  if (reason.length < 10) throw new Error('Justifique o acerto com pelo menos 10 caracteres.');
+  state.loading = true;
+  render();
+  const { error } = await getSupabase().rpc('adjust_stock_quantity', {
+    p_material_id: materialId,
+    p_new_quantity: newQuantity,
+    p_reason: reason,
+    p_document_number: String(data.get('documentNumber') || '').trim() || null
+  });
+  if (error) throw error;
+  state.modal = null;
+  await refreshData('Acerto de inventário salvo e registrado na auditoria.');
 }
 
 export async function submitUserCreate(form) {
@@ -642,6 +698,7 @@ export const SUBMIT_HANDLERS = {
   'school-form': (form) => submitSchool(form),
   'material-form': (form) => submitMaterial(form),
   'stock-entry-form': (form) => submitStockEntry(form),
+  'stock-adjustment-form': (form) => submitStockAdjustment(form),
   'user-create-form': (form) => submitUserCreate(form),
   'school-import-form': (form) => submitSchoolImport(form),
   'user-edit-form': (form) => submitUserEdit(form),

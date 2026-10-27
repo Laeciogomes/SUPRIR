@@ -33,5 +33,40 @@ td.num { text-align: right; }
 .order-report-block .print-box p { margin: 4px 0 0; color: #5b5546; }
 .order-report-block table { margin-top: 8px; }
 tfoot th, tfoot td { background: #fff5bd; font-weight: bold; }
-@media print { button { display: none; } }
+/* Termo de entrega: duas vias independentes, com area de assinatura manual. */
+.receipt-copy { break-after: page; page-break-after: always; }
+.receipt-copy.receipt-last { break-after: auto; page-break-after: auto; }
+.receipt-copy .print-header { margin-bottom: 7px; padding: 7px 9px; border-radius: 4px; }
+.receipt-copy .print-header-brand { min-height: 28px; }
+.receipt-copy .print-header-brand img { max-height: 54px; }
+.receipt-copy .print-header-title { margin-top: 5px; padding: 5px 9px; }
+.receipt-copy .print-header-title h1 { font-size: 14px; }
+.receipt-copy .print-header-title p { font-size: 9px; }
+.receipt-copy-label { font-size: 10px; font-weight: bold; letter-spacing: .08em; text-align: right; padding: 5px 0; border-bottom: 1px solid #a8a8a8; }
+.receipt-summary { display: grid; grid-template-columns: 1fr 1fr; column-gap: 10px; row-gap: 5px; padding: 10px 0; }
+.receipt-summary div { display: flex; gap: 9px; }
+.receipt-summary span, .receipt-destination span { color: #555; font-size: 9px; }
+.receipt-summary strong { font-size: 10px; }
+.receipt-destination { border: 1px solid #d9d2bb; padding: 9px; display: flex; flex-direction: column; }
+.receipt-destination strong { font-size: 12px; }
+.receipt-destination small { font-size: 9px; }
+.receipt-declaration { margin: 12px 0 8px; text-align: justify; font-size: 10px; }
+.receipt-table { margin-top: 8px; }
+.receipt-table td { font-size: 10px; padding: 6px; }
+.receipt-table tr { break-inside: avoid; page-break-inside: avoid; }
+.receipt-num { text-align: center; }
+.receipt-substitution { font-size: 9px; font-style: italic; color: #555; margin-top: 2px; }
+.receipt-audit { margin: 7px 0; font-size: 9px; }
+.receipt-audit span { padding: 0 8px; }
+.receipt-confirm { font-weight: bold; }
+.receipt-remarks { margin-top: 13px; min-height: 54px; font-size: 10px; }
+.receipt-line { border-bottom: 1px solid #bbb; margin: 11px 0; }
+.receipt-date { margin-top: 11px; font-size: 10px; }
+.receipt-signatures { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 43px; text-align: center; }
+.receipt-signatures .receipt-sign-line { border-top: 1px solid #333; }
+.receipt-signatures strong { display: block; margin-top: 6px; font-size: 10px; }
+.receipt-signatures span { display: block; font-size: 9px; }
+.receipt-footnote { margin-top: 14px; font-size: 8px; color: #555; }
+@media print { button { display: none; } .receipt-copy { page-break-after: always; } .receipt-copy.receipt-last { page-break-after: auto; } }
+
 `;

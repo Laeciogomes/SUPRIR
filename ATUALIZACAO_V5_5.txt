@@ -1,0 +1,17 @@
+SUPRIR Educação V5.5.0 — acerto de estoque, substituição SME e termo de entrega em duas vias
+
+PACOTE INCREMENTAL PARA INSTALAR SOBRE A V5.4.1
+
+1. Execute no Supabase SQL Editor: supabase/migrations/014_ajuste_estoque_substituicao_termo_v5_5.sql
+2. Execute: supabase/VALIDACAO_V5_5.sql — nove verificações true
+3. Copie os arquivos deste ZIP sobre a pasta atual, substituindo arquivos existentes.
+4. Dentro da pasta atual no PowerShell:
+   npm version 5.5.0 --no-git-tag-version
+   npm audit
+   npm run build
+5. Teste o formulário de autorização com troca de material, acerto de saldo e a impressão do termo.
+6. Publique no GitHub e no Cloudflare após o teste.
+
+Não execute novamente migrations antigas. Este pacote preserva package.json e package-lock.json atuais, que têm npm audit com 0 vulnerabilidades.
+
+Manual detalhado: docs/ATUALIZACAO_V5_5.md

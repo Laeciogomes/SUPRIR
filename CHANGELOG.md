@@ -1,3 +1,16 @@
+# SUPRIR Educação — V5.5.0
+
+## 5.5.0 — Acerto de estoque, substituição de material na SME e termo de entrega
+
+- Almoxarifado/Administrador: ajuste de saldo físico de qualquer material (subida/descida), com justificativa e histórico auditável.
+- SME: troca do material solicitado por um produto alternativo autorizado, mantendo pedido original e justificativa, sob validação de estoque e unidade.
+- Expedição: baixa física do **material autorizado**, inclusive quando substitui o solicitado.
+- Termo de entrega: duas vias para assinatura física, disponíveis imediatamente após saída e em cada remessa, com material entregue e substituições.
+- Relatórios: separação entre solicitado e autorizado na consolidação de materiais.
+- Migração 014, validação, cache PWA da V5.5.0. Sem alteração de senhas nem quebra do Realtime.
+
+---
+
 # V5.4.1 — correção do reset em massa de senhas no Cloudflare
 
 ## 5.4.1

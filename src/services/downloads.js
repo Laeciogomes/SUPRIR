@@ -76,7 +76,7 @@ export function exportCurrentReport() {
   if (state.report.type === 'orders') {
     const rows = [[
       'Protocolo', 'Escola', 'Data do pedido', 'Finalidade', 'Prioridade', 'Situação',
-      'Material', 'Categoria', 'Unidade', 'Quantidade solicitada', 'Quantidade autorizada', 'Quantidade entregue', 'Saldo autorizado',
+      'Material solicitado', 'Material autorizado pela SME', 'Categoria', 'Unidade', 'Quantidade solicitada', 'Quantidade autorizada', 'Quantidade entregue', 'Saldo autorizado',
       'Observação da escola', 'Observação da SME', 'Registrado por', 'Recebido na SME por', 'Autorizado por'
     ]];
     requests.forEach((request) => {
@@ -89,7 +89,7 @@ export function exportCurrentReport() {
           request.purpose,
           PRIORITY[request.priority]?.label,
           STATUS[request.status]?.label,
-          '', '', '', '', '', '', '', '', '',
+          '', '', '', '', '', '', '', '', '', '',
           request.created_by_name,
           request.received_by_name,
           request.authorized_by_name
@@ -104,6 +104,7 @@ export function exportCurrentReport() {
         PRIORITY[request.priority]?.label,
         STATUS[request.status]?.label,
         item.material,
+        item.authorizedMaterial || item.material,
         item.category,
         item.unit,
         formatNumber(item.requested),

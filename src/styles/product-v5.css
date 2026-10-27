@@ -357,3 +357,12 @@
 @media (max-width: 700px) {
   .stock-summary { grid-template-columns: 1fr; }
 }
+
+/* V5.5.0 — substituição de materiais na autorização e ajuste de estoque */
+.authorization-swap-item { background: var(--surface, #fff); padding: 18px; border-bottom: 1px solid var(--line, #dce5e8); }
+.authorization-swap-item:last-child { border-bottom: 0; }
+.authorization-swap-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 0 12px; }
+.authorization-swap-title strong { font-weight: 750; font-size: 13px; }
+.authorization-swap-title > span { color: var(--muted, #667); white-space: nowrap; }
+.authorization-swap-item .field select { width: 100%; }
+@media (max-width: 680px) { .authorization-swap-title { flex-direction: column; align-items: flex-start; } .authorization-swap-item { padding: 13px; } }

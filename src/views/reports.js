@@ -31,26 +31,38 @@ export function getReportRequests({ applyDate = true } = {}) {
 }
 
 export function aggregateReportMaterials(requests) {
+  // Cada total fica atribuído ao produto correto. Se a SME substituir um item,
+  // o solicitado permanece no produto original e o aprovado/expedido fica no substituto.
   const map = new Map();
+  function add(materialId, name, unit, category, request, requested, approved, delivered) {
+    if (!materialId) return;
+    const current = map.get(materialId) || {
+      material: name || 'Material', unit: unit || '', category: category || '',
+      requested: 0, approved: 0, delivered: 0,
+      requests: new Set(), schools: new Set()
+    };
+    current.requested += requested;
+    current.approved += approved;
+    current.delivered += delivered;
+    current.requests.add(request.id);
+    current.schools.add(request.school_id);
+    map.set(materialId, current);
+  }
   requests.forEach((request) => {
     (request.request_items || []).forEach((item) => {
-      const key = item.material_id;
-      const current = map.get(key) || {
-        material: item.material_name_snapshot,
-        unit: item.unit_snapshot,
-        category: item.materials?.categoria || '',
-        requested: 0,
-        approved: 0,
-        delivered: 0,
-        requests: new Set(),
-        schools: new Set()
-      };
-      current.requested += Number(item.requested_quantity || 0);
-      current.approved += Number(item.approved_quantity || 0);
-      current.delivered += deliveredQuantityForItem(request, item.id);
-      current.requests.add(request.id);
-      current.schools.add(request.school_id);
-      map.set(key, current);
+      const delivered = deliveredQuantityForItem(request, item.id);
+      const approved = Number(item.approved_quantity || 0);
+      const originalId = item.material_id;
+      const approvedId = item.approved_material_id || originalId;
+      const isSubstitution = approvedId !== originalId && approved > 0;
+      add(originalId, item.material_name_snapshot, item.unit_snapshot, item.materials?.categoria, request,
+        Number(item.requested_quantity || 0), isSubstitution ? 0 : approved, isSubstitution ? 0 : delivered);
+      if (isSubstitution) {
+        const replacement = state.materials.find((m) => m.id === approvedId);
+        add(approvedId, item.approved_material_name_snapshot || replacement?.nome || 'Material substituto',
+          item.approved_unit_snapshot || replacement?.unidade || item.unit_snapshot,
+          replacement?.categoria || '', request, 0, approved, delivered);
+      }
     });
   });
   return [...map.values()].sort((a, b) => a.material.localeCompare(b.material, 'pt-BR'));
@@ -86,6 +98,7 @@ export function requestItemReportRows(request) {
     return {
       id: item.id,
       material: item.material_name_snapshot || item.materials?.nome || 'Material não identificado',
+      authorizedMaterial: item.approved_material_name_snapshot || null,
       category: item.materials?.categoria || '—',
       unit: item.unit_snapshot || item.materials?.unidade || '—',
       requested,
@@ -117,7 +130,7 @@ export function renderRequestItemsReportBlock(request, { print = false } = {}) {
   const body = rows.map((row, index) => `
     <tr>
       <td data-label="#">${index + 1}</td>
-      <td data-label="Material"><strong class="cell-title">${escapeHtml(row.material)}</strong><small class="cell-sub">${escapeHtml(row.category)}</small></td>
+      <td data-label="Material"><strong class="cell-title">${escapeHtml(row.material)}</strong>${row.authorizedMaterial && row.authorizedMaterial !== row.material ? `<small class="cell-sub">Autorizado pela SME: ${escapeHtml(row.authorizedMaterial)}</small>` : ''}<small class="cell-sub">${escapeHtml(row.category)}</small></td>
       <td data-label="Unidade">${escapeHtml(row.unit)}</td>
       <td class="${numClass}" data-label="Solicitado">${formatNumber(row.requested)}</td>
       <td class="${numClass}" data-label="Autorizado">${formatNumber(row.approved)}</td>

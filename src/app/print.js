@@ -42,6 +42,45 @@ export function printDocument(title, body) {
   popup.document.close();
 }
 
+export function printDeliveryTerm(deliveryId) {
+  const request = state.requests.find((entry) => (entry.deliveries || []).some((delivery) => delivery.id === deliveryId));
+  const delivery = request?.deliveries?.find((entry) => entry.id === deliveryId);
+  if (!request || !delivery) {
+    deps.setToast('warning', 'Remessa não localizada. Atualize os dados e tente novamente.');
+    render();
+    return;
+  }
+
+  const schoolName = request.schools?.nome || deps.getSchoolName(request.school_id) || 'Unidade escolar';
+  const lines = (delivery.delivery_items || []).map((line, index) => {
+    const originalItem = (request.request_items || []).find((item) => item.id === line.request_item_id);
+    const originalName = originalItem?.material_name_snapshot || '';
+    const actualName = line.material_name_snapshot || line.materials?.nome || 'Material';
+    const substitution = originalItem && originalItem.material_id !== line.material_id;
+    return `<tr><td class="receipt-num">${index + 1}</td><td><strong>${escapeHtml(actualName)}</strong>${substitution ? `<div class="receipt-substitution">Substitui o solicitado: ${escapeHtml(originalName)}</div>` : ''}</td><td class="num">${formatNumber(line.quantity)}</td><td>${escapeHtml(line.unit_snapshot || '')}</td></tr>`;
+  }).join('');
+
+  const makeCopy = (copyLabel, second = false) => `
+    <section class="receipt-copy ${second ? 'receipt-last' : ''}">
+      ${reportHeaderHtml('TERMO DE ENTREGA E RECEBIMENTO DE MATERIAIS', 'Comprovante de remessa para assinatura presencial')}
+      <div class="receipt-copy-label">${escapeHtml(copyLabel)}</div>
+      <div class="receipt-summary"><div><span>Remessa</span><strong>${escapeHtml(delivery.delivery_number || 'Registrada')}</strong></div><div><span>Pedido / protocolo</span><strong>${escapeHtml(request.protocol_number || '—')}</strong></div><div><span>Data da expedição</span><strong>${formatDate(delivery.dispatch_date || delivery.delivery_date)}</strong></div><div><span>Documento / guia</span><strong>${escapeHtml(delivery.document_number || '—')}</strong></div></div>
+      <div class="receipt-destination"><span>Unidade destinatária</span><strong>${escapeHtml(schoolName)}</strong>${request.schools?.endereco ? `<small>${escapeHtml(request.schools.endereco)}</small>` : ''}</div>
+      <p class="receipt-declaration">A Secretaria Municipal de Educação, por meio do Almoxarifado, entrega à unidade escolar acima identificada os materiais discriminados a seguir, relativos ao pedido informado. O responsável pelo recebimento deverá conferir as quantidades e registrar eventuais ressalvas.</p>
+      <table class="receipt-table"><thead><tr><th style="width:6%">Item</th><th>Material entregue / autorizado pela SME</th><th style="width:12%;text-align:right">Qtd.</th><th style="width:12%">Unid.</th></tr></thead><tbody>${lines || '<tr><td colspan="4">Nenhum item informado na remessa.</td></tr>'}</tbody></table>
+      <div class="receipt-audit"><strong>Autorizado pela SME:</strong> ${escapeHtml(request.authorized_by_name || '—')} <span>•</span> <strong>Expedido por:</strong> ${escapeHtml(delivery.registered_by_name || '—')}</div>
+      ${delivery.observations ? `<p class="receipt-audit"><strong>Observações da saída:</strong> ${escapeHtml(delivery.observations)}</p>` : ''}
+      <p class="receipt-declaration receipt-confirm">Declaro que recebi fisicamente os materiais relacionados neste termo, observadas as ressalvas abaixo, quando houver.</p>
+      <div class="receipt-remarks"><strong>Ressalvas / divergências no recebimento:</strong><div class="receipt-line"></div><div class="receipt-line"></div></div>
+      <div class="receipt-date">Local: ___________________________ Data do recebimento: ______ / ______ / __________</div>
+      <div class="receipt-signatures"><div><div class="receipt-sign-line"></div><strong>Responsável pela entrega</strong><span>Nome / assinatura</span></div><div><div class="receipt-sign-line"></div><strong>Responsável pelo recebimento na escola</strong><span>Nome / assinatura / matrícula ou carimbo</span></div></div>
+      <p class="receipt-footnote">Documento em duas vias de igual teor: uma destinada ao Almoxarifado e outra à Escola. A assinatura física não substitui a confirmação de recebimento no SUPRIR.</p>
+    </section>`;
+
+  printDocument(`Termo de entrega ${delivery.delivery_number || request.protocol_number} (2 vias)`,
+    makeCopy('1ª VIA — ALMOXARIFADO') + makeCopy('2ª VIA — ESCOLA', true));
+}
+
 export function printRequest(request) {
   if (!request) return;
   const totals = deps.requestTotals(request);
@@ -50,7 +89,7 @@ export function printRequest(request) {
     <div class="print-meta"><div><span>Protocolo</span><strong>${escapeHtml(request.protocol_number)}</strong></div><div><span>Situação</span><strong>${escapeHtml((deps.isSchool() ? STATUS[request.status]?.school : STATUS[request.status]?.label) || request.status)}</strong></div><div><span>Prioridade</span><strong>${escapeHtml(PRIORITY[request.priority]?.label || request.priority)}</strong></div><div><span>Data do pedido</span><strong>${formatDate(request.submitted_at || request.created_at)}</strong></div></div>
     <div class="print-box"><span class="print-label">Finalidade</span><strong>${escapeHtml(request.purpose)}</strong><p>${escapeHtml(request.notes || '')}</p></div>
     <h2>Materiais solicitados</h2>
-    <table><thead><tr><th>Material</th><th>Unidade</th><th>Solicitado</th><th>Autorizado</th><th>Entregue</th><th>Observações</th></tr></thead><tbody>${(request.request_items || []).map((item) => `<tr><td>${escapeHtml(item.material_name_snapshot)}</td><td>${escapeHtml(item.unit_snapshot)}</td><td class="num">${formatNumber(item.requested_quantity)}</td><td class="num">${formatNumber(item.approved_quantity)}</td><td class="num">${formatNumber(deps.deliveredQuantityForItem(request, item.id))}</td><td>${escapeHtml([item.school_notes, item.sme_notes].filter(Boolean).join(' / ') || '—')}</td></tr>`).join('')}</tbody><tfoot><tr><th colspan="2">Totais</th><th class="num">${formatNumber(totals.requested)}</th><th class="num">${formatNumber(totals.approved)}</th><th class="num">${formatNumber(totals.delivered)}</th><th></th></tr></tfoot></table>
+    <table><thead><tr><th>Material</th><th>Unidade</th><th>Solicitado</th><th>Autorizado</th><th>Entregue</th><th>Observações</th></tr></thead><tbody>${(request.request_items || []).map((item) => `<tr><td>${escapeHtml(item.material_name_snapshot)}${item.approved_material_id && item.approved_material_id !== item.material_id ? `<p><strong>Autorizado: ${escapeHtml(item.approved_material_name_snapshot || item.material_name_snapshot)}</strong></p>` : ''}</td><td>${escapeHtml(item.unit_snapshot)}</td><td class="num">${formatNumber(item.requested_quantity)}</td><td class="num">${formatNumber(item.approved_quantity)}</td><td class="num">${formatNumber(deps.deliveredQuantityForItem(request, item.id))}</td><td>${escapeHtml([item.school_notes, item.sme_notes].filter(Boolean).join(' / ') || '—')}</td></tr>`).join('')}</tbody><tfoot><tr><th colspan="2">Totais</th><th class="num">${formatNumber(totals.requested)}</th><th class="num">${formatNumber(totals.approved)}</th><th class="num">${formatNumber(totals.delivered)}</th><th></th></tr></tfoot></table>
     <h2>Responsáveis</h2><div class="audit-grid"><div class="print-box"><span class="print-label">Registrado por</span><strong>${escapeHtml(request.created_by_name || '—')}</strong><p>${escapeHtml(request.created_by_email || '')}</p></div><div class="print-box"><span class="print-label">Recebido na SME por</span><strong>${escapeHtml(request.received_by_name || '—')}</strong><p>${request.received_at ? formatDateTime(request.received_at) : ''}</p></div><div class="print-box"><span class="print-label">Autorizado por</span><strong>${escapeHtml(request.authorized_by_name || '—')}</strong><p>${request.authorized_at ? formatDateTime(request.authorized_at) : ''}</p></div></div>
     ${(request.deliveries || []).length ? `<h2>Remessas e recebimentos</h2>${request.deliveries.map((delivery) => `<div class="delivery-block"><div class="delivery-head"><strong>${escapeHtml(delivery.delivery_number || 'Remessa')}</strong><span>${escapeHtml(delivery.status === 'delivered' ? 'Recebida' : 'Aguardando escola')}</span></div><div class="print-meta"><div><span>Saída</span><strong>${formatDate(delivery.dispatch_date || delivery.delivery_date)}</strong></div><div><span>Expedido por</span><strong>${escapeHtml(delivery.registered_by_name || '—')}</strong></div><div><span>Recebimento</span><strong>${delivery.status === 'delivered' ? formatDate(delivery.receipt_date || delivery.delivery_date) : 'Pendente'}</strong></div><div><span>Confirmado pela escola</span><strong>${escapeHtml(delivery.school_confirmed_by_name || delivery.received_by_name || 'Pendente')}</strong></div></div><table><thead><tr><th>Material</th><th>Quantidade</th><th>Unidade</th></tr></thead><tbody>${(delivery.delivery_items || []).map((item) => `<tr><td>${escapeHtml(item.material_name_snapshot)}</td><td class="num">${formatNumber(item.quantity)}</td><td>${escapeHtml(item.unit_snapshot || '')}</td></tr>`).join('')}</tbody></table><p><strong>Registro da saída:</strong> ${escapeHtml(delivery.registered_by_name || '—')} • <strong>Confirmação da escola:</strong> ${delivery.school_confirmed_at ? formatDateTime(delivery.school_confirmed_at) : 'Pendente'}</p></div>`).join('')}` : ''}
     <div class="signature-grid"><div class="signature">Responsável da SME</div><div class="signature">Responsável da escola</div></div>`;

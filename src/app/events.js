@@ -86,6 +86,15 @@ export function registerEventListeners() {
       state.report[target.dataset.reportFilter] = target.value;
       render();
     }
+    if (target.matches('[data-stock-adjustment-material]')) {
+      const quantity = target.closest('form')?.querySelector('input[name="newQuantity"]');
+      if (quantity) quantity.value = target.selectedOptions?.[0]?.dataset.stock || '';
+    }
+    if (target.matches('[data-authorization-material]')) {
+      const stock = target.selectedOptions?.[0]?.dataset.stock || '0';
+      const display = target.closest('form')?.querySelector(`[data-authorization-stock="${target.dataset.authorizationMaterial}"]`);
+      if (display) display.textContent = stock;
+    }
     if (target.matches('[data-user-account-type]')) {
       const form = target.closest('form');
       const isSchoolAccount = target.value === 'school';

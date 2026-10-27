@@ -11,7 +11,7 @@ import {
   executeRpc
 } from '../services/supabase.js';
 import { handleInstallApp } from './pwa.js';
-import { printRequest, printCurrentReport } from './print.js';
+import { printRequest, printCurrentReport, printDeliveryTerm } from './print.js';
 import {
   downloadSchoolImportTemplate,
   downloadSchoolImportReport,
@@ -230,6 +230,11 @@ export const ACTIONS = {
     state.modal = { type: 'materialForm', materialId: button.dataset.id || null };
     render();
   },
+  'open-stock-adjustment': (button) => {
+    if (!canManageMaterials()) throw new Error('Seu perfil não pode ajustar o estoque.');
+    state.modal = { type: 'stockAdjustment', materialId: button.dataset.id || null };
+    render();
+  },
   'open-stock-entry': (button) => {
     if (!canManageMaterials()) throw new Error('Somente o almoxarifado ou o administrador pode registrar entradas de estoque.');
     state.modal = { type: 'stockEntry', materialId: button.dataset.id || null };
@@ -302,6 +307,9 @@ export const ACTIONS = {
   },
   'print-report': () => {
     printCurrentReport();
+  },
+  'print-delivery-term': (button) => {
+    printDeliveryTerm(button.dataset.id);
   },
   'print-request': (button) => {
     printRequest(getRequest(button.dataset.id));
