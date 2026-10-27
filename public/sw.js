@@ -1,4 +1,4 @@
-const CACHE_NAME = 'suprir-educacao-5.5.0';
+const CACHE_NAME = 'suprir-educacao-5.5.1';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -44,14 +44,19 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
-  if (url.pathname.startsWith('/api/') || url.hostname.includes('supabase.co')) return;
+  // CacheStorage aceita apenas http(s). Extensões do navegador podem emitir
+  // fetches chrome-extension://; deixamos o navegador tratá-los diretamente.
+  if (!['http:', 'https:'].includes(url.protocol)) return;
+  // Não interceptar nem armazenar conteúdo de outros domínios (inclusive Supabase).
+  if (url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith('/api/')) return;
 
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request)
         .then((response) => {
           const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put('/index.html', clone));
+          caches.open(CACHE_NAME).then((cache) => cache.put('/index.html', clone)).catch(() => undefined);
           return response;
         })
         .catch(() => caches.match('/index.html').then((cached) => cached || caches.match('/offline.html')))
@@ -65,7 +70,7 @@ self.addEventListener('fetch', (event) => {
         .then((response) => {
           if (response && response.ok) {
             const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone)).catch(() => undefined);
           }
           return response;
         })

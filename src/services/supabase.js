@@ -245,7 +245,7 @@ export function fetchRequests() {
       schools (id, nome, inep, codigo, diretor, telefone, email, endereco, bairro),
       request_items (
         *,
-        materials (id, nome, unidade, categoria, codigo, stock_quantity, quantidade_minima)
+        materials:materials!request_items_material_id_fkey (id, nome, unidade, categoria, codigo, stock_quantity, quantidade_minima)
       ),
       deliveries (
         *,

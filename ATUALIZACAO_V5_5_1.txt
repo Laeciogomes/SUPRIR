@@ -1,0 +1,64 @@
+# SUPRIR Educação V5.5.1 — correção de erros após a V5.5.0
+
+## Erro que bloqueia o carregamento
+
+`PGRST201: Could not embed because more than one relationship was found for 'request_items' and 'materials'`.
+
+Motivo: a migração 014 adicionou `request_items.approved_material_id` como segunda chave estrangeira para `public.materials`. O Supabase passou a exigir que a consulta identifique explicitamente a relação do material originalmente solicitado.
+
+Corrigido em `src/services/supabase.js`:
+
+```js
+request_items (
+  *,
+  materials:materials!request_items_material_id_fkey (id, nome, unidade, categoria, codigo, stock_quantity, quantidade_minima)
+)
+```
+
+A alias `materials:` mantém o formato dos dados esperado pelo frontend, sem mudar telas, relatórios, pedidos ou saldos. A relação aninhada `deliveries -> delivery_items -> materials` permanece inalterada porque não é ambígua.
+
+## Aviso do Service Worker
+
+`TypeError: Failed to execute 'put' on 'Cache': Request scheme 'chrome-extension' is unsupported`.
+
+Corrigido em `public/sw.js`: os recursos de extensões e outros domínios deixam de ser interceptados e armazenados. Falhas pontuais de cache são tratadas e não interrompem o aplicativo. O cache PWA mudou para `suprir-educacao-5.5.1`.
+
+## Como aplicar
+
+1. Extraia este ZIP *dentro de* `C:\Projetos\SUPRIR`, autorizando a substituição dos arquivos. O pacote é incremental e não contém nem substitui `.env.local`, `package.json` ou `package-lock.json`.
+2. No PowerShell:
+
+```powershell
+cd C:\Projetos\SUPRIR
+npm version 5.5.1 --no-git-tag-version
+npm audit
+npm run build
+```
+
+3. Se o audit retornar `found 0 vulnerabilities` e o build concluir, registre no GitHub:
+
+```powershell
+git add -A
+git diff --cached --check
+git commit -m "SUPRIR Educação v5.5.1 - correção de relacionamentos e cache PWA"
+git push origin main
+git tag -a v5.5.1 -m "SUPRIR Educação v5.5.1"
+git push origin v5.5.1
+```
+
+4. Só então publique no Cloudflare:
+
+```powershell
+npx wrangler pages deploy dist --project-name suprir
+```
+
+5. Atualize o portal oficial. Se uma instalação PWA ainda exibir a versão antiga, feche e reabra a aplicação; se necessário recarregue uma vez para o novo Service Worker assumir o controle.
+
+## Testes funcionais
+
+- Entre como Escola, SME e Almoxarifado e abra as telas de pedidos, conferindo se o erro PGRST201 desapareceu.
+- Em um pedido com troca de material, confira que **Solicitado** mantém o material original e **Autorizado/Expedido** usa o substituto.
+- Verifique as consultas de estoque e as remessas existentes. Não há SQL nem mudança em dados.
+- Confirme que o console não mostra novos erros `chrome-extension://` no `sw.js` (erros anteriores podem ficar visíveis até recarregar a aba).
+
+**Importante:** o aviso `beforeinstallprompt.preventDefault()` é apenas informativo, e o aviso de preload do logotipo não causa o bloqueio de carregamento.

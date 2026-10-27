@@ -1,4 +1,14 @@
-# SUPRIR Educação — V5.5.0
+# SUPRIR Educação — V5.5.1
+
+## 5.5.1 — Correção das consultas de pedidos e do cache PWA
+
+- Corrige o erro **PGRST201** ao carregar pedidos após a migração 014: seleciona explicitamente `request_items.material_id` usando `materials!request_items_material_id_fkey`, preservando o nome de resposta `materials` utilizado pelas telas e relatórios.
+- Mantém a relação de materiais autorizados pela SME, sem alterar pedidos, autorizações ou saldos.
+- O Service Worker passa a ignorar solicitações de protocolos não HTTP(S) e de outras origens, eliminando a tentativa de armazenar recursos `chrome-extension://` no CacheStorage.
+- Escritas no cache que falharem não interrompem a navegação; cache PWA atualizado para `suprir-educacao-5.5.1`.
+- **Sem migração SQL.** Aplicar sobre a V5.5.0 instalada e manter o `package-lock.json` já corrigido e auditado no computador.
+
+---
 
 ## 5.5.0 — Acerto de estoque, substituição de material na SME e termo de entrega
 
